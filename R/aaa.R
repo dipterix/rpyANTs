@@ -1,4 +1,9 @@
-
+#' @importFrom reticulate tuple
+#' @importFrom reticulate py_help
+#' @importFrom reticulate np_array
+#' @importFrom reticulate import
+#' @importFrom rpymat repl_python
+NULL
 
 validate_python <- function(verbose = TRUE) {
   verb <- function(expr) {
@@ -35,6 +40,9 @@ validate_python <- function(verbose = TRUE) {
   return(invisible(package_missing))
 }
 
+#' @title Install 'ANTs' via 'ANTsPy'
+#' @param python_ver 'Python' version, see \code{\link[rpymat]{configure_conda}}
+#' @param verbose whether to print the installation messages
 #' @export
 install_ants <- function(python_ver = "auto", verbose = TRUE) {
   # Install conda and create a conda environment
@@ -58,98 +66,7 @@ install_ants <- function(python_ver = "auto", verbose = TRUE) {
   validate_python(verbose = verbose)
 }
 
-#' @name ants
-#' @title Get 'ANTs' module
-#' @export
-NULL
-
-#' @name py
-#' @title Get 'Python' object
-#' @export
-NULL
-
 rpymat_is_setup <- function() {
   return( dir.exists(rpymat::env_path()) )
 }
 
-#' @rdname ants
-#' @export
-load_ants <- local({
-
-  ants <- NULL
-
-  function(force = FALSE) {
-    if(!force && inherits(ants, "python.builtin.module")) {
-      return( ants )
-    }
-    if( !rpymat_is_setup() ) {
-      return( NULL )
-    }
-    tryCatch({
-      rpymat::ensure_rpymat(verbose = FALSE)
-      ants <<- reticulate::import("ants")
-      return( ants )
-    }, error = function(e) {
-      return(NULL)
-    })
-  }
-})
-
-#' @rdname ants
-#' @export
-ants_available <- function() {
-  ants <- load_ants()
-  !is.null(ants)
-}
-
-load_py <- local({
-
-  main <- NULL
-
-  function() {
-    if (!is.null(main)) { return(main) }
-
-    if( !rpymat_is_setup() ) {
-      return( NULL )
-    }
-
-    py <- tryCatch({
-      reticulate <- asNamespace("reticulate")
-      if(isTRUE(reticulate$is_python_initialized())) {
-        py <- reticulate::import_main(convert = TRUE)
-      } else {
-        py <- NULL
-      }
-      py
-    }, error = function(e) {
-      reticulate::py
-    })
-
-    if(!is.null(py)) {
-      main <<- py
-    }
-    main
-  }
-})
-
-.onLoad <- function(libname, pkgname) {
-  pkg <- getNamespace(pkgname)
-  makeActiveBinding(
-    "ants", env = pkg,
-    fun = function() { load_ants() }
-  )
-  makeActiveBinding("py", fun = load_py, env = pkg)
-}
-
-
-#' @export
-tuple <- reticulate::tuple
-
-#' @export
-py_help <- reticulate::py_help
-
-#' @export
-np_array <- reticulate::np_array
-
-#' @export
-import <- reticulate::import
