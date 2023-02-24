@@ -21,3 +21,25 @@ the 'Python' documentation
 \description{
 Load data as \code{'ANTsImage'} class
 }
+\examples{
+
+if(interactive() && ants_available()) {
+
+  ants <- load_ants()
+
+  # Python string
+  x1 <- ants$get_ants_data('r16')
+  as_ANTsImage( x1 )
+
+  # R character
+  nii_path <- system.file(package = "RNifti",
+                          "extdata", "example.nii.gz")
+  as_ANTsImage( nii_path )
+
+  # niftiImage object
+  x2 <- RNifti::readNifti(nii_path)
+  as_ANTsImage( x2 )
+
+}
+
+}

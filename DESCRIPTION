@@ -11,7 +11,7 @@ Description:
     Compared to the Avants's R implementation 'ANTsR' 
     (<doi:10.17605/osf.io/bsq5v>, <https://github.com/ANTsX/ANTsR>), 
     this package improves portability, reduces installation time
-    and build efforts at the cost of restricted functionality. See 
+    and build efforts at the cost of slightly restricted functionality. See 
     the official 'ANTs' website for citation information.
 License: Apache License 2.0
 Language: en-US

@@ -87,6 +87,7 @@ load_py <- local({
 
 #' @title Check if 'ANTs' is available
 #' @seealso \code{\link{install_ants}}
+#' @returns Logical, whether 'ANTs' is available
 #' @export
 ants_available <- function() {
   ants <- load_ants()
@@ -97,6 +98,7 @@ ants_available <- function() {
 #' @title Get 'ANTs' module
 #' @param force whether to force reloading \code{ants} module; default is false
 #' @usage ants
+#' @returns A 'Python' module
 #' @export
 NULL
 
@@ -105,8 +107,9 @@ NULL
 load_ants <- .ants$get
 
 #' @name py
-#' @title Get 'Python' built-in main module
+#' @title Get 'Python' main process environment
 #' @usage py
+#' @returns The 'Python' main process as a module
 #' @export
 "py"
 NULL

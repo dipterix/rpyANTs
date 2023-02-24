@@ -11,6 +11,9 @@ install_ants(python_ver = "auto", verbose = TRUE)
 
 \item{verbose}{whether to print the installation messages}
 }
+\value{
+This function returns nothing.
+}
 \description{
 Install 'ANTs' via 'ANTsPy'
 }

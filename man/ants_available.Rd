@@ -6,6 +6,9 @@
 \usage{
 ants_available()
 }
+\value{
+Logical, whether 'ANTs' is available
+}
 \description{
 Check if 'ANTs' is available
 }

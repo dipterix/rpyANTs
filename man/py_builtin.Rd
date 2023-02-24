@@ -12,7 +12,7 @@ py_builtin(name, convert = TRUE)
 \item{convert}{see \code{\link[reticulate]{import_builtins}}}
 }
 \value{
-A python built-in object
+A python built-in object specified by \code{name}
 }
 \description{
 Get 'Python' built-in object

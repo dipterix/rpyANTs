@@ -12,6 +12,9 @@ load_ants(force = FALSE)
 \arguments{
 \item{force}{whether to force reloading \code{ants} module; default is false}
 }
+\value{
+A 'Python' module
+}
 \description{
 Get 'ANTs' module
 }

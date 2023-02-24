@@ -3,14 +3,17 @@
 \docType{data}
 \name{py}
 \alias{py}
-\title{Get 'Python' built-in main module}
+\title{Get 'Python' main process environment}
 \format{
-An object of class \code{python.builtin.module} (inherits from \code{python.builtin.object}) of length 1.
+An object of class \code{NULL} of length 0.
 }
 \usage{
 py
 }
+\value{
+The 'Python' main process as a module
+}
 \description{
-Get 'Python' built-in main module
+Get 'Python' main process environment
 }
 \keyword{datasets}

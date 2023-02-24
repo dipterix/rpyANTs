@@ -1,7 +1,7 @@
 #' @title Get 'Python' built-in object
 #' @param name object name
 #' @param convert see \code{\link[reticulate]{import_builtins}}
-#' @returns A python built-in object
+#' @returns A python built-in object specified by \code{name}
 #' @examples
 #'
 #' if(interactive() && ants_available()) {
@@ -89,6 +89,28 @@ py_list <- function(..., convert = FALSE) {
 #' @param strict whether \code{x} should not be \code{NULL}
 #' @returns An \code{'ANTsImage'} instance; use \code{ants$ANTsImage} to see
 #' the 'Python' documentation
+#'
+#' @examples
+#'
+#' if(interactive() && ants_available()) {
+#'
+#'   ants <- load_ants()
+#'
+#'   # Python string
+#'   x1 <- ants$get_ants_data('r16')
+#'   as_ANTsImage( x1 )
+#'
+#'   # R character
+#'   nii_path <- system.file(package = "RNifti",
+#'                           "extdata", "example.nii.gz")
+#'   as_ANTsImage( nii_path )
+#'
+#'   # niftiImage object
+#'   x2 <- RNifti::readNifti(nii_path)
+#'   as_ANTsImage( x2 )
+#'
+#' }
+#'
 #' @export
 as_ANTsImage <- function(x, strict = FALSE) {
   if(is.null(x)) {
@@ -100,7 +122,7 @@ as_ANTsImage <- function(x, strict = FALSE) {
   if(inherits(x, "ants.core.ants_image.ANTsImage")) {
     return(x)
   }
-  if(isTRUE(is.character(x))) {
+  if(isTRUE(is.character(x)) || inherits(x, "python.builtin.str")) {
     ants <- load_ants()
     return(ants$image_read(x))
   }

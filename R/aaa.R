@@ -61,6 +61,7 @@ validate_python <- function(verbose = TRUE) {
 #' @title Install 'ANTs' via 'ANTsPy'
 #' @param python_ver 'Python' version, see \code{\link[rpymat]{configure_conda}}
 #' @param verbose whether to print the installation messages
+#' @returns This function returns nothing.
 #' @export
 install_ants <- function(python_ver = "auto", verbose = TRUE) {
   # Install conda and create a conda environment

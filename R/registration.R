@@ -26,6 +26,8 @@
 #' registration
 #' @param ... others passed to \code{ants$registration}
 #'
+#' @returns A 'Python' dictionary of aligned images and transform files.
+#'
 #' @examples
 #'
 #' if(interactive() && ants_available()) {

@@ -42,7 +42,7 @@ install.packages("rpyANTs")
 rpyANTs::install_ants()
 ```
 
-`install_ants` creates an isolated `Python` environment managed by [`RAVE`](https://rave.wiki/). This environment does not conflict nor affect your existing Python installations.
+`install_ants` creates an isolated `Python` environment managed by [`RAVE`](https://openwetware.org/wiki/RAVE). This environment does not conflict nor affect your existing Python installations.
 
 ## How to use
 

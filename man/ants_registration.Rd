@@ -71,6 +71,9 @@ registration}
 
 \item{...}{others passed to \code{ants$registration}}
 }
+\value{
+A 'Python' dictionary of aligned images and transform files.
+}
 \description{
 Register two images using 'ANTs'
 }
