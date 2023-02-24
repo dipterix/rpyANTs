@@ -5,14 +5,30 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="What the package does (one paragraph).">
-<title>ANTs Package in R • rpyANTs</title>
+<meta name="description" content="
+    Providing access from R to biomedical image processing toolbox 
+    ANTs (&lt;doi:10.54294/uvnhin&gt;, &lt;https://github.com/ANTsX/ANTs&gt;) and 
+    its Python implementation ANTsPy &lt;https://github.com/ANTsX/ANTsPy&gt;. 
+    Compared to the Avantss R implementation ANTsR 
+    (&lt;doi:10.17605/osf.io/bsq5v&gt;, &lt;https://github.com/ANTsX/ANTsR&gt;), 
+    this package improves portability, reduces installation time
+    and build efforts at the cost of restricted functionality. See 
+    the official ANTs' website for citation information.">
+<title>An Alternative R Package for Advanced Normalization Tools (ANTs) • rpyANTs</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="ANTs Package in R">
-<meta property="og:description" content="What the package does (one paragraph).">
+<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="An Alternative R Package for Advanced Normalization Tools (ANTs)">
+<meta property="og:description" content="
+    Providing access from R to biomedical image processing toolbox 
+    ANTs (&lt;doi:10.54294/uvnhin&gt;, &lt;https://github.com/ANTsX/ANTs&gt;) and 
+    its Python implementation ANTsPy &lt;https://github.com/ANTsX/ANTsPy&gt;. 
+    Compared to the Avantss R implementation ANTsR 
+    (&lt;doi:10.17605/osf.io/bsq5v&gt;, &lt;https://github.com/ANTsX/ANTsR&gt;), 
+    this package improves portability, reduces installation time
+    and build efforts at the cost of restricted functionality. See 
+    the official ANTs' website for citation information.">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -43,7 +59,14 @@
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="search.json" id="search-input" placeholder="Search for" autocomplete="off">
 </form>
 
-      <ul class="navbar-nav"></ul>
+      <ul class="navbar-nav">
+<li class="nav-item">
+  <a class="external-link nav-link" href="https://github.com/dipterix/rpyANTs/" aria-label="github">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
 
     
@@ -56,6 +79,9 @@
 <!-- badges: start -->
 
 <p><code>rpyANTs</code> is a package that ports <code>ANTsPy</code>, a <code>Python</code> implementation of <code>ANTs</code> into R using R-Python interpreter package <code>reticulate</code>.</p>
+<blockquote>
+<p>Disclaimer: This is NOT the official <a href="https://github.com/ANTsX/ANTsR" class="external-link"><code>ANTsR</code> package</a>.</p>
+</blockquote>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -123,8 +149,9 @@
 <span><span class="co">#&gt;     &gt;&gt;&gt; noise_image = ants.add_noise_to_image(image, 'shot', 1.0)</span></span>
 <span><span class="co">#&gt;     &gt;&gt;&gt; noise_image = ants.add_noise_to_image(image, 'speckle', 1.0)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; *** Above documentation is for Python. Please use `$` in R</span></span>
-<span><span class="co">#&gt; &lt;function add_noise_to_image at 0x14cf2c700&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt; *** Above documentation is for Python. </span></span>
+<span><span class="co">#&gt; *** Please use `$` instead of `.` for modules and functions in R</span></span>
+<span><span class="co">#&gt; &lt;function add_noise_to_image at 0x142250790&gt;</span></span></code></pre></div>
 <p>The following R code translates Python code into R:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># &gt;&gt;&gt; img = ants.image_read(ants.get_ants_data('r16'))</span></span>
@@ -155,11 +182,11 @@
 <span><span class="op">)</span></span></code></pre></div>
 <p>To load imaging data into R</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">orig_array</span> <span class="op">&lt;-</span> <span class="va">img</span><span class="op">$</span><span class="fu">numpy</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">noise_array1</span> <span class="op">&lt;-</span> <span class="va">noise_image1</span><span class="op">$</span><span class="fu">numpy</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">noise_array2</span> <span class="op">&lt;-</span> <span class="va">noise_image2</span><span class="op">$</span><span class="fu">numpy</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">noise_array3</span> <span class="op">&lt;-</span> <span class="va">noise_image3</span><span class="op">$</span><span class="fu">numpy</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">noise_array4</span> <span class="op">&lt;-</span> <span class="va">noise_image4</span><span class="op">$</span><span class="fu">numpy</span><span class="op">(</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">orig_array</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rstudio.github.io/reticulate/reference/r-py-conversion.html" class="external-link">py_to_r</a></span><span class="op">(</span><span class="va">img</span><span class="op">$</span><span class="fu">numpy</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">noise_array1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rstudio.github.io/reticulate/reference/r-py-conversion.html" class="external-link">py_to_r</a></span><span class="op">(</span><span class="va">noise_image1</span><span class="op">$</span><span class="fu">numpy</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">noise_array2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rstudio.github.io/reticulate/reference/r-py-conversion.html" class="external-link">py_to_r</a></span><span class="op">(</span><span class="va">noise_image2</span><span class="op">$</span><span class="fu">numpy</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">noise_array3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rstudio.github.io/reticulate/reference/r-py-conversion.html" class="external-link">py_to_r</a></span><span class="op">(</span><span class="va">noise_image3</span><span class="op">$</span><span class="fu">numpy</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">noise_array4</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rstudio.github.io/reticulate/reference/r-py-conversion.html" class="external-link">py_to_r</a></span><span class="op">(</span><span class="va">noise_image4</span><span class="op">$</span><span class="fu">numpy</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># plot via R</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/layout.html" class="external-link">layout</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">4</span>,<span class="fl">5</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">2</span>, byrow <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
@@ -188,26 +215,157 @@
 <span><span class="fu">rpymat</span><span class="fu">::</span><span class="fu"><a href="http://dipterix.org/rpymat/reference/conda-env.html" class="external-link">add_packages</a></span><span class="op">(</span>packages <span class="op">=</span> <span class="st">"antspyx"</span>, pip <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
+<h2 id="advanced-use-case">Advanced use case<a class="anchor" aria-label="anchor" href="#advanced-use-case"></a>
+</h2>
+<div class="section level4">
+<h4 id="rundebug-python-scripts">Run/Debug <code>Python</code> scripts<a class="anchor" aria-label="anchor" href="#rundebug-python-scripts"></a>
+</h4>
+<p><code>rpyANTs</code> ports functions that allows to run <code>Python</code> scripts. For example:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://dipterix.org/rpyANTs/">rpyANTs</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">script_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".py"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">script_path</span>, text <span class="op">=</span> <span class="st">r"(</span></span>
+<span><span class="st"></span></span>
+<span><span class="st"># This is Python script</span></span>
+<span><span class="st">import ants</span></span>
+<span><span class="st">print(ants.__version__)</span></span>
+<span><span class="st"></span></span>
+<span><span class="st">)"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="http://dipterix.org/rpymat/reference/run_script.html" class="external-link">run_script</a></span><span class="op">(</span><span class="va">script_path</span><span class="op">)</span></span></code></pre></div>
+<p>You can also run <code>Python</code> interactive in R (yes, you are correct). Simply run</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">rpyANTs</span><span class="fu">::</span><span class="fu"><a href="http://dipterix.org/rpymat/reference/repl_python.html" class="external-link">repl_python</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>The console prefix will change from <code>&gt;</code> to <code>&gt;&gt;&gt;</code>, meaning you are in <code>Python</code> mode:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> rpyANTs<span class="sc">::</span><span class="fu">repl_python</span>()</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>Python <span class="dv">3</span>.<span class="fl">8.16</span> (<span class="sc">/</span>Users<span class="sc">/</span>dipterix<span class="sc">/</span>Library<span class="sc">/</span>r<span class="sc">-</span>rpymat<span class="sc">/</span>miniconda<span class="sc">/</span>envs<span class="sc">/</span>rpymat<span class="sc">-</span>conda<span class="sc">-</span>env<span class="sc">/</span>bin<span class="sc">/</span>python3<span class="fl">.8</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>Reticulate <span class="fl">1.26</span> REPL <span class="sc">--</span> A Python interpreter <span class="cf">in</span> R.</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>Enter <span class="st">'exit'</span> or <span class="st">'quit'</span> to exit the REPL and return to R.</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span><span class="er">&gt;&gt;</span> </span></code></pre></div>
+<p>Try some Python code!</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span><span class="er">&gt;&gt;</span> import ants</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span><span class="er">&gt;&gt;</span> <span class="fu">help</span>(ants.registration)</span></code></pre></div>
+<p>To exit Python mode, type <code>exit</code> (no parenthesis) and hit enter key</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span><span class="er">&gt;&gt;</span> exit</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> </span></code></pre></div>
+</div>
+<div class="section level4">
+<h4 id="data-conversions">Data conversions<a class="anchor" aria-label="anchor" href="#data-conversions"></a>
+</h4>
+<p>Native R variables can be easily converted to <code>Python</code> and back via <code>r_to_py</code> and <code>py_to_r</code>.</p>
+<p>For example</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># R to Python</span></span>
+<span><span class="fu"><a href="https://rstudio.github.io/reticulate/reference/r-py-conversion.html" class="external-link">r_to_py</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; 1.0</span></span>
+<span><span class="fu"><a href="https://rstudio.github.io/reticulate/reference/r-py-conversion.html" class="external-link">r_to_py</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span></span>
+<span><span class="co">#&gt; 1</span></span>
+<span></span>
+<span><span class="co"># Python to R</span></span>
+<span><span class="va">py_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/py_list.html">py_list</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">py_obj</span><span class="op">)</span>  <span class="co"># &lt;- this is a python object</span></span>
+<span><span class="co">#&gt; [1] "python.builtin.list"   "python.builtin.object"</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rstudio.github.io/reticulate/reference/r-py-conversion.html" class="external-link">py_to_r</a></span><span class="op">(</span><span class="va">py_obj</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 1 2 3</span></span></code></pre></div>
+<p>You can also use variables created in R from Python or vice versa:</p>
+<p>In the following example, an R object <code>object_r</code> is created. In Python, it can be accessed (read-only) via <code>r.object_r</code></p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> object_r <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">repl_python</span>()</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>Python <span class="dv">3</span>.<span class="fl">8.16</span> (<span class="sc">/</span>Users<span class="sc">/</span>dipterix<span class="sc">/</span>Library<span class="sc">/</span>r<span class="sc">-</span>rpymat<span class="sc">/</span>miniconda<span class="sc">/</span>envs<span class="sc">/</span>rpymat<span class="sc">-</span>conda<span class="sc">-</span>env<span class="sc">/</span>bin<span class="sc">/</span>python3<span class="fl">.8</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>Reticulate <span class="fl">1.26</span> REPL <span class="sc">--</span> A Python interpreter <span class="cf">in</span> R.</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>Enter <span class="st">'exit'</span> or <span class="st">'quit'</span> to exit the REPL and return to R.</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span><span class="er">&gt;&gt;</span> r.object_r</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>[<span class="fl">1.0</span>, <span class="fl">2.0</span>, <span class="fl">3.0</span>]</span></code></pre></div>
+<p>Similarly, a Python object <code>object_py</code> is created, and it can be read from <code>py$object_py</code>:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span><span class="er">&gt;&gt;</span> import numpy as np</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span><span class="er">&gt;&gt;</span> object_py <span class="ot">=</span> <span class="fu">np.array</span>([<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>])</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span><span class="er">&gt;&gt;</span> exit</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> py<span class="sc">$</span>object_py</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">2</span> <span class="dv">3</span> <span class="dv">4</span></span></code></pre></div>
+</div>
+</div>
+<div class="section level2">
 <h2 id="known-issues">Known issues<a class="anchor" aria-label="anchor" href="#known-issues"></a>
 </h2>
-<p>TODO: Integers, numeric</p>
-<p>TODO: tuple, list, …</p>
-<p>TODO: class operators</p>
-<p>TODO: type conversion</p>
-<p>TODO: documentation</p>
+<div class="section level4">
+<h4 id="variable-types">Variable types<a class="anchor" aria-label="anchor" href="#variable-types"></a>
+</h4>
+<p>R is not a type-rigid language. Some functions in <code>ANTsPy</code> require specific variable types that are often vague in R. For example the <code>dimension</code> argument in function <code>ants$create_ants_transform</code> needs to be an integer, but R’s default numerical values are <code>double</code>. In this case, variable formats need to be explicitly given.</p>
+<p>Here are several examples</p>
+<ol style="list-style-type: decimal">
+<li>Explicit integers</li>
+</ol>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># ants$create_ants_transform(dimension = 3)     # &lt;- error</span></span>
+<span><span class="va">ants</span><span class="op">$</span><span class="fu">create_ants_transform</span><span class="op">(</span>dimension <span class="op">=</span> <span class="fl">3L</span><span class="op">)</span>      <span class="co"># &lt; XXXL is an explicit integer</span></span></code></pre></div>
+<ol start="2" style="list-style-type: decimal">
+<li>
+<code>Tuple</code>, <code>list</code>, and <code>dictionary</code>
+</li>
+</ol>
+<p>A Python <code>tuple</code> is a vector that cannot alter lengths.</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Wrong as `aff_iterations` needs to be a tuple</span></span>
+<span><span class="co"># ants$registration(fixed, moving, ..., aff_iterations = c(6L, 4L, 2L, 1L))</span></span>
+<span></span>
+<span><span class="va">ants</span><span class="op">$</span><span class="fu">registration</span><span class="op">(</span><span class="va">fixed</span>, <span class="va">moving</span>, <span class="va">...</span>, aff_iterations <span class="op">=</span> <span class="fu"><a href="https://rstudio.github.io/reticulate/reference/tuple.html" class="external-link">tuple</a></span><span class="op">(</span><span class="fl">6L</span>, <span class="fl">4L</span>, <span class="fl">2L</span>, <span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>Similar conversions can be done via <code>py_list</code>, <code>py_dict</code>.</p>
+</div>
+<div class="section level4">
+<h4 id="operators">Operators<a class="anchor" aria-label="anchor" href="#operators"></a>
+</h4>
+<p>Currently there is no operator support in <code>rpyANTs</code>. For example, <code>ANTsImage</code> has Python operators:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Python code</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ants</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>image <span class="op">=</span> ants.image_read(ants.get_ants_data(<span class="st">'r16'</span>))</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>ants.plot(image <span class="op">&gt;</span> <span class="dv">10</span>)</span></code></pre></div>
+<p>The operator is not available in R (don’t worry, I will add it in the future, it takes time, OK?), hence it takes a little bit work-around.</p>
+<p>Work-around version 1: call operators directly</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://dipterix.org/rpyANTs/">rpyANTs</a></span><span class="op">)</span></span>
+<span><span class="va">image</span> <span class="op">&lt;-</span> <span class="va">ants</span><span class="op">$</span><span class="fu">image_read</span><span class="op">(</span><span class="va">ants</span><span class="op">$</span><span class="fu">get_ants_data</span><span class="op">(</span><span class="st">'r16'</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># cannot use image &gt; 10 ***for now***</span></span>
+<span><span class="va">threshold</span> <span class="op">&lt;-</span> <span class="va">image</span><span class="op">$</span><span class="fu">`__gt__`</span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span>
+<span><span class="va">ants</span><span class="op">$</span><span class="fu">plot</span><span class="op">(</span><span class="va">threshold</span><span class="op">)</span></span></code></pre></div>
+<p>Work-around version 2: If you don’t know how Python operators work, use Python directly</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://dipterix.org/rpyANTs/">rpyANTs</a></span><span class="op">)</span></span>
+<span><span class="va">image</span> <span class="op">&lt;-</span> <span class="va">ants</span><span class="op">$</span><span class="fu">image_read</span><span class="op">(</span><span class="va">ants</span><span class="op">$</span><span class="fu">get_ants_data</span><span class="op">(</span><span class="st">'r16'</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Create an R variable in Python!</span></span>
+<span><span class="fu"><a href="https://rstudio.github.io/reticulate/reference/py_run.html" class="external-link">py_run_string</a></span><span class="op">(</span><span class="st">"r.threshold = r.image &gt; 10"</span>, local <span class="op">=</span> <span class="cn">TRUE</span>, convert <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">ants</span><span class="op">$</span><span class="fu">plot</span><span class="op">(</span><span class="va">threshold</span><span class="op">)</span></span></code></pre></div>
+</div>
 </div>
 <div class="section level2">
 <h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
 </h2>
-<p>TBA</p>
+<p>This is a general citation:</p>
+<blockquote>
+<p>Avants, B.B., Tustison, N. and Song, G., 2009. Advanced normalization tools (ANTS). The Insight Journal, 2(365), pp.1-35.</p>
+</blockquote>
+<p>Please check their official website to cite specific methods.</p>
 </div>
 <div class="section level2">
 <h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
 </h2>
-<p>Apache-2.0</p>
+<p>This package <code>rpyANTs</code> is released under Apache-2.0 license (Copyright: Zhengjia Wang). The underlying <code>ANTsPy</code> is released under Apache-2.0 license (Copyright: ANTs contributors).</p>
 </div>
 </div>
-  </main><aside class="col-md-3"><div class="license">
+  </main><aside class="col-md-3"><div class="links">
+<h2 data-toc-skip>Links</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/dipterix/rpyANTs/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/dipterix/rpyANTs/issues" class="external-link">Report a bug</a></li>
+</ul>
+</div>
+
+<div class="license">
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li>Apache License 2.0</li>
@@ -233,7 +391,7 @@
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://CRAN.R-project.org/package=rpyANTs" class="external-link"><img src="https://www.r-pkg.org/badges/version/rpyANTs" alt="CRAN status"></a></li>
-<li><a href="https://github.com/dipterix/rpyANTs/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/dipterix/rpyANTs/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://github.com/dipterix/rpyANTs/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/dipterix/rpyANTs/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-check"></a></li>
 </ul>
 </div>
 
