@@ -8,6 +8,24 @@
 \alias{np_array}
 \alias{import}
 \alias{repl_python}
+\alias{run_script}
+\alias{r_to_py}
+\alias{py_to_r}
+\alias{py_to_r_wrapper}
+\alias{py_str}
+\alias{py_run_string}
+\alias{py_bool}
+\alias{py_dict}
+\alias{py_call}
+\alias{py_del_attr}
+\alias{py_del_item}
+\alias{py_eval}
+\alias{py_get_attr}
+\alias{py_set_attr}
+\alias{py_get_item}
+\alias{py_set_item}
+\alias{py_len}
+\alias{py_none}
 \title{Objects exported from other packages}
 \keyword{internal}
 \description{
@@ -15,8 +33,8 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{reticulate}{\code{\link[reticulate]{import}}, \code{\link[reticulate]{np_array}}, \code{\link[reticulate]{np_array}}, \code{\link[reticulate]{py_help}}, \code{\link[reticulate]{tuple}}}
+  \item{reticulate}{\code{\link[reticulate]{import}}, \code{\link[reticulate]{np_array}}, \code{\link[reticulate]{np_array}}, \code{\link[reticulate]{py_bool}}, \code{\link[reticulate]{py_call}}, \code{\link[reticulate]{py_del_attr}}, \code{\link[reticulate]{py_del_item}}, \code{\link[reticulate:dict]{py_dict}}, \code{\link[reticulate]{py_eval}}, \code{\link[reticulate]{py_get_attr}}, \code{\link[reticulate]{py_get_item}}, \code{\link[reticulate]{py_help}}, \code{\link[reticulate]{py_len}}, \code{\link[reticulate]{py_none}}, \code{\link[reticulate:py_run]{py_run_string}}, \code{\link[reticulate]{py_set_attr}}, \code{\link[reticulate]{py_set_item}}, \code{\link[reticulate]{py_str}}, \code{\link[reticulate:r-py-conversion]{py_to_r}}, \code{\link[reticulate]{py_to_r_wrapper}}, \code{\link[reticulate:r-py-conversion]{r_to_py}}, \code{\link[reticulate:r-py-conversion]{r_to_py}}, \code{\link[reticulate]{tuple}}}
 
-  \item{rpymat}{\code{\link[rpymat]{repl_python}}}
+  \item{rpymat}{\code{\link[rpymat]{repl_python}}, \code{\link[rpymat]{run_script}}}
 }}
 

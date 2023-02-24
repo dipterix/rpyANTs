@@ -1,19 +1,33 @@
 Package: rpyANTs
-Title: 'ANTs' Package in R
+Title: An Alternative R Package for Advanced Normalization Tools ('ANTs')
 Version: 0.0.0.9000
 Authors@R: 
     person("Zhengjia", "Wang", email = "dipterix.wang@gmail.com", 
             role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Description: 
+    Providing access from R to biomedical image processing toolbox 
+    'ANTs' (<doi:10.54294/uvnhin>, <https://github.com/ANTsX/ANTs>) and 
+    its 'Python' implementation 'ANTsPy' <https://github.com/ANTsX/ANTsPy>. 
+    Compared to the Avants's R implementation 'ANTsR' 
+    (<doi:10.17605/osf.io/bsq5v>, <https://github.com/ANTsX/ANTsR>), 
+    this package improves portability, reduces installation time
+    and build efforts at the cost of restricted functionality. See 
+    the official 'ANTs' website for citation information.
 License: Apache License 2.0
+Language: en-US
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Imports: 
     rpymat (>= 0.1.4),
     reticulate (>= 1.26)
-URL: http://dipterix.org/rpyANTs/
 Suggests: 
     RNifti (>= 1.4.4),
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+URL: http://dipterix.org/rpyANTs/
+BugReports: https://github.com/dipterix/rpyANTs/issues
+Copyright: 
+    For the rpyANTs package - Zhengjia Wang; 
+    For ANTs - ConsortiumOfANTS; 
+    For ANTsPy - ANTs Contributors.

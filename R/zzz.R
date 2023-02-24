@@ -19,7 +19,7 @@
     }
     tryCatch({
       rpymat::ensure_rpymat(verbose = FALSE)
-      m <- reticulate::import("ants")
+      m <- reticulate::import("ants", convert = FALSE)
       class(m) <- c('ants.proxy', class(m))
       ants <<- m
       return( ants )

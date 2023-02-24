@@ -26,5 +26,4 @@ if(interactive() && ants_available()) {
   x[py_slice(NULL, NULL, 2L)]
 
 }
-
 }

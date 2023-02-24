@@ -2,7 +2,24 @@
 #' @importFrom reticulate py_help
 #' @importFrom reticulate np_array
 #' @importFrom reticulate import
-#' @importFrom reticulate np_array
+#' @importFrom reticulate py_bool
+#' @importFrom reticulate py_call
+#' @importFrom reticulate py_del_attr
+#' @importFrom reticulate py_dict
+#' @importFrom reticulate py_del_item
+#' @importFrom reticulate py_eval
+#' @importFrom reticulate py_get_attr
+#' @importFrom reticulate py_get_item
+#' @importFrom reticulate py_len
+#' @importFrom reticulate py_none
+#' @importFrom reticulate py_set_attr
+#' @importFrom reticulate py_set_item
+#' @importFrom reticulate py_str
+#' @importFrom reticulate py_to_r
+#' @importFrom reticulate py_to_r_wrapper
+#' @importFrom reticulate r_to_py
+#' @importFrom reticulate py_run_string
+#' @importFrom rpymat run_script
 #' @importFrom rpymat repl_python
 NULL
 

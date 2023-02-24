@@ -50,10 +50,10 @@ to registration}
 
 \item{grad_step, flow_sigma, total_sigma}{optimization parameters}
 
-\item{aff_metric}{the metric for the affine transformation, choices are
+\item{aff_metric}{the metric for the 'affine' transformation, choices are
 \code{'GC'}, \code{'mattes'}, \code{'meansquares'}}
 
-\item{aff_sampling, aff_random_sampling_rate, aff_iterations, aff_shrink_factors, aff_smoothing_sigmas}{controls affine transform}
+\item{aff_sampling, aff_random_sampling_rate, aff_iterations, aff_shrink_factors, aff_smoothing_sigmas}{controls 'affine' transform}
 
 \item{syn_metric}{the metric for the \code{'SyN'} transformation, choices
 are \code{'GC'}, \code{'mattes'}, \code{'meansquares'}, \code{'demons'}}

@@ -12,9 +12,9 @@
 #' @param outprefix output file to save results
 #' @param mask image mask; see also \code{\link{as_ANTsImage}}
 #' @param grad_step,flow_sigma,total_sigma optimization parameters
-#' @param aff_metric the metric for the affine transformation, choices are
+#' @param aff_metric the metric for the 'affine' transformation, choices are
 #' \code{'GC'}, \code{'mattes'}, \code{'meansquares'}
-#' @param aff_sampling,aff_random_sampling_rate,aff_iterations,aff_shrink_factors,aff_smoothing_sigmas controls affine transform
+#' @param aff_sampling,aff_random_sampling_rate,aff_iterations,aff_shrink_factors,aff_smoothing_sigmas controls 'affine' transform
 #' @param syn_metric the metric for the \code{'SyN'} transformation, choices
 #' are \code{'GC'}, \code{'mattes'}, \code{'meansquares'}, \code{'demons'}
 #' @param syn_sampling,reg_iterations controls the \code{'SyN'} transform
