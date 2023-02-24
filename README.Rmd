@@ -29,13 +29,18 @@ library(rpyANTs)
 The installation requires one-line extra setup
 
 ```r
+# Install from CRAN
 install.packages("rpyANTs")
+
+# Install from nightly dev builder
+# install.packages("rpyANTs", repos = "https://dipterix.r-universe.dev")
+
 
 # set up ANTs
 rpyANTs::install_ants()
 ```
 
-`install_ants` creates an isolated `Python` environment managed by [`RAVE`](https://rave.wiki/). This environment does not conflict nor affect any existing Python installations.
+`install_ants` creates an isolated `Python` environment managed by [`RAVE`](https://rave.wiki/). This environment does not conflict nor affect your existing Python installations.
 
 ## How to use
 
@@ -115,7 +120,16 @@ image(noise_array4, asp = 1, axes = FALSE,
       col = pal, zlim = c(0, 255))
 ```
 
-# Known issues
+## Upgrade `ANTs`
+
+To upgrade `ANTs`, first update `rpyANTs`, then upgrade `ANTsPyx`
+
+```r
+install.packages("rpyANTs")
+rpymat::add_packages(packages = "antspyx", pip = TRUE)
+```
+
+## Known issues
 
 TODO: Integers, numeric
 
@@ -127,10 +141,10 @@ TODO: type conversion
 
 TODO: documentation
 
-# Citation
+## Citation
 
 TBA
 
-# License
+## License
 
 Apache-2.0

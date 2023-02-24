@@ -2,6 +2,7 @@
 #' @importFrom reticulate py_help
 #' @importFrom reticulate np_array
 #' @importFrom reticulate import
+#' @importFrom reticulate np_array
 #' @importFrom rpymat repl_python
 NULL
 

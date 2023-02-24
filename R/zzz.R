@@ -1,3 +1,10 @@
+#
+# ex <- c("n3_bias_field_correction2", "n4_bias_field_correction")
+# for(nm in names(ants)) {
+#   if(nm %in% ex) { next }
+#   message(nm)
+#   reticulate::py_help_handler("completion", nm, source = "ants")
+# }
 
 .ants <- local({
 

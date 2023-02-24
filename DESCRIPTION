@@ -13,3 +13,7 @@ Imports:
     rpymat (>= 0.1.4),
     reticulate (>= 1.26)
 URL: http://dipterix.org/rpyANTs/
+Suggests: 
+    RNifti (>= 1.4.4),
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3

@@ -15,7 +15,7 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{reticulate}{\code{\link[reticulate]{import}}, \code{\link[reticulate]{np_array}}, \code{\link[reticulate]{py_help}}, \code{\link[reticulate]{tuple}}}
+  \item{reticulate}{\code{\link[reticulate]{import}}, \code{\link[reticulate]{np_array}}, \code{\link[reticulate]{np_array}}, \code{\link[reticulate]{py_help}}, \code{\link[reticulate]{tuple}}}
 
   \item{rpymat}{\code{\link[rpymat]{repl_python}}}
 }}

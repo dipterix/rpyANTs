@@ -12,3 +12,7 @@ reticulate::import
 
 #' @export
 rpymat::repl_python
+
+
+#' @export
+reticulate::np_array

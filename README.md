@@ -18,7 +18,12 @@ status](https://www.r-pkg.org/badges/version/rpyANTs)](https://CRAN.R-project.or
 The installation requires one-line extra setup
 
 ``` r
+# Install from CRAN
 install.packages("rpyANTs")
+
+# Install from nightly dev builder
+# install.packages("rpyANTs", repos = "https://dipterix.r-universe.dev")
+
 
 # set up ANTs
 rpyANTs::install_ants()
@@ -26,7 +31,7 @@ rpyANTs::install_ants()
 
 `install_ants` creates an isolated `Python` environment managed by
 [`RAVE`](https://rave.wiki/). This environment does not conflict nor
-affect any existing Python installations.
+affect your existing Python installations.
 
 ## How to use
 
@@ -82,10 +87,8 @@ ants$add_noise_to_image
 #>     >>> noise_image = ants.add_noise_to_image(image, 'shot', 1.0)
 #>     >>> noise_image = ants.add_noise_to_image(image, 'speckle', 1.0)
 #> 
-#> 
-#> 
-#> *** Above is documentation for Python. Please use `$` in R accordingly
-#> <function add_noise_to_image at 0x1125ab820>
+#> *** Above documentation is for Python. Please use `$` in R
+#> <function add_noise_to_image at 0x14cf2c700>
 ```
 
 The following R code translates Python code into R:
@@ -147,7 +150,16 @@ image(noise_array4, asp = 1, axes = FALSE,
 
 <img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
 
-# Known issues
+## Upgrade `ANTs`
+
+To upgrade `ANTs`, first update `rpyANTs`, then upgrade `ANTsPyx`
+
+``` r
+install.packages("rpyANTs")
+rpymat::add_packages(packages = "antspyx", pip = TRUE)
+```
+
+## Known issues
 
 TODO: Integers, numeric
 
@@ -159,10 +171,10 @@ TODO: type conversion
 
 TODO: documentation
 
-# Citation
+## Citation
 
 TBA
 
-# License
+## License
 
 Apache-2.0
