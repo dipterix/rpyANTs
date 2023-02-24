@@ -53,35 +53,19 @@ jobs:
       - name: Get conda cache key
         id: get-conda-cache-key
         run: |
-          v <- tryCatch({
-            if( dir.exists(rpymat::env_path()) ) {
-              rpymat::ensure_rpymat(verbose = FALSE)
-              ants <- reticulate::import("ants")
-              ants$`__version__`
-            } else {
-              1
-            }
-          }, error = function(e){ 1 })
-          # echo "{name}={value}" >> $GITHUB_STATE
-          # cat("::set-output name=key::", v, sep = "")
-          s <- sprintf("key=%s\n", v)
-          cat(s, file = Sys.getenv("GITHUB_STATE"))
-          message(s)
-        shell: Rscript {0}
+          echo key=1 >> $GITHUB_OUTPUT
 
       - name: Restore ANTsPy
         id: restore-conda-cache
-        if: steps.state.key != '1'
         uses: actions/cache@v3
         with:
           path: |
             ${{ steps.get-conda-path.outputs.path }}
-          key: ${{ runner.os }}-conda-${{ steps.state.key }}
+          key: ${{ runner.os }}-conda-${{ steps.get-conda-cache-key.outputs.key }}
           restore-keys: |
             ${{ runner.os }}-conda-
 
       - name: Install ANTsPy
-        if: steps.restore-conda-cache.outputs.cache-hit != 'true' || steps.state.key == '1'
         run: |
           python_ver <- "auto"
           verbose <- TRUE
@@ -102,21 +86,7 @@ jobs:
           if(!"antspyx" %in% installed_pkgs_tbl$package) {
             rpymat::add_packages(packages = "antspyx", pip = TRUE)
           }
-
-          rpymat::ensure_rpymat(verbose = FALSE)
-          ants <- reticulate::import("ants")
-          v <- ants$`__version__`
-          s <- sprintf("key=%s\n", v)
-          cat(s, file = Sys.getenv("GITHUB_STATE"))
-          message(s)
         shell: Rscript {0}
-
-      - name: Cache ANTsPy
-        uses: actions/cache@v3
-        with:
-          path: |
-            ${{ steps.get-conda-path.outputs.path }}
-          key: ${{ runner.os }}-conda-${{ steps.state.key }}
 
       - uses: r-lib/actions/check-r-package@v2
         with:
