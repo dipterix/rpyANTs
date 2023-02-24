@@ -22,7 +22,6 @@ jobs:
           - {os: windows-latest, r: 'release'}
           - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
           - {os: ubuntu-latest,   r: 'release'}
-          - {os: ubuntu-latest,   r: 'oldrel-1'}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -43,6 +42,34 @@ jobs:
         with:
           extra-packages: any::rcmdcheck
           needs: check
+
+      - name: Get conda path
+        id: get-conda-path
+        run: |
+          Rscript --no-save --no-restore -e "cat('::set-output name=path::', rpymat:::install_root(), sep = '')"
+
+      - name: Get conda cache key
+        id: get-conda-cache-key
+        run: |
+          v <- tryCatch({
+            rpyANTs::ants$`__version__`
+          }, error = function(e){ 1 })
+          cat("::set-output name=key::", v, sep = "")
+        shell: Rscript {0}
+
+      - name: Restore ANTsPy
+        uses: actions/cache@v3
+        with:
+          path: |
+            ${{ steps.get-conda-path.outputs.path }}
+          key: ${{ steps.get-conda-cache-key.outputs.key }}
+          restore-keys: |
+            ${{ runner.os }}-conda-
+
+      - name: Install ANTsPy
+        run: |
+          rpyANTs::install_ants()
+        shell: Rscript {0}
 
       - uses: r-lib/actions/check-r-package@v2
         with:
