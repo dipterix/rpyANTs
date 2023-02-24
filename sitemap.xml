@@ -16,6 +16,12 @@
     <loc>http://dipterix.org/rpyANTs/reference/ants_available.html</loc>
   </url>
   <url>
+    <loc>http://dipterix.org/rpyANTs/reference/ants_registration.html</loc>
+  </url>
+  <url>
+    <loc>http://dipterix.org/rpyANTs/reference/as_ANTsImage.html</loc>
+  </url>
+  <url>
     <loc>http://dipterix.org/rpyANTs/reference/index.html</loc>
   </url>
   <url>
@@ -23,6 +29,9 @@
   </url>
   <url>
     <loc>http://dipterix.org/rpyANTs/reference/py.html</loc>
+  </url>
+  <url>
+    <loc>http://dipterix.org/rpyANTs/reference/py_slice.html</loc>
   </url>
   <url>
     <loc>http://dipterix.org/rpyANTs/reference/reexports.html</loc>
