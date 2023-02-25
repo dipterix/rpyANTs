@@ -42,7 +42,7 @@
     
     <a class="navbar-brand me-2" href="index.html">rpyANTs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9002</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -99,7 +99,7 @@
 <span></span>
 <span><span class="co"># set up ANTs</span></span>
 <span><span class="fu">rpyANTs</span><span class="fu">::</span><span class="fu"><a href="reference/install_ants.html">install_ants</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><code>install_ants</code> creates an isolated <code>Python</code> environment managed by <a href="https://rave.wiki/" class="external-link"><code>RAVE</code></a>. This environment does not conflict nor affect your existing Python installations.</p>
+<p><code>install_ants</code> creates an isolated <code>Python</code> environment managed by <a href="https://openwetware.org/wiki/RAVE" class="external-link"><code>RAVE</code></a>. This environment does not conflict nor affect your existing Python installations.</p>
 </div>
 <div class="section level2">
 <h2 id="how-to-use">How to use<a class="anchor" aria-label="anchor" href="#how-to-use"></a>
@@ -154,7 +154,7 @@
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; *** Above documentation is for Python. </span></span>
 <span><span class="co">#&gt; *** Please use `$` instead of `.` for modules and functions in R</span></span>
-<span><span class="co">#&gt; &lt;function add_noise_to_image at 0x142250790&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt; &lt;function add_noise_to_image at 0x142e9c790&gt;</span></span></code></pre></div>
 <p>The following R code translates Python code into R:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># &gt;&gt;&gt; img = ants.image_read(ants.get_ants_data('r16'))</span></span>
@@ -343,6 +343,11 @@
 <span><span class="co"># Create an R variable in Python!</span></span>
 <span><span class="fu"><a href="https://rstudio.github.io/reticulate/reference/py_run.html" class="external-link">py_run_string</a></span><span class="op">(</span><span class="st">"r.threshold = r.image &gt; 10"</span>, local <span class="op">=</span> <span class="cn">TRUE</span>, convert <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="va">ants</span><span class="op">$</span><span class="fu">plot</span><span class="op">(</span><span class="va">threshold</span><span class="op">)</span></span></code></pre></div>
+<p><em>* As of Feb 25 (2023)</em>: operators (<code>==</code>, <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>&gt;=</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&lt;</code>) for <code>ANTsImage</code> has been implemented: see example below</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://dipterix.org/rpyANTs/">rpyANTs</a></span><span class="op">)</span></span>
+<span><span class="va">image</span> <span class="op">&lt;-</span> <span class="va">ants</span><span class="op">$</span><span class="fu">image_read</span><span class="op">(</span><span class="va">ants</span><span class="op">$</span><span class="fu">get_ants_data</span><span class="op">(</span><span class="st">'r16'</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">ants</span><span class="op">$</span><span class="fu">plot</span><span class="op">(</span><span class="va">image</span> <span class="op">&gt;</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
