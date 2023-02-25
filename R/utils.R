@@ -141,3 +141,23 @@ as_ANTsImage <- function(x, strict = FALSE) {
 }
 
 
+as_hexcolor <- function(x, ..., use_alpha = FALSE) {
+  s <- adjustcolor(col = x, ...)
+  if(!use_alpha) {
+    s <- substr(s, 1, 7)
+  }
+  s
+}
+
+
+convert_if_not_python <- function(x, value, convert = TRUE) {
+  value <- substitute(value)
+  if(!inherits(x, "python.builtin.object")) {
+    parent_frame <- parent.frame()
+    x <- eval(value, parent_frame)
+  }
+  if(convert && !inherits(x, "python.builtin.object")) {
+    x <- r_to_py(x)
+  }
+  return(x)
+}

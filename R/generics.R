@@ -37,3 +37,60 @@ print.ants.proxy <- function(x, ...) {
   NextMethod()
   invisible(x)
 }
+
+
+#' @export
+`==.ants.core.ants_image.ANTsImage` <- function(e1, e2) {
+  e1$`__eq__`(e2)
+}
+
+#' @export
+`>=.ants.core.ants_image.ANTsImage` <- function(e1, e2) {
+  e1$`__ge__`(e2)
+}
+
+#' @export
+`>.ants.core.ants_image.ANTsImage` <- function(e1, e2) {
+  e1$`__gt__`(e2)
+}
+
+#' @export
+`<=.ants.core.ants_image.ANTsImage` <- function(e1, e2) {
+  e1$`__le__`(e2)
+}
+
+#' @export
+`<.ants.core.ants_image.ANTsImage` <- function(e1, e2) {
+  e1$`__lt__`(e2)
+}
+
+#' @export
+`*.ants.core.ants_image.ANTsImage` <- function(e1, e2) {
+  e1$`__mul__`(e2)
+}
+
+#' @export
+`!=.ants.core.ants_image.ANTsImage` <- function(e1, e2) {
+  e1$`__ne__`(e2)
+}
+
+#' @export
+`^.ants.core.ants_image.ANTsImage` <- function(e1, e2) {
+  e1$`__pow__`(e2)
+}
+
+#' @export
+`+.ants.core.ants_image.ANTsImage` <- function(e1, e2) {
+  e1$`__add__`(e2)
+}
+
+#' @export
+`-.ants.core.ants_image.ANTsImage` <- function(e1, e2) {
+  e1$`__sub__`(e2)
+}
+
+#' @export
+`/.ants.core.ants_image.ANTsImage` <- function(e1, e2) {
+  e1$`__truediv__`(e2)
+}
+
