@@ -293,6 +293,14 @@ py_run_string("r.threshold = r.image > 10", local = TRUE, convert = FALSE)
 ants$plot(threshold)
 ```
 
+_* As of Feb 25 (2023)_: operators (`==`, `+`, `-`, `*`, `/`, `>=`, `>`, `<=`, `<`) for `ANTsImage` has been implemented: see example below
+
+```r
+library(rpyANTs)
+image <- ants$image_read(ants$get_ants_data('r16'))
+ants$plot(image > 10)
+```
+
 ## Citation
 
 This is a general citation:

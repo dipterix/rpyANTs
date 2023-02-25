@@ -33,8 +33,8 @@ rpyANTs::install_ants()
 ```
 
 `install_ants` creates an isolated `Python` environment managed by
-[`RAVE`](https://rave.wiki/). This environment does not conflict nor
-affect your existing Python installations.
+[`RAVE`](https://openwetware.org/wiki/RAVE). This environment does not
+conflict nor affect your existing Python installations.
 
 ## How to use
 
@@ -92,7 +92,7 @@ ants$add_noise_to_image
 #> 
 #> *** Above documentation is for Python. 
 #> *** Please use `$` instead of `.` for modules and functions in R
-#> <function add_noise_to_image at 0x142250790>
+#> <function add_noise_to_image at 0x142e9c790>
 ```
 
 The following R code translates Python code into R:
@@ -326,6 +326,15 @@ image <- ants$image_read(ants$get_ants_data('r16'))
 # Create an R variable in Python!
 py_run_string("r.threshold = r.image > 10", local = TRUE, convert = FALSE)
 ants$plot(threshold)
+```
+
+*\* As of Feb 25 (2023)*: operators (`==`, `+`, `-`, `*`, `/`, `>=`,
+`>`, `<=`, `<`) for `ANTsImage` has been implemented: see example below
+
+``` r
+library(rpyANTs)
+image <- ants$image_read(ants$get_ants_data('r16'))
+ants$plot(image > 10)
 ```
 
 ## Citation
