@@ -142,7 +142,7 @@ as_ANTsImage <- function(x, strict = FALSE) {
 
 
 as_hexcolor <- function(x, ..., use_alpha = FALSE) {
-  s <- adjustcolor(col = x, ...)
+  s <- grDevices::adjustcolor(col = x, ...)
   if(!use_alpha) {
     s <- substr(s, 1, 7)
   }
@@ -160,4 +160,8 @@ convert_if_not_python <- function(x, value, convert = TRUE) {
     x <- r_to_py(x)
   }
   return(x)
+}
+
+is_py_inherits <- function(x, class = NULL) {
+  inherits(x, c("python.builtin.object", class))
 }

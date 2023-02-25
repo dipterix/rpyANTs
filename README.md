@@ -92,7 +92,7 @@ ants$add_noise_to_image
 #> 
 #> *** Above documentation is for Python. 
 #> *** Please use `$` instead of `.` for modules and functions in R
-#> <function add_noise_to_image at 0x142e9c790>
+#> <function add_noise_to_image at 0x115d50790>
 ```
 
 The following R code translates Python code into R:
@@ -141,18 +141,18 @@ par(mar = c(0.1, 0.1, 0.1, 0.1), bg = "black", fg = "white")
 pal <- grDevices::gray.colors(256, start = 0, end = 1)
 
 image(orig_array, asp = 1, axes = FALSE, 
-      col = pal, zlim = c(0, 255))
+      col = pal, zlim = c(0, 255), ylim = c(1, 0))
 image(noise_array1, asp = 1, axes = FALSE, 
-      col = pal, zlim = c(0, 255))
+      col = pal, zlim = c(0, 255), ylim = c(1, 0))
 image(noise_array2, asp = 1, axes = FALSE, 
-      col = pal, zlim = c(0, 255))
+      col = pal, zlim = c(0, 255), ylim = c(1, 0))
 image(noise_array3, asp = 1, axes = FALSE, 
-      col = pal, zlim = c(0, 255))
+      col = pal, zlim = c(0, 255), ylim = c(1, 0))
 image(noise_array4, asp = 1, axes = FALSE, 
-      col = pal, zlim = c(0, 255))
+      col = pal, zlim = c(0, 255), ylim = c(1, 0))
 ```
 
-<img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
+<img src="man/figures/README-load-image-into-r-1.png" width="80%" />
 
 ## Upgrade `ANTs`
 
@@ -290,28 +290,48 @@ Similar conversions can be done via `py_list`, `py_dict`.
 
 #### Operators
 
-Currently there is no operator support in `rpyANTs`. For example,
-`ANTsImage` has Python operators:
+In Python, operators on `ANTsImage`, such as `img > 5` are defined. Such
+operators is being supported in R as `S3` generic functions. Don’t worry
+if you don’t know what is `S3` generic, see the following examples:
 
-``` python
-# Python code
-import ants
-import numpy as np
-image = ants.image_read(ants.get_ants_data('r16'))
+``` r
+library(rpyANTs)
+image <- ants$image_read(ants$get_ants_data('mni'))
+print(image)
+dim(image)
+range(image)
 
-ants.plot(image > 10)
+y1 <- (image > 10) * 8000
+
+y2 <- image
+y2[y2 < 10] <- 4000
+
+y3 <- log(image + 1000)
+y3 <- (y3 - min(y3)) / (max(y3) - min(y3)) * 8000
+
+ants_plot_grid(
+  list(image, y1, y2, y3),
+  slices = 100, shape = c(2,2),
+  vmin = 0, vmax = 8000
+)
 ```
 
-The operator is not available in R (don’t worry, I will add it in the
-future, it takes time, OK?), hence it takes a little bit work-around.
+<img src="man/figures/README-s3-generic-showcase-1.png" width="80%" />
 
-Work-around version 1: call operators directly
+Notice the operator generics are still under implementation. Some
+classes/objects are still not supported. In this case, you might want to
+use the following workaround methods. You are more than welcome to post
+a wish-list or issue ticket to the [`Github`
+repository](https://github.com/dipterix/rpyANTs/issues)
+
+Alternative version 1: call operators directly
 
 ``` r
 library(rpyANTs)
 image <- ants$image_read(ants$get_ants_data('r16'))
 
-# cannot use image > 10 ***for now***
+# The followings are the same
+# threshold <- image > 10
 threshold <- image$`__gt__`(10)
 ants$plot(threshold)
 ```
@@ -323,18 +343,9 @@ Python directly
 library(rpyANTs)
 image <- ants$image_read(ants$get_ants_data('r16'))
 
-# Create an R variable in Python!
+# Create an R variable from Python!
 py_run_string("r.threshold = r.image > 10", local = TRUE, convert = FALSE)
 ants$plot(threshold)
-```
-
-*\* As of Feb 25 (2023)*: operators (`==`, `+`, `-`, `*`, `/`, `>=`,
-`>`, `<=`, `<`) for `ANTsImage` has been implemented: see example below
-
-``` r
-library(rpyANTs)
-image <- ants$image_read(ants$get_ants_data('r16'))
-ants$plot(image > 10)
 ```
 
 ## Citation

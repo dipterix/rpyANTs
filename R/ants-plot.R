@@ -15,6 +15,7 @@
 #' @param rfontsize,rfontcolor,rfacecolor,cfontsize,cfontcolor,cfacecolor row
 #' and column font size, color, and background color
 #' @param filename,dpi parameters to save figures
+#' @param ... passed to \code{ants$plot_grid}; make sure all entries are named
 #' @returns Nothing
 #' @examples
 #'
@@ -153,6 +154,9 @@ ants_plot_grid <- function(
                  rfontsize = rfontsize, rfontcolor = rfontcolor, rfacecolor = rfacecolor,
                  cfontsize = cfontsize, cfontcolor = cfontcolor, cfacecolor = cfacecolor,
                  filename = filename, dpi = dpi, transparent = transparent)
+
   matplotlib$pyplot$close()
+
+  return(invisible())
 
 }

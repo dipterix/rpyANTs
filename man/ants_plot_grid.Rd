@@ -59,6 +59,8 @@ number to plot}
 and column font size, color, and background color}
 
 \item{filename, dpi}{parameters to save figures}
+
+\item{...}{passed to \code{ants$plot_grid}; make sure all entries are named}
 }
 \value{
 Nothing
