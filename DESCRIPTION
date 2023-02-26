@@ -1,6 +1,6 @@
 Package: rpyANTs
 Title: An Alternative R Package for Advanced Normalization Tools ('ANTs')
-Version: 0.0.0.9004
+Version: 0.0.0.9005
 Authors@R: 
     person("Zhengjia", "Wang", email = "dipterix.wang@gmail.com", 
             role = c("aut", "cre"))
@@ -12,7 +12,7 @@ Description:
     (<doi:10.17605/osf.io/bsq5v>, <https://github.com/ANTsX/ANTsR>), 
     this package improves portability, reduces installation time
     and build efforts at the cost of slightly restricted functionality. See 
-    the official 'ANTs' website for citation information.
+    'citation("rpyANTs")' for citation information.
 License: Apache License 2.0
 Language: en-US
 Encoding: UTF-8

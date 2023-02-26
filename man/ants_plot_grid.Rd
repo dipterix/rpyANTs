@@ -2,7 +2,7 @@
 % Please edit documentation in R/ants-plot.R
 \name{ants_plot_grid}
 \alias{ants_plot_grid}
-\title{Plot multiple 'ANTsImage'}
+\title{Plot multiple \code{'ANTsImage'}}
 \usage{
 ants_plot_grid(
   images,
@@ -31,19 +31,21 @@ ants_plot_grid(
   filename = NULL,
   dpi = 400,
   transparent = TRUE,
-  ...
+  ...,
+  force_agg = FALSE,
+  close_figure = TRUE
 )
 }
 \arguments{
-\item{images}{a single 'ANTsImage', list, or nested list of 'ANTsImage'}
+\item{images}{a single \code{'ANTsImage'}, list, or nested list of \code{'ANTsImage'}}
 
 \item{shape}{shape of grid, default is using dimensions of \code{images}}
 
 \item{slices}{length of one or equaling to length of \code{slices}, slice
 number to plot}
 
-\item{axes}{\code{0} for 'sagittal', \code{1} for 'coronal',
-\code{2} for 'axial'; default is \code{2}}
+\item{axes}{\code{0} for \code{'sagittal'}, \code{1} for \code{'coronal'},
+\code{2} for \code{'axial'}; default is \code{2}}
 
 \item{figsize, rpad, cpad, colorbar, cmap, transparent}{graphical parameters}
 
@@ -61,6 +63,11 @@ and column font size, color, and background color}
 \item{filename, dpi}{parameters to save figures}
 
 \item{...}{passed to \code{ants$plot_grid}; make sure all entries are named}
+
+\item{force_agg}{whether to force graphic engine to use \code{'agg'} device;
+default is false}
+
+\item{close_figure}{whether to close figure when returning the function}
 }
 \value{
 Nothing
