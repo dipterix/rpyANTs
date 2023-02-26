@@ -92,10 +92,3 @@ jobs:
         with:
           upload-snapshots: true
 
-      - uses: actions/upload-artifact@v3
-        with:
-          name: rpyANTs-artifact
-          path: |
-            D:/a/rpyANTs/rpyANTs
-            C:/Users/runneradmin/.antspy/
-          if-no-files-found: ignore
