@@ -28,10 +28,16 @@
     <loc>http://dipterix.org/rpyANTs/reference/as_ANTsImage.html</loc>
   </url>
   <url>
+    <loc>http://dipterix.org/rpyANTs/reference/as_ANTsTransform.html</loc>
+  </url>
+  <url>
     <loc>http://dipterix.org/rpyANTs/reference/index.html</loc>
   </url>
   <url>
     <loc>http://dipterix.org/rpyANTs/reference/install_ants.html</loc>
+  </url>
+  <url>
+    <loc>http://dipterix.org/rpyANTs/reference/is_affine3D.html</loc>
   </url>
   <url>
     <loc>http://dipterix.org/rpyANTs/reference/py.html</loc>
