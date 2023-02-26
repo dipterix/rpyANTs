@@ -8,7 +8,10 @@
 
 inject_ants <- function(ants) {
 
-  if(!inherits(ants, "python.builtin.module")) { return(ants) }
+  if(
+    !inherits(ants, "python.builtin.module") ||
+    !identical(get_os(), "windows")
+  ) { return(ants) }
 
   ants$utils$rpyANTsInjected <- FALSE
 
