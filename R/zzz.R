@@ -6,6 +6,50 @@
 #   reticulate::py_help_handler("completion", nm, source = "ants")
 # }
 
+inject_ants <- function(ants) {
+
+  if(
+    !inherits(ants, "python.builtin.module") ||
+    !identical(get_os(), "windows")
+  ) { return(ants) }
+
+  ants$utils$rpyANTsInjected <- FALSE
+
+  RpyANTsInjection <- reticulate::PyClass(
+    "RpyANTsInjection",
+    list(
+      requested_tempfiles = NULL,
+      `__init__` = function(self) {
+        self$requested_tempfiles <- py_list()
+        NULL
+      },
+      temp_nii_file = function(self) {
+        f <- tempfile(fileext = ".nii.gz")
+        f <- normalizePath(f, mustWork = FALSE, winslash = "/")
+        self$requested_tempfiles[[length(self$requested_tempfiles) + 1]] <- f
+        return( f )
+      }
+    )
+  )
+
+  ants$utils$rpyANTsInjection <- RpyANTsInjection()
+
+  patch <- system.file(package = "rpyANTs", "patches", "win_patch.py")
+  tdir <- normalizePath(tempdir(check = TRUE))
+  file.copy(patch, file.path(tdir, "rpyANTs_win_patch.py"))
+
+  reticulate::import_from_path(
+    path = tdir,
+    module = "rpyANTs_win_patch",
+    convert = FALSE,
+    delay_load = FALSE
+  )
+  # ants$utils$win_patch <- win_patch
+
+  ants
+
+}
+
 .ants <- local({
 
   ants <- NULL
@@ -20,6 +64,7 @@
     tryCatch({
       rpymat::ensure_rpymat(verbose = FALSE)
       m <- reticulate::import("ants", convert = FALSE, delay_load = FALSE)
+      m <- inject_ants(m)
       class(m) <- c('ants.proxy', class(m))
       ants <<- m
       return( ants )
@@ -90,8 +135,15 @@ load_py <- local({
 #' @returns Logical, whether 'ANTs' is available
 #' @export
 ants_available <- function() {
-  ants <- load_ants()
-  !is.null(ants)
+  if( !rpymat_is_setup() ) {
+    return( FALSE )
+  }
+  tryCatch({
+    rpymat::ensure_rpymat(verbose = FALSE)
+    return(reticulate::py_module_available("ants"))
+  }, error = function(e) {
+    return(FALSE)
+  })
 }
 
 #' @name ants

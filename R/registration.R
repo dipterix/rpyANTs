@@ -112,6 +112,7 @@ ants_registration <- function(
 
 
   ants <- load_ants()
+  tfiles1 <- snapshot_tempfiles()
   py_results <- ants$registration(
     fixed = fixed_img, moving = moving_img,
     type_of_transform = type_of_transform,
@@ -128,6 +129,8 @@ ants_registration <- function(
     write_composite_transform=write_composite_transform,
     verbose=verbose,
     smoothing_in_mm=smoothing_in_mm)
+  tfiles2 <- snapshot_tempfiles()
+  remove_tmpfiles(setdiff(tfiles2, tfiles1))
 
   py_results
 
