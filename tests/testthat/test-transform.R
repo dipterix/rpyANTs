@@ -31,6 +31,9 @@ test_that("ANTsTransform generics", {
   fi <- ants$image_read(ants$get_ants_data('r16'))
   mo <- ants$image_read(ants$get_ants_data('r64'))
 
+  print(fi)
+  print(mo)
+
   # Somehow this cannot run on windows
   # # resample to speed up this example
   # cat("Resample images for speed\n")
