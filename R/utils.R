@@ -204,6 +204,8 @@ to_r <- function(x) {
 snapshot_tempfiles <- function() {
   if(!ants_available()) { return() }
   ants <- load_ants()
+  injected <- py_builtin("hasattr", convert = TRUE)(ants$utils, "rpyANTsInjected")
+  if(!injected) { return() }
   tryCatch({
     to_r(ants$utils$rpyANTsInjection$requested_tempfiles)
   }, error = function(e) {

@@ -13,8 +13,9 @@ status](https://www.r-pkg.org/badges/version/rpyANTs)](https://CRAN.R-project.or
 `rpyANTs` is a package that ports `ANTsPy`, a `Python` implementation of
 `ANTs` into R using R-Python interpreter package `reticulate`.
 
-> Disclaimer: This is NOT the official [`ANTsR`
-> package](https://github.com/ANTsX/ANTsR).
+> Disclaimer: This is a third-party maintained R package for `ANTs`. If
+> you want to check the official `ANTsR` package, please see
+> [here](https://github.com/ANTsX/ANTsR).
 
 ## Installation
 
@@ -101,7 +102,7 @@ ants$add_noise_to_image
 #> 
 #> *** Above documentation is for Python. 
 #> *** Please use `$` instead of `.` for modules and functions in R
-#> <function add_noise_to_image at 0x11274c790>
+#> <function add_noise_to_image at 0x1162f8790>
 ```
 
 The following R code translates Python code into R:

@@ -24,7 +24,7 @@ library(rpyANTs)
 
 `rpyANTs` is a package that ports `ANTsPy`, a `Python` implementation of `ANTs` into R using R-Python interpreter package `reticulate`. 
 
-> Disclaimer: This is NOT the official [`ANTsR` package](https://github.com/ANTsX/ANTsR).  
+> Disclaimer: This is a third-party maintained R package for `ANTs`. If you want to check the official `ANTsR` package, please see [here](https://github.com/ANTsX/ANTsR).  
 
 ## Installation
 
