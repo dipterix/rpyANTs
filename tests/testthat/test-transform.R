@@ -43,7 +43,7 @@ test_that("ANTsTransform generics", {
   # SDR transform
   cat("Non-linear transform\n")
   transform <- ants_registration(
-    fixed=fi, moving=mo, type_of_transform = 'SyN', outprefix = tempfile() )
+    fixed=fi, moving=mo, type_of_transform = 'SyN' )
 
   tmp_files <- unique(unlist(c(
     py_to_r(transform$fwdtransforms),

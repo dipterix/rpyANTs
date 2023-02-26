@@ -93,9 +93,23 @@ ants_registration <- function(
   verbose <- convert_if_not_python(verbose, as.logical(verbose))
   smoothing_in_mm <- convert_if_not_python(smoothing_in_mm, as.logical(smoothing_in_mm))
 
+
+  type_of_transform <- convert_if_not_python(type_of_transform, as.character(type_of_transform))
+
   fixed_img <- as_ANTsImage(fixed, strict = TRUE)
   moving_img <- as_ANTsImage(moving, strict = TRUE)
   mask <- as_ANTsImage(mask, strict = FALSE)
+
+  if(length(initial_transform)) {
+    initial_transform <- as_ANTsTransform(initial_transform, fixed_img$dimension)
+  } else {
+    initial_transform <- NULL
+  }
+
+  outprefix <- convert_if_not_python(outprefix, {
+    normalizePath(outprefix, mustWork = FALSE, winslash = "/")
+  })
+
 
   ants <- load_ants()
   py_results <- ants$registration(
