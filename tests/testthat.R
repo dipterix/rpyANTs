@@ -9,4 +9,15 @@
 library(testthat)
 library(rpyANTs)
 
-test_check("rpyANTs")
+
+message("Checking if rpymat is set up")
+if(rpyANTs:::rpymat_is_setup()) {
+
+  message("Checking if ants is available")
+  if( rpyANTs:::ants_available() ) {
+
+    message("ANTsPy is set up, run tests...")
+    test_check("rpyANTs")
+
+  }
+}
