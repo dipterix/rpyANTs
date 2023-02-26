@@ -26,13 +26,16 @@ test_that("ANTsTransform generics", {
 
   print(ipath1)
   print(ipath2)
+  print(class(ipath1))
 
   cat("Load images\n")
   fi <- ants$image_read(ants$get_ants_data('r16'))
   mo <- ants$image_read(ants$get_ants_data('r64'))
 
   print(fi)
+  print(dim(fi[]))
   print(mo)
+  print(dim(mo[]))
 
   # Somehow this cannot run on windows
   # # resample to speed up this example
