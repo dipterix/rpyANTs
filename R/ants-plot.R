@@ -82,7 +82,7 @@ ants_plot_grid <- function(
     images <- images$reshape(tuple(as.list(as.integer(shape))))
   }
   if(py_len(images$shape) == 1) {
-    n <- c(1L, as.integer(py_to_r(images$shape)))
+    n <- c(1L, as.integer(to_r(images$shape)))
     images <- images$reshape(n)
   }
 
@@ -91,7 +91,7 @@ ants_plot_grid <- function(
       slices <- 0L
     }
     if(length(slices) == 1) {
-      slices <- rep(as.integer(slices), prod(as.integer(py_to_r(images$shape))))
+      slices <- rep(as.integer(slices), prod(as.integer(to_r(images$shape))))
     } else {
       slices <- np$asarray(as.integer(unlist(slices)), dtype = "int")
     }

@@ -99,23 +99,23 @@
 #' @export
 as.array.ants.core.ants_image.ANTsImage <- function(x, ...) {
   # do NOT use numpy as data is copied anyway from py to r
-  py_to_r(x$view())
+  to_r(x$view())
 }
 
 #' @export
 dim.ants.core.ants_image.ANTsImage <- function(x) {
-  as.integer(py_to_r(x$shape))
+  as.integer(to_r(x$shape))
 }
 
 #' @export
 `[.ants.core.ants_image.ANTsImage` <- function(x, i, ..., drop = TRUE) {
   if(!missing(i) && is_py_inherits(i)) {
-    x <- py_to_r(x$`__getitem__`(i))
+    x <- to_r(x$`__getitem__`(i))
     if(drop) {
       x <- baseenv()$drop(x)
     }
   } else {
-    x <- py_to_r(x$view())
+    x <- to_r(x$view())
     x[i, ..., drop = drop]
   }
 }
@@ -128,7 +128,7 @@ dim.ants.core.ants_image.ANTsImage <- function(x) {
   if(!missing(i) && is_py_inherits(i)) {
     x$`__setitem__`(i, value)
   } else {
-    arr <- py_to_r(x$view())
+    arr <- to_r(x$view())
     arr[i, ...] <- value
     x$`__setitem__`(NULL, arr)
   }
@@ -178,7 +178,7 @@ range.ants.core.ants_image.ANTsImage <- function(x, ..., axis = NULL, na.rm = FA
 #' @export
 log.ants.core.ants_image.ANTsImage <- function(x, base = exp(1)) {
 
-  y <- log(py_to_r(x$view()), base = base)
+  y <- log(to_r(x$view()), base = base)
   x <- x$clone()
   x[] <- y
   x
@@ -188,7 +188,7 @@ log.ants.core.ants_image.ANTsImage <- function(x, base = exp(1)) {
 #' @export
 exp.ants.core.ants_image.ANTsImage <- function(x) {
 
-  y <- exp(py_to_r(x$view()))
+  y <- exp(to_r(x$view()))
   x <- x$clone()
   x[] <- y
   x

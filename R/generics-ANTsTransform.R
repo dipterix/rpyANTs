@@ -88,10 +88,16 @@ is_affine3D.default <- function(x, strict = TRUE, ...) {
 #' @rdname is_affine3D
 #' @export
 is_affine3D.ants.core.ants_transform.ANTsTransform <- function(x, ...) {
-  if(!isTRUE(py_to_r(x$dimension) == 3)) {
+  if(!isTRUE(to_r(x$dimension) == 3)) {
     return(FALSE)
   }
-  if(!py_to_r(x$transform_type) %in% AFFINE_TRANSFORM_TYPES) { return(FALSE) }
+  if(is_py_inherits(x$transform_type)) {
+    transform_type <- to_r(x$transform_type)
+  } else {
+    transform_type <- x$transform_type
+  }
+
+  if(!transform_type %in% AFFINE_TRANSFORM_TYPES) { return(FALSE) }
   return(TRUE)
 }
 
@@ -138,7 +144,7 @@ as_ANTsTransform.default <- function(x, dimension = 3, ...) {
 
   is_affine <- TRUE
   if(is_py_inherits(dimension)) {
-    dimension <- py_to_r(dimension)
+    dimension <- to_r(dimension)
   }
   dimension <- as.integer(dimension)[[1]]
 
@@ -204,7 +210,7 @@ as_ANTsTransform.ants.core.ants_image.ANTsImage <- function(x, ...) {
 #' @rdname as_ANTsTransform
 #' @export
 as_ANTsTransform.numpy.ndarray <- function(x, ...) {
-  as_ANTsTransform.default(py_to_r(x), ...)
+  as_ANTsTransform.default(to_r(x), ...)
 }
 
 #' @rdname as_ANTsTransform
@@ -217,23 +223,34 @@ as_ANTsTransform.character <- function(x, ...) {
 #' @export
 as.matrix.ants.core.ants_transform.ANTsTransform <- function(x, ...) {
 
-  if(!isTRUE(py_to_r(x$transform_type) %in% AFFINE_TRANSFORM_TYPES)) {
+  if(is_py_inherits(x$transform_type)) {
+    transform_type <- to_r(x$transform_type)
+  } else {
+    transform_type <- x$transform_type
+  }
+
+  if(!isTRUE(transform_type %in% AFFINE_TRANSFORM_TYPES)) {
     stop("This ANTsTransform is not affine/linear. Cannot convert to matrix")
   }
-  ndims <- py_to_r(x$dimension)
+  ndims <- to_r(x$dimension)
 
   pfrom <- diag(rep(1.0, ndims))
   tx <- apply(pfrom, 2, function(v) {
-    c(as.double(py_to_r(x$apply_to_vector(v))), 0)
+    c(as.double(to_r(x$apply_to_vector(v))), 0)
   })
 
-  trans <- c(as.double(py_to_r(x$apply_to_point(rep(0.0, ndims)))), 1)
+  trans <- c(as.double(to_r(x$apply_to_point(rep(0.0, ndims)))), 1)
   unname(cbind(tx, trans))
 }
 
 #' @export
 as.array.ants.core.ants_transform.ANTsTransform <- function(x, displacement_field = NULL, ...) {
-  transform_type <- py_to_r(x$transform_type)
+  if(is_py_inherits(x$transform_type)) {
+    transform_type <- to_r(x$transform_type)
+  } else {
+    transform_type <- x$transform_type
+  }
+
 
   if(transform_type %in% AFFINE_TRANSFORM_TYPES) {
     return(as.matrix(x, ...))
@@ -260,9 +277,15 @@ as.array.ants.core.ants_transform.ANTsTransform <- function(x, displacement_fiel
 
 #' @export
 dim.ants.core.ants_transform.ANTsTransform <- function(x) {
-  if(!isTRUE(py_to_r(x$transform_type) %in% AFFINE_TRANSFORM_TYPES)) {
+  if(is_py_inherits(x$transform_type)) {
+    transform_type <- to_r(x$transform_type)
+  } else {
+    transform_type <- x$transform_type
+  }
+
+  if(!isTRUE(transform_type %in% AFFINE_TRANSFORM_TYPES)) {
     stop("Cannot obtain dim(x) for non-linear transform")
   }
-  ndims <- py_to_r(x$dimension) + 1
+  ndims <- to_r(x$dimension) + 1
   return(c(ndims, ndims))
 }

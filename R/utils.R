@@ -191,3 +191,12 @@ convert_if_not_python <- function(x, value, convert = TRUE) {
 is_py_inherits <- function(x, class = NULL) {
   inherits(x, c("python.builtin.object", class))
 }
+
+
+to_r <- function(x) {
+  tryCatch({
+    reticulate::py_to_r(x)
+  }, error = function(e) {
+    x
+  })
+}

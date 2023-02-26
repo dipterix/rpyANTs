@@ -92,7 +92,7 @@ ants$add_noise_to_image
 #> 
 #> *** Above documentation is for Python. 
 #> *** Please use `$` instead of `.` for modules and functions in R
-#> <function add_noise_to_image at 0x115fec790>
+#> <function add_noise_to_image at 0x123a64790>
 ```
 
 The following R code translates Python code into R:
@@ -124,31 +124,42 @@ noise_image4 <- ants$add_noise_to_image(
   img, 'speckle', 
   noise_parameters = 1.0
 )
+
+# >>> trans = ants.create_ants_transform(
+# >>>   dimension=2, matrix=[[0.707, 0.707], [-.707, 0.707]],
+# >>>   translation=[-53, 128])
+trans <- as_ANTsTransform(matrix(
+  c(0.707, 0.707, -53,
+    -0.707, 0.707, 128),
+  nrow = 2, byrow = TRUE
+), dimension = 2)
+
+
+# >>> noise_image4 = trans.apply_to_image(noise_image4)
+noise_image4 <- trans$apply_to_image(noise_image4)
 ```
 
 To load imaging data into R
 
 ``` r
-orig_array <- py_to_r(img$numpy())
-noise_array1 <- py_to_r(noise_image1$numpy())
-noise_array2 <- py_to_r(noise_image2$numpy())
-noise_array3 <- py_to_r(noise_image3$numpy())
-noise_array4 <- py_to_r(noise_image4$numpy())
+# Use [] to convert ANTsImage into R array
+is.array(img[])
+#> [1] TRUE
 
 # plot via R
 layout(matrix(c(1,1,2,3,1,1,4,5), nrow = 2, byrow = TRUE))
 par(mar = c(0.1, 0.1, 0.1, 0.1), bg = "black", fg = "white")
 pal <- grDevices::gray.colors(256, start = 0, end = 1)
 
-image(orig_array, asp = 1, axes = FALSE, 
+image(img[], asp = 1, axes = FALSE, 
       col = pal, zlim = c(0, 255), ylim = c(1, 0))
-image(noise_array1, asp = 1, axes = FALSE, 
+image(noise_image1[], asp = 1, axes = FALSE, 
       col = pal, zlim = c(0, 255), ylim = c(1, 0))
-image(noise_array2, asp = 1, axes = FALSE, 
+image(noise_image2[], asp = 1, axes = FALSE, 
       col = pal, zlim = c(0, 255), ylim = c(1, 0))
-image(noise_array3, asp = 1, axes = FALSE, 
+image(noise_image3[], asp = 1, axes = FALSE, 
       col = pal, zlim = c(0, 255), ylim = c(1, 0))
-image(noise_array4, asp = 1, axes = FALSE, 
+image(noise_image4[], asp = 1, axes = FALSE, 
       col = pal, zlim = c(0, 255), ylim = c(1, 0))
 ```
 
@@ -318,10 +329,11 @@ ants_plot_grid(
 
 <img src="man/figures/README-s3-generic-showcase-1.png" width="100%" />
 
-Notice the operator generics are still under implementation. Some
-classes/objects are still not supported. In this case, you might want to
-use the following workaround methods. You are more than welcome to post
-a wish-list or issue ticket to the [`Github`
+Although the operator generics have been implemented for common classes
+such as `ANTsImage` and `ANTsTransform`. Many are still under
+development and not supported. In this case, you might want to use the
+following workaround methods. You are more than welcome to post a
+wish-list or issue ticket to the [`Github`
 repository](https://github.com/dipterix/rpyANTs/issues)
 
 Alternative version 1: call operators directly
@@ -350,12 +362,16 @@ ants$plot(threshold)
 
 ## Citation
 
-This is a general citation:
+This is a general citation for `ANTs`:
 
 > Avants, B.B., Tustison, N. and Song, G., 2009. Advanced normalization
 > tools (ANTS). The Insight Journal, 2(365), pp.1-35.
 
-Please check their official website to cite specific methods.
+If you are using `rpyANTs` through `RAVE`, please also cite:
+
+> Magnotti, J.F., Wang, Z. and Beauchamp, M.S., 2020. RAVE:
+> Comprehensive open-source software for reproducible analysis and
+> visualization of intracranial EEG data. NeuroImage, 223, p.117341.
 
 ## License
 
