@@ -9,7 +9,7 @@ ants_registration(
   moving,
   type_of_transform = "SyN",
   initial_transform = NULL,
-  outprefix = "",
+  outprefix = tempfile(),
   mask = NULL,
   grad_step = 0.2,
   flow_sigma = 3,

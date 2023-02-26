@@ -6,7 +6,10 @@ test_that("ANTsTransform generics", {
 
   cat("Testing ANTsTransform generics\n")
 
+  cat("Loading numpy\n")
   np <- import("numpy", convert = TRUE)
+
+  cat("Sanity-check on default transform\n")
   y <- ants$new_ants_transform()
 
   p <- matrix(rnorm(120), nrow = py_to_r(y$dimension))
@@ -17,24 +20,38 @@ test_that("ANTsTransform generics", {
   expected_trans <- rbind(t(np$array(apply(p, 2, y$apply_to_vector))), 0)
   expect_equal(vector_trans, expected_trans, tolerance = 1e-4)
 
+  cat("Sanity-check on sample data with SyN registration\n")
+  ipath1 <- ants$get_ants_data('r16')
+  ipath2 <- ants$get_ants_data('r64')
+
+  print(ipath1)
+  print(ipath2)
+
+  cat("Load images\n")
   fi <- ants$image_read(ants$get_ants_data('r16'))
   mo <- ants$image_read(ants$get_ants_data('r64'))
 
   # resample to speed up this example
+  cat("Resample images for speed\n")
   fi <- ants$resample_image(fi, list(60L,60L), TRUE, 0L)
   mo <- ants$resample_image(mo, list(60L,60L), TRUE, 0L)
 
   # SDR transform
+  cat("Non-linear transform\n")
   transform <- ants_registration(
-    fixed=fi, moving=mo, type_of_transform = 'SyN' )
+    fixed=fi, moving=mo, type_of_transform = 'SyN', outprefix = tempfile() )
 
   tmp_files <- unique(unlist(c(
     py_to_r(transform$fwdtransforms),
     py_to_r(transform$invtransforms)
   )))
+  cat("Transform generated. Needs to remove later\n")
+  cat(tmp_files, sep = "\n")
+  cat("\n")
 
 
   # AffineTransform
+  cat("Testing with saved transformation\n")
   y <- ants$read_transform(transform$fwdtransforms[1L])
   z1 <- as_ANTsTransform(y)
   z2 <- as_ANTsTransform(y[], dimension = y$dimension)

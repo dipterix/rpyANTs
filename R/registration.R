@@ -58,7 +58,7 @@
 #' @export
 ants_registration <- function(
     fixed, moving, type_of_transform='SyN', initial_transform = NULL,
-    outprefix='', mask=NULL, grad_step=0.2, flow_sigma=3, total_sigma=0,
+    outprefix=tempfile(), mask=NULL, grad_step=0.2, flow_sigma=3, total_sigma=0,
     aff_metric=c('mattes', 'GC', 'meansquares'),
     aff_sampling=32, aff_random_sampling_rate=0.2,
     syn_metric=c('mattes', 'CC', 'meansquares', 'demons'),
@@ -74,24 +74,24 @@ ants_registration <- function(
   # fixed <- "~/Dropbox (PennNeurosurgery)/RAVE/Samples/raw/PAV006/rave-imaging/derivative/MRI_RAW.nii"
   # type_of_transform <- "Rigid"
 
-  aff_metric <- match.arg(aff_metric)
-  syn_metric <- match.arg(syn_metric)
+  aff_metric <- convert_if_not_python(aff_metric, { match.arg(aff_metric) })
+  syn_metric <- convert_if_not_python(syn_metric, { match.arg(syn_metric) })
 
-  grad_step <- as.double(grad_step)
-  flow_sigma <- as.double(flow_sigma)
-  total_sigma <- as.double(total_sigma)
-  aff_sampling <- as.integer(aff_sampling)
-  aff_random_sampling_rate <- as.double(aff_random_sampling_rate)
-  syn_sampling <- as.integer(syn_sampling)
+  grad_step <- convert_if_not_python(grad_step, as.double(grad_step))
+  flow_sigma <- convert_if_not_python(flow_sigma, as.double(flow_sigma))
+  total_sigma <- convert_if_not_python(total_sigma, as.double(total_sigma))
+  aff_sampling <- convert_if_not_python(aff_sampling, as.integer(aff_sampling))
+  aff_random_sampling_rate <- convert_if_not_python(aff_random_sampling_rate, as.double(aff_random_sampling_rate))
+  syn_sampling <- convert_if_not_python(syn_sampling, as.integer(syn_sampling))
 
-  reg_iterations <- tuple(as.list(as.integer(reg_iterations)))
-  aff_iterations <- tuple(as.list(as.integer(aff_iterations)))
-  aff_shrink_factors <- tuple(as.list(as.integer(aff_shrink_factors)))
-  aff_smoothing_sigmas <- tuple(as.list(as.integer(aff_smoothing_sigmas)))
+  reg_iterations <- convert_if_not_python(reg_iterations, tuple(as.list(as.integer(reg_iterations))))
+  aff_iterations <- convert_if_not_python(aff_iterations, tuple(as.list(as.integer(aff_iterations))))
+  aff_shrink_factors <- convert_if_not_python(aff_shrink_factors, tuple(as.list(as.integer(aff_shrink_factors))))
+  aff_smoothing_sigmas <- convert_if_not_python(aff_smoothing_sigmas, tuple(as.list(as.integer(aff_smoothing_sigmas))))
 
-  write_composite_transform <- as.logical(write_composite_transform)[[1]]
-  verbose <- as.logical(verbose)[[1]]
-  smoothing_in_mm <- as.logical(smoothing_in_mm)[[1]]
+  write_composite_transform <- convert_if_not_python(write_composite_transform, as.logical(write_composite_transform))
+  verbose <- convert_if_not_python(verbose, as.logical(verbose))
+  smoothing_in_mm <- convert_if_not_python(smoothing_in_mm, as.logical(smoothing_in_mm))
 
   fixed_img <- as_ANTsImage(fixed, strict = TRUE)
   moving_img <- as_ANTsImage(moving, strict = TRUE)
