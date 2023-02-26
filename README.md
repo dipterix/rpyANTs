@@ -92,7 +92,7 @@ ants$add_noise_to_image
 #> 
 #> *** Above documentation is for Python. 
 #> *** Please use `$` instead of `.` for modules and functions in R
-#> <function add_noise_to_image at 0x115d50790>
+#> <function add_noise_to_image at 0x115fec790>
 ```
 
 The following R code translates Python code into R:
@@ -311,12 +311,12 @@ y3 <- (y3 - min(y3)) / (max(y3) - min(y3)) * 8000
 
 ants_plot_grid(
   list(image, y1, y2, y3),
-  slices = 100, shape = c(2,2),
+  slices = 100, shape = c(1, 4),
   vmin = 0, vmax = 8000
 )
 ```
 
-<img src="man/figures/README-s3-generic-showcase-1.png" width="80%" />
+<img src="man/figures/README-s3-generic-showcase-1.png" width="100%" />
 
 Notice the operator generics are still under implementation. Some
 classes/objects are still not supported. In this case, you might want to

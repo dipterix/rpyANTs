@@ -98,7 +98,7 @@ noise_image4 <- ants$add_noise_to_image(
 
 To load imaging data into R
 
-```{r load-image-into-r}
+```{r load-image-into-r, fig.width=6, fig.height=3}
 orig_array <- py_to_r(img$numpy())
 noise_array1 <- py_to_r(noise_image1$numpy())
 noise_array2 <- py_to_r(noise_image2$numpy())
@@ -277,12 +277,12 @@ y3 <- (y3 - min(y3)) / (max(y3) - min(y3)) * 8000
 
 ants_plot_grid(
   list(image, y1, y2, y3),
-  slices = 100, shape = c(2,2),
+  slices = 100, shape = c(1, 4),
   vmin = 0, vmax = 8000
 )
 ```
 
-<img src="man/figures/README-s3-generic-showcase-1.png" width="80%" />
+<img src="man/figures/README-s3-generic-showcase-1.png" width="100%" />
 
 
 Notice the operator generics are still under implementation. Some classes/objects are still not supported. In this case, you might want to use the following workaround methods. You are more than welcome to post a wish-list or issue ticket to the [`Github` repository](https://github.com/dipterix/rpyANTs/issues)
@@ -313,11 +313,13 @@ ants$plot(threshold)
 
 ## Citation
 
-This is a general citation:
+This is a general citation for `ANTs`:
 
 > Avants, B.B., Tustison, N. and Song, G., 2009. Advanced normalization tools (ANTS). The Insight Journal, 2(365), pp.1-35.
 
-Please check their official website to cite specific methods.
+If you are using `rpyANTs` through `RAVE`, please also cite:
+
+> Magnotti, J.F., Wang, Z. and Beauchamp, M.S., 2020. RAVE: Comprehensive open-source software for reproducible analysis and visualization of intracranial EEG data. NeuroImage, 223, p.117341.
 
 ## License
 

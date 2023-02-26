@@ -113,31 +113,57 @@ py_list <- function(..., convert = FALSE) {
 #'
 #' @export
 as_ANTsImage <- function(x, strict = FALSE) {
+  UseMethod("as_ANTsImage")
+}
+
+#' @export
+as_ANTsImage.ants.core.ants_image.ANTsImage <- function(x, strict = TRUE) {
+  return(x)
+}
+
+#' @export
+as_ANTsImage.oro.nifti <- function(x, strict = TRUE) {
+  tfile <- tempfile(fileext = ".nii.gz", pattern = "as_ANTsImage_")
+  RNifti::writeNifti(x, file = tfile)
+  on.exit({ unlink(tfile) })
+  ants <- load_ants()
+  return(ants$image_read(tfile))
+}
+
+#' @export
+as_ANTsImage.niftiImage <- as_ANTsImage.oro.nifti
+
+#' @export
+as_ANTsImage.threeBrain.nii <- function(x, strict = TRUE) {
+  as_ANTsImage.oro.nifti(x$header)
+}
+
+#' @export
+as_ANTsImage.character <- function(x, strict = TRUE) {
+  if(length(x) != 1 || is.na(x) || trimws(x) == "") {
+    if(strict) {
+      stop("as_ANTsImage: for string `x`, length(x) must equal to 1 and cannot be empty/NA under strict mode")
+    }
+    return(NULL)
+  }
+  ants <- load_ants()
+  return(ants$image_read(x))
+}
+
+#' @export
+as_ANTsImage.python.builtin.str <- function(x, strict = TRUE) {
+  as_ANTsImage.character(py_to_r(x), strict = strict)
+}
+
+#' @export
+as_ANTsImage.default <- function(x, strict = TRUE) {
   if(is.null(x)) {
     if( strict ) {
       stop("as_ANTsImage: input x (image) cannot be NULL under strict mode")
     }
     return(x)
   }
-  if(inherits(x, "ants.core.ants_image.ANTsImage")) {
-    return(x)
-  }
-  if(isTRUE(is.character(x)) || inherits(x, "python.builtin.str")) {
-    ants <- load_ants()
-    return(ants$image_read(x))
-  }
-  if(inherits(x, "threeBrain.nii")) {
-    x <- x$header
-  }
-  if(inherits(x, c("niftiImage", "oro.nifti"))) {
-    # RNifti or oro.nifti
-    tfile <- tempfile(fileext = ".nii.gz", pattern = "as_ANTsImage_")
-    RNifti::writeNifti(x, file = tfile)
-    on.exit({ unlink(tfile) })
-    ants <- load_ants()
-    return(ants$image_read(tfile))
-  }
-  stop("as_ANTsImage: unsupported input format: [", paste0(class(x), collapse = ","), "]. Only characters, ANTsImage, threeBrain.nii, niftiImage, or oro.nifti allowed.")
+  stop("as_ANTsImage: unsupported input format: [", paste0(class(x), collapse = ","), "].")
 }
 
 

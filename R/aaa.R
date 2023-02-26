@@ -23,6 +23,16 @@
 #' @importFrom rpymat repl_python
 NULL
 
+AFFINE_TRANSFORM_TYPES <- c(
+  'AffineTransform', 'CenteredAffineTransform',
+  'Euler2DTransform', 'Euler3DTransform', 'Rigid3DTransform',
+  'Rigid2DTransform', 'QuaternionRigidTransform',
+  'Similarity2DTransform', 'CenteredSimilarity2DTransform',
+  'Similarity3DTransform', 'CenteredRigid2DTransform',
+  'CenteredEuler3DTransform', "ScaleTransform",
+  "ScaleVersor3DTransform", "ScaleSkewVersor3DTransform"
+)
+
 validate_python <- function(verbose = TRUE) {
   verb <- function(expr) {
     if(verbose) {
