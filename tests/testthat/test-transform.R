@@ -4,6 +4,8 @@ test_that("ANTsTransform generics", {
   testthat::skip_if_not(rpyANTs:::rpymat_is_setup())
   testthat::skip_if_not(rpyANTs:::ants_available())
 
+  cat("Testing ANTsTransform generics\n")
+
   np <- import("numpy", convert = TRUE)
   y <- ants$new_ants_transform()
 
