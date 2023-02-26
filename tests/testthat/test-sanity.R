@@ -2,7 +2,10 @@ library(testthat)
 test_that("Make sure ANTs can be loaded", {
 
   # If conda is not set up, skip
+  message("Checking if rpymat is set up")
   testthat::skip_if_not(rpyANTs:::rpymat_is_setup())
+
+  message("Checking if ants is available")
   testthat::skip_if_not(rpyANTs:::ants_available())
 
   for(cls in c("ants.proxy", "python.builtin.module", "python.builtin.object"
