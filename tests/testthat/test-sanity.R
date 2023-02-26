@@ -50,11 +50,6 @@ test_that("ANTsTransform generics", {
     py_to_r(transform$fwdtransforms),
     py_to_r(transform$invtransforms)
   )))
-  on.exit({
-    for(f in tmp_files) {
-      if(file.exists(f)){ unlink(f) }
-    }
-  })
 
 
   # AffineTransform
@@ -82,6 +77,10 @@ test_that("ANTsTransform generics", {
 
   expected_trans <- rbind(t(np$array(apply(p, 2, z2$apply_to_vector))), 0)
   expect_equal(vector_trans, expected_trans, tolerance = 1e-4)
+
+  for(f in tmp_files) {
+    if(file.exists(f)){ unlink(f) }
+  }
 
 })
 

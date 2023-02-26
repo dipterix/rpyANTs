@@ -36,6 +36,15 @@ rpyANTs::install_ants()
 [`RAVE`](https://openwetware.org/wiki/RAVE). This environment does not
 conflict nor affect your existing Python installations.
 
+### Upgrade `ANTs`
+
+To upgrade `ANTs`, first update `rpyANTs`, then upgrade `ANTsPyx`
+
+``` r
+install.packages("rpyANTs")
+rpymat::add_packages(packages = "antspyx", pip = TRUE)
+```
+
 ## How to use
 
 To load `ANTs`
@@ -92,7 +101,7 @@ ants$add_noise_to_image
 #> 
 #> *** Above documentation is for Python. 
 #> *** Please use `$` instead of `.` for modules and functions in R
-#> <function add_noise_to_image at 0x123a64790>
+#> <function add_noise_to_image at 0x11274c790>
 ```
 
 The following R code translates Python code into R:
@@ -165,18 +174,9 @@ image(noise_image4[], asp = 1, axes = FALSE,
 
 <img src="man/figures/README-load-image-into-r-1.png" width="80%" />
 
-## Upgrade `ANTs`
-
-To upgrade `ANTs`, first update `rpyANTs`, then upgrade `ANTsPyx`
-
-``` r
-install.packages("rpyANTs")
-rpymat::add_packages(packages = "antspyx", pip = TRUE)
-```
-
 ## Advanced use case
 
-#### Run/Debug `Python` scripts
+### Run/Debug `Python` scripts
 
 `rpyANTs` ports functions that allows to run `Python` scripts. For
 example:
@@ -222,7 +222,7 @@ To exit Python mode, type `exit` (no parenthesis) and hit enter key
     >>> exit
     > 
 
-#### Data conversions
+### Data conversions
 
 Native R variables can be easily converted to `Python` and back via
 `r_to_py` and `py_to_r`.
@@ -269,7 +269,7 @@ from `py$object_py`:
 
 ## Known issues
 
-#### Variable types
+### Variable types
 
 R is not a type-rigid language. Some functions in `ANTsPy` require
 specific variable types that are often vague in R. For example the
@@ -299,7 +299,67 @@ ants$registration(fixed, moving, ..., aff_iterations = tuple(6L, 4L, 2L, 1L))
 
 Similar conversions can be done via `py_list`, `py_dict`.
 
-#### Operators
+3.  Convert `TRUE` vs. `FALSE`
+
+A Python module can be imported with auto-conversion (argument
+`convert`) set to `TRUE` or `FALSE`. When auto-conversion is on, the
+Python function results will be converted to R objects automatically.
+For example,
+
+``` r
+np <- import("numpy", convert = TRUE)
+np$eye(4L)
+#>      [,1] [,2] [,3] [,4]
+#> [1,]    1    0    0    0
+#> [2,]    0    1    0    0
+#> [3,]    0    0    1    0
+#> [4,]    0    0    0    1
+```
+
+The `numpy` array is automatically translated as an R matrix. While this
+is convenient, this automated conversion could cause some issues when
+the function results are further passed into another Python function.
+For example, the following code will raise errors.
+
+``` r
+> np <- import("numpy", convert = TRUE) 
+> ants <- load_ants()
+> 
+> image <- ants$image_read(ants$get_ants_data('mni'))
+> image_array <- np$asarray(list(image, image))
+> 
+> ants$plot_grid(image_array, slices = 100L)
+
+Error in py_call_impl(callable, dots$args, dots$keywords) :
+Matrix type cannot be converted to python (only integer, numeric, complex, logical, and character matrixes can be converted
+```
+
+The error is raised because `numpy` has `convert=TRUE`, hence
+`image_array` is converted to an R list with each element being a
+`ANTsImage` instance. Calling `ants$plot_grid` needs R-to-Python
+conversion for all input variables, including `image_array`. However
+this conversion makes `image_array` a Python list instead of `numpy`
+array, violating the input format.
+
+A safer way is to keep in the Python format, i.e. `convert=FALSE`. In
+this mode, function results will not be converted back to R (you need to
+manually make conversion by yourself via `py_to_r`). Now the following
+example works.
+
+``` r
+> np <- import("numpy", convert = TRUE) 
+> ants <- load_ants()
+> 
+> image <- ants$image_read(ants$get_ants_data('mni'))
+> image_array <- np$asarray(list(image, image))
+> 
+> ants$plot_grid(image_array, slices = 100L)
+```
+
+> Object `ants` in `rpyANTs` is a non-conversion Python module. Object
+> `py` is a auto-conversion Python module
+
+### Operators
 
 In Python, operators on `ANTsImage`, such as `img > 5` are defined. Such
 operators is being supported in R as `S3` generic functions. Don’t worry
