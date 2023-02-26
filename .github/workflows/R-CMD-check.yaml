@@ -4,7 +4,7 @@ on:
   push:
     branches: [main, master]
   pull_request:
-    branches: [main, master]
+    branches: [main, master, test-fixing]
 
 name: R-CMD-check
 
@@ -95,5 +95,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: rpyANTs-artifact
-          path: D:/a/rpyANTs/rpyANTs
+          path: |
+            D:/a/rpyANTs/rpyANTs
+            C:/Users/runneradmin/.antspy/
           if-no-files-found: ignore
