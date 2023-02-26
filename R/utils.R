@@ -200,3 +200,40 @@ to_r <- function(x) {
     x
   })
 }
+
+snapshot_tempfiles <- function() {
+  if(!ants_available()) { return() }
+  ants <- load_ants()
+  tryCatch({
+    to_r(ants$utils$rpyANTsInjection$requested_tempfiles)
+  }, error = function(e) {
+    NULL
+  })
+}
+
+remove_tmpfiles <- function(x, ...) {
+
+  tfiles <- py_list(convert = FALSE)
+  if(ants_available()) {
+    ants <- load_ants()
+
+    injected <- py_builtin("hasattr", convert = TRUE)(ants$utils, "rpyANTsInjected")
+    if(injected && isTRUE(to_r(ants$utils$rpyANTsInjected))) {
+      tfiles <- ants$utils$rpyANTsInjection$requested_tempfiles
+    }
+  }
+
+  for(f in x) {
+    if(file.exists(f)) {
+      unlink(f, ...)
+      tryCatch({
+        idx <- to_r(tfiles$index(f))
+        if(idx > -1) {
+          tfiles$remove(f)
+        }
+      }, error = function(e) {
+
+      })
+    }
+  }
+}

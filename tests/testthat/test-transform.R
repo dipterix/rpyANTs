@@ -39,9 +39,9 @@ test_that("ANTsTransform generics", {
 
   # Somehow this cannot run on windows
   # # resample to speed up this example
-  # cat("Resample images for speed\n")
-  # fi <- ants$resample_image(fi, list(60L,60L), TRUE, 0L)
-  # mo <- ants$resample_image(mo, list(60L,60L), TRUE, 0L)
+  cat("Resample images for speed\n")
+  fi <- ants$resample_image(fi, list(60L,60L), TRUE, 0L)
+  mo <- ants$resample_image(mo, list(60L,60L), TRUE, 0L)
 
   # SDR transform
   cat("Non-linear transform\n")

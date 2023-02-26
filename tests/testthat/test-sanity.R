@@ -13,7 +13,6 @@ test_that("Make sure ANTs can be loaded", {
 
   for(nm in names(ants)){
     obj <- do.call(`$`, list(ants, nm))
-    cat("Checking if [", nm, "] is ants.proxy\n", sep = "")
     expect_true(inherits(obj, "ants.proxy"))
   }
 
