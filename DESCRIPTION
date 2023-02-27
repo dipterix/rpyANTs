@@ -1,18 +1,15 @@
 Package: rpyANTs
-Title: An Alternative R Package for Advanced Normalization Tools ('ANTs')
+Title: An Alternative Advanced Normalization Tools ('ANTs')
 Version: 0.0.1
 Authors@R: 
     person("Zhengjia", "Wang", email = "dipterix.wang@gmail.com", 
             role = c("aut", "cre"))
 Description: 
-    Providing access from R to biomedical image processing toolbox 
-    'ANTs' (<doi:10.54294/uvnhin>, <https://github.com/ANTsX/ANTs>) and 
-    its 'Python' implementation 'ANTsPy' <https://github.com/ANTsX/ANTsPy>. 
-    Compared to the Avants's R implementation 'ANTsR' 
-    (<doi:10.17605/osf.io/bsq5v>, <https://github.com/ANTsX/ANTsR>), 
-    this package improves portability, reduces installation time
-    and build efforts at the cost of slightly restricted functionality. See 
-    'citation("rpyANTs")' for citation information.
+    Provides portable access from 'R' to biomedical image processing toolbox 
+    'ANTs' by Avants et al. (2009) <doi:10.54294/uvnhin> via seamless
+    integration with the 'Python' implementation 'ANTsPy'. Allows biomedical 
+    images to be processed in 'Python' and analyzed in 'R', and vice versa 
+    via shared memory. See 'citation("rpyANTs")' for more reference information.
 License: Apache License 2.0
 Language: en-US
 Encoding: UTF-8
