@@ -81,9 +81,31 @@
 </h1></div>
 <!-- badges: start -->
 
-<p><code>rpyANTs</code> is a package that ports <code>ANTsPy</code>, a <code>Python</code> implementation of <code>ANTs</code> into R using R-Python interpreter package <code>reticulate</code>.</p>
+<p><code>rpyANTs</code> was detached from a <code>RAVE</code> (<a href="https://openwetware.org/wiki/RAVE" class="external-link">Reproducible Analysis and Visualization of <code>iEEG</code></a>) module. It is now a standalone package that connects <code>ANTsPy</code> with R using seamless shared-memory.</p>
+<p>This package was originally created for the following three purposes:</p>
+<ul>
+<li>Portability
+<ul>
+<li>Make <code>ANTs</code> easily accessible from the latest R and all major operating systems</li>
+<li>Allow <code>RAVE</code> or other code/scripts/frameworks to be reproducible since the code will be OS-invariant</li>
+</ul>
+</li>
+<li>Easy to install
+<ul>
+<li>Automated installation that requires very little to no knowledge about compilers</li>
+<li>Installing <code>rpyANTs</code> takes less than 10 minutes</li>
+<li>The goal is to have minimum human intervention</li>
+</ul>
+</li>
+<li>Easy to embed
+<ul>
+<li>Python scripts using <code>ANTsPy</code> can be executed from <code>rpyANTs</code> and R with no modification</li>
+<li>Built-in bilateral data conversions between Python and R allows image generated from Python to be analyzed/visualized in R and vice versa</li>
+</ul>
+</li>
+</ul>
 <blockquote>
-<p>Disclaimer: This is a third-party maintained R package for <code>ANTs</code>. If you want to check the official <code>ANTsR</code> package, please see <a href="https://github.com/ANTsX/ANTsR" class="external-link">here</a>.</p>
+<p>Disclaimer: This is a third-party maintained R package for <code>ANTs</code>. If you are looking for the <code>ANTsR</code> package by <code>B.B Avants</code>, please check <a href="https://github.com/ANTsX/ANTsR" class="external-link">here</a>.</p>
 </blockquote>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -99,7 +121,7 @@
 <span></span>
 <span><span class="co"># set up ANTs</span></span>
 <span><span class="fu">rpyANTs</span><span class="fu">::</span><span class="fu"><a href="reference/install_ants.html">install_ants</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><code>install_ants</code> creates an isolated <code>Python</code> environment managed by <a href="https://openwetware.org/wiki/RAVE" class="external-link"><code>RAVE</code></a>. This environment does not conflict nor affect your existing Python installations.</p>
+<p><code>install_ants</code> creates an isolated <code>Python</code> environment managed by <code>RAVE</code>. This environment does not conflict nor affect your existing Python installations.</p>
 <div class="section level3">
 <h3 id="upgrade-ants">Upgrade <code>ANTs</code>
 <a class="anchor" aria-label="anchor" href="#upgrade-ants"></a>
@@ -163,7 +185,7 @@
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; *** Above documentation is for Python. </span></span>
 <span><span class="co">#&gt; *** Please use `$` instead of `.` for modules and functions in R</span></span>
-<span><span class="co">#&gt; &lt;function add_noise_to_image at 0x1162f8790&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt; &lt;function add_noise_to_image at 0x112480790&gt;</span></span></code></pre></div>
 <p>The following R code translates Python code into R:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># &gt;&gt;&gt; img = ants.image_read(ants.get_ants_data('r16'))</span></span>
