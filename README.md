@@ -10,11 +10,32 @@ status](https://www.r-pkg.org/badges/version/rpyANTs)](https://CRAN.R-project.or
 [![R-check](https://github.com/dipterix/rpyANTs/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/dipterix/rpyANTs/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-`rpyANTs` is a package that ports `ANTsPy`, a `Python` implementation of
-`ANTs` into R using R-Python interpreter package `reticulate`.
+`rpyANTs` was detached from a `RAVE` ([Reproducible Analysis and
+Visualization of `iEEG`](https://openwetware.org/wiki/RAVE)) module. It
+is now a standalone package that connects `ANTsPy` with R using seamless
+shared-memory.
+
+This package was originally created for the following three purposes:
+
+- Portability
+  - Make `ANTs` easily accessible from the latest R and all major
+    operating systems
+  - Allow `RAVE` or other code/scripts/frameworks to be reproducible
+    since the code will be OS-invariant
+- Easy to install
+  - Automated installation that requires very little to no knowledge
+    about compilers
+  - Installing `rpyANTs` takes less than 10 minutes
+  - The goal is to have minimum human intervention
+- Easy to embed
+  - Python scripts using `ANTsPy` can be executed from `rpyANTs` and R
+    with no modification
+  - Built-in bilateral data conversions between Python and R allows
+    image generated from Python to be analyzed/visualized in R and vice
+    versa
 
 > Disclaimer: This is a third-party maintained R package for `ANTs`. If
-> you want to check the official `ANTsR` package, please see
+> you are looking for the `ANTsR` package by `B.B Avants`, please check
 > [here](https://github.com/ANTsX/ANTsR).
 
 ## Installation
@@ -34,8 +55,8 @@ rpyANTs::install_ants()
 ```
 
 `install_ants` creates an isolated `Python` environment managed by
-[`RAVE`](https://openwetware.org/wiki/RAVE). This environment does not
-conflict nor affect your existing Python installations.
+`RAVE`. This environment does not conflict nor affect your existing
+Python installations.
 
 ### Upgrade `ANTs`
 
@@ -102,7 +123,7 @@ ants$add_noise_to_image
 #> 
 #> *** Above documentation is for Python. 
 #> *** Please use `$` instead of `.` for modules and functions in R
-#> <function add_noise_to_image at 0x1162f8790>
+#> <function add_noise_to_image at 0x112480790>
 ```
 
 The following R code translates Python code into R:
