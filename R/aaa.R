@@ -69,14 +69,16 @@ validate_python <- function(verbose = TRUE) {
 }
 
 #' @title Install 'ANTs' via 'ANTsPy'
-#' @param python_ver 'Python' version, see \code{\link[rpymat]{configure_conda}}
+#' @param python_ver 'Python' version, see \code{\link[rpymat]{configure_conda}};
+#' default is \code{"3.9"} since \code{'ANTsPy'} is compiled for all
 #' @param verbose whether to print the installation messages
 #' @returns This function returns nothing.
 #' @export
-install_ants <- function(python_ver = "auto", verbose = TRUE) {
+install_ants <- function(python_ver = "3.9", verbose = TRUE) {
   # Install conda and create a conda environment
   if(!dir.exists(rpymat::env_path())) {
-    rpymat::configure_conda(python_ver = python_ver, force = TRUE)
+    standalone <- !file.exists(rpymat::conda_bin())
+    rpymat::configure_conda(python_ver = python_ver, force = TRUE, standalone = standalone)
   }
   rpymat::ensure_rpymat(verbose = verbose)
   installed_pkgs_tbl <- rpymat::list_pkgs()

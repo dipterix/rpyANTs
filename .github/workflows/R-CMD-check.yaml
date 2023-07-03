@@ -67,11 +67,12 @@ jobs:
 
       - name: Install ANTsPy
         run: |
-          python_ver <- "auto"
+          python_ver <- "3.9"
           verbose <- TRUE
           # Install conda and create a conda environment
           if(!dir.exists(rpymat::env_path())) {
-            rpymat::configure_conda(python_ver = python_ver, force = TRUE)
+            standalone <- !file.exists(rpymat::conda_bin())
+            rpymat::configure_conda(python_ver = python_ver, force = TRUE, standalone = standalone)
           }
           rpymat::ensure_rpymat(verbose = verbose)
           installed_pkgs_tbl <- rpymat::list_pkgs()

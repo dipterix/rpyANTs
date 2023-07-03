@@ -35,6 +35,6 @@ below to see their documentation.
 \describe{
   \item{reticulate}{\code{\link[reticulate]{import}}, \code{\link[reticulate]{np_array}}, \code{\link[reticulate]{np_array}}, \code{\link[reticulate]{py_bool}}, \code{\link[reticulate]{py_call}}, \code{\link[reticulate]{py_del_attr}}, \code{\link[reticulate]{py_del_item}}, \code{\link[reticulate:dict]{py_dict}}, \code{\link[reticulate]{py_eval}}, \code{\link[reticulate]{py_get_attr}}, \code{\link[reticulate]{py_get_item}}, \code{\link[reticulate]{py_help}}, \code{\link[reticulate]{py_len}}, \code{\link[reticulate]{py_none}}, \code{\link[reticulate:py_run]{py_run_string}}, \code{\link[reticulate]{py_set_attr}}, \code{\link[reticulate]{py_set_item}}, \code{\link[reticulate]{py_str}}, \code{\link[reticulate:r-py-conversion]{py_to_r}}, \code{\link[reticulate]{py_to_r_wrapper}}, \code{\link[reticulate:r-py-conversion]{r_to_py}}, \code{\link[reticulate:r-py-conversion]{r_to_py}}, \code{\link[reticulate]{tuple}}}
 
-  \item{rpymat}{\code{\link[rpymat]{repl_python}}, \code{\link[rpymat]{run_script}}}
+  \item{rpymat}{\code{\link[rpymat]{repl_python}}, \code{\link[rpymat:run_pyscript]{run_script}}}
 }}
 

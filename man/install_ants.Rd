@@ -4,10 +4,11 @@
 \alias{install_ants}
 \title{Install 'ANTs' via 'ANTsPy'}
 \usage{
-install_ants(python_ver = "auto", verbose = TRUE)
+install_ants(python_ver = "3.9", verbose = TRUE)
 }
 \arguments{
-\item{python_ver}{'Python' version, see \code{\link[rpymat]{configure_conda}}}
+\item{python_ver}{'Python' version, see \code{\link[rpymat]{configure_conda}};
+default is \code{"3.9"} since \code{'ANTsPy'} is compiled for all}
 
 \item{verbose}{whether to print the installation messages}
 }
