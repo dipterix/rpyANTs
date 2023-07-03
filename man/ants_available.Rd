@@ -4,10 +4,14 @@
 \alias{ants_available}
 \title{Check if 'ANTs' is available}
 \usage{
-ants_available()
+ants_available(module = c("ants", "antspynet"))
+}
+\arguments{
+\item{module}{either \code{'ants'} or \code{'antspynet'}; default is
+\code{'ants'}}
 }
 \value{
-Logical, whether 'ANTs' is available
+Logical, whether \code{'ANTs'} or \code{'ANTsPyNet'} is available
 }
 \description{
 Check if 'ANTs' is available

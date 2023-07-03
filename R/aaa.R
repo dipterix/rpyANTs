@@ -88,8 +88,10 @@ install_ants <- function(python_ver = "auto", verbose = TRUE) {
   }
 
   # install antspyx family
-  if(!"antspyx" %in% installed_pkgs_tbl$package) {
-    rpymat::add_packages(packages = "antspyx", pip = TRUE)
+  ants_packages <- c("antspyx", "antspynet")
+  ants_packages <- ants_packages[!ants_packages %in% installed_pkgs_tbl$package]
+  if(length(ants_packages)) {
+    rpymat::add_packages(packages = ants_packages, pip = TRUE)
   }
 
   validate_python(verbose = verbose)

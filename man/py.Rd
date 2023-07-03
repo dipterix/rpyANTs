@@ -5,7 +5,7 @@
 \alias{py}
 \title{Get 'Python' main process environment}
 \format{
-An object of class \code{python.builtin.module} (inherits from \code{python.builtin.object}) of length 1.
+An object of class \code{NULL} of length 0.
 }
 \usage{
 py
