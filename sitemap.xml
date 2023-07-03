@@ -16,7 +16,13 @@
     <loc>http://dipterix.org/rpyANTs/reference/ants.html</loc>
   </url>
   <url>
+    <loc>http://dipterix.org/rpyANTs/reference/ants_apply_transforms.html</loc>
+  </url>
+  <url>
     <loc>http://dipterix.org/rpyANTs/reference/ants_available.html</loc>
+  </url>
+  <url>
+    <loc>http://dipterix.org/rpyANTs/reference/ants_motion_correction.html</loc>
   </url>
   <url>
     <loc>http://dipterix.org/rpyANTs/reference/ants_plot.html</loc>
@@ -26,6 +32,21 @@
   </url>
   <url>
     <loc>http://dipterix.org/rpyANTs/reference/ants_registration.html</loc>
+  </url>
+  <url>
+    <loc>http://dipterix.org/rpyANTs/reference/ants_resample_image.html</loc>
+  </url>
+  <url>
+    <loc>http://dipterix.org/rpyANTs/reference/antspynet.html</loc>
+  </url>
+  <url>
+    <loc>http://dipterix.org/rpyANTs/reference/antspynet_brain_extraction.html</loc>
+  </url>
+  <url>
+    <loc>http://dipterix.org/rpyANTs/reference/antspynet_preprocess_brain_image.html</loc>
+  </url>
+  <url>
+    <loc>http://dipterix.org/rpyANTs/reference/antspynet_segmentation.html</loc>
   </url>
   <url>
     <loc>http://dipterix.org/rpyANTs/reference/as_ANTsImage.html</loc>
