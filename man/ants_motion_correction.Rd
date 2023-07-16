@@ -24,7 +24,7 @@ ants_motion_correction(
 
 \item{mask}{mask for image}
 
-\item{fdOffset}{offset value to use in fram-ewise displacement calculation}
+\item{fdOffset}{offset value to use in frame-wise displacement calculation}
 
 \item{outprefix}{save path}
 

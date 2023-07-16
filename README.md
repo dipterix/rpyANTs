@@ -7,6 +7,7 @@
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/rpyANTs)](https://CRAN.R-project.org/package=rpyANTs)
+[![r-universe](https://rave-ieeg.r-universe.dev/badges/rpyANTs)](https://rave-ieeg.r-universe.dev/rpyANTs)
 [![R-check](https://github.com/dipterix/rpyANTs/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/dipterix/rpyANTs/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
@@ -123,7 +124,7 @@ ants$add_noise_to_image
 #> 
 #> *** Above documentation is for Python. 
 #> *** Please use `$` instead of `.` for modules and functions in R
-#> <function add_noise_to_image at 0x112480790>
+#> <function add_noise_to_image at 0x113867060>
 ```
 
 The following R code translates Python code into R:
@@ -449,7 +450,7 @@ This is a general citation for `ANTs`:
 > Avants, B.B., Tustison, N. and Song, G., 2009. Advanced normalization
 > tools (ANTS). The Insight Journal, 2(365), pp.1-35.
 
-If you are using `rpyANTs` through `RAVE`, please also cite:
+If you are using `rpyANTs` through `RAVE` or `YAEL`, please also cite:
 
 > Magnotti, J.F., Wang, Z. and Beauchamp, M.S., 2020. RAVE:
 > Comprehensive open-source software for reproducible analysis and

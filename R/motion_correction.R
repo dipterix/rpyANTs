@@ -6,7 +6,7 @@
 #' @param fixed fixed image to register all timepoints to
 #' @param type_of_transform see \code{\link{ants_registration}}
 #' @param mask mask for image
-#' @param fdOffset offset value to use in fram-ewise displacement calculation
+#' @param fdOffset offset value to use in frame-wise displacement calculation
 #' @param outprefix save path
 #' @param verbose whether to verbose the messages
 #' @param ... passed to registration methods
