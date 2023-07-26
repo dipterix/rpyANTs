@@ -67,7 +67,7 @@ inject_ants <- function(ants) {
     tryCatch({
       rpymat::ensure_rpymat(verbose = FALSE)
       m <- reticulate::import("ants", convert = FALSE, delay_load = FALSE)
-      m <- inject_ants(m)
+      # m <- inject_ants(m)
       class(m) <- c('ants.proxy', class(m))
       ants <<- m
       return( ants )
@@ -242,4 +242,5 @@ load_antspynet <- .antspynet$get
 #' @export
 "py"
 NULL
+
 
