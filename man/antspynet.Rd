@@ -5,8 +5,6 @@
 \alias{load_antspynet}
 \title{Get \code{'ANTsPyNet'} module}
 \usage{
-antspynet
-
 load_antspynet(force = FALSE, error_if_missing = TRUE)
 }
 \arguments{

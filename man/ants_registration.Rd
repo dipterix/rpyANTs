@@ -77,6 +77,18 @@ A 'Python' dictionary of aligned images and transform files.
 \description{
 Register two images using 'ANTs'
 }
+\details{
+Function family \code{ants_registration*} align images (specified by
+\code{moving}) to \code{fixed}. Here are descriptions of the variations:
+\describe{
+\item{\code{ants_registration}}{Simple wrapper function for 'Python'
+implementation \code{ants.registration}, providing various of registration
+options}
+\item{\code{ants_registration_halpern1}}{Rigid-body registration designed
+for 'Casey-Halpern' lab, mainly used for aligning 'MRI' to 'CT' (or the other
+way around)}
+}
+}
 \examples{
 
 if(interactive() && ants_available()) {

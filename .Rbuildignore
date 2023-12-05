@@ -8,3 +8,15 @@
 ^\.github$
 ^cran-comments\.md$
 ^CRAN-SUBMISSION$
+\.DS_Store$
+\.Rhistory$
+\.venv
+\.vscode
+\.pyc$
+\.pyx$
+__pycache__
+\.egg-info$
+node_modules
+\.ipynb_checkpoints$
+package-lock\.json$
+yarn\.lock$

@@ -96,6 +96,8 @@ install_ants <- function(python_ver = "3.9", verbose = TRUE) {
     rpymat::add_packages(packages = ants_packages, pip = TRUE)
   }
 
+  # rpymat::add_packages(packages = system.file("rpyants", package = "rpyANTs"), pip = TRUE)
+
   validate_python(verbose = verbose)
 }
 

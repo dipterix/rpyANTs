@@ -28,6 +28,17 @@
 #'
 #' @returns A 'Python' dictionary of aligned images and transform files.
 #'
+#' @details
+#' Function family \code{ants_registration*} align images (specified by
+#' \code{moving}) to \code{fixed}. Here are descriptions of the variations:
+#' \describe{
+#' \item{\code{ants_registration}}{Simple wrapper function for 'Python'
+#' implementation \code{ants.registration}, providing various of registration
+#' options}
+#' \item{\code{ants_registration_halpern1}}{Rigid-body registration designed
+#' for 'Casey-Halpern' lab, mainly used for aligning 'MRI' to 'CT' (or the other
+#' way around)}
+#' }
 #' @examples
 #'
 #' if(interactive() && ants_available()) {
@@ -101,7 +112,9 @@ ants_registration <- function(
   mask <- as_ANTsImage(mask, strict = FALSE)
 
   if(length(initial_transform)) {
-    initial_transform <- as_ANTsTransform(initial_transform, fixed_img$dimension)
+    if(length(initial_transform) == 1 && is.character(initial_transform) && file.exists(initial_transform)) {
+      initial_transform <- as_ANTsTransform(initial_transform, fixed_img$dimension)
+    }
   } else {
     initial_transform <- NULL
   }
@@ -134,6 +147,287 @@ ants_registration <- function(
 
   py_results
 
+}
+
+#' @name halpern_preprocess
+#' @title 'ANTs' functions for 'Halpern' lab
+#' @param fixed fixed image as template
+#' @param moving moving image that is to be registered into \code{fixed}
+#' @param outprefix output prefix, needs to be absolute path prefix
+#' @param verbose whether to verbose the progress; default is true
+#' @param fixed_is_ct whether \code{fixed} is 'CT'
+#' @param mask mask file for template (skull-stripped)
+#' @param roi_folder template 'ROI' or atlas folder in which the image atlases
+#' or masks will be transformed into subject's native brain
+#' @returns A list of result configurations
+#' @export
+halpern_register_ct_mri <- function(fixed, moving, outprefix, fixed_is_ct = TRUE, verbose = TRUE) {
+  # DIPSAUS DEBUG START
+  # moving <- "~/rave_data/raw_dir/testtest/rave-imaging/coregistration/MRI_RAW.nii.gz"
+  # fixed <- "~/rave_data/raw_dir/testtest/rave-imaging/coregistration/CT_RAW.nii.gz"
+  # outprefix <- "~/rave_data/raw_dir/testtest/rave-imaging/coregistration/t1w_to_postopct_"
+  # verbose = TRUE
+  # fixed_is_ct <- TRUE
+
+  rpyants_py <- load_rpyants()
+
+  outprefix <- normalize_path(outprefix, must_work = FALSE)
+  dir.create(dirname(outprefix), showWarnings = FALSE, recursive = TRUE)
+  verbose <- convert_if_not_python(verbose, as.logical(verbose))
+
+  fixed_img <- as_ANTsImage(fixed, strict = TRUE)
+  moving_img <- as_ANTsImage(moving, strict = TRUE)
+
+  fixed <- sprintf("%sorig_fixed.nii.gz", outprefix)
+  moving <- sprintf("%sorig_moving.nii.gz", outprefix)
+
+  fixed_img$to_file(filename = fixed)
+  moving_img$to_file(filename = moving)
+
+  py_results <- rpyants_py$registration$halpern_coregister_ct_mri(
+    fixed_path = fixed,
+    moving_path = moving,
+    outprefix = outprefix
+  )
+
+  transform <- py_to_r(py_results$transforms)
+  ct_lps_to_mri_lps <- as.matrix(as_ANTsTransform(transform))
+  if( fixed_is_ct ) {
+    fixed_is_ct <- TRUE
+    ct_ijk_to_lps <- t(t(py_to_r(fixed_img$direction)) *
+                         as.double(py_to_r(fixed_img$spacing)))
+    ct_ijk_to_lps <- rbind(cbind(ct_ijk_to_lps, as.double(py_to_r(fixed_img$origin))), c(0, 0, 0, 1))
+  } else {
+    fixed_is_ct <- FALSE
+    ct_lps_to_mri_lps <- solve(ct_lps_to_mri_lps)
+    ct_ijk_to_lps <- t(t(py_to_r(moving_img$direction)) *
+                         as.double(py_to_r(moving_img$spacing)))
+    ct_ijk_to_lps <- rbind(cbind(ct_ijk_to_lps, as.double(py_to_r(moving_img$origin))), c(0, 0, 0, 1))
+  }
+
+  ct_ijk_to_mri_lps <- ct_lps_to_mri_lps %*% ct_ijk_to_lps
+  ct_ijk_to_mri_ras <- diag(c(-1, -1, 1, 1)) %*% ct_ijk_to_mri_lps
+
+  utils::write.table(ct_ijk_to_mri_ras, paste0(outprefix, "CT_IJK_to_MR_RAS.txt"),
+                     row.names = FALSE, col.names = FALSE)
+
+  ct_ras_to_mri_ras <- diag(c(-1, -1, 1, 1)) %*%
+    ct_lps_to_mri_lps %*% diag(c(-1, -1, 1, 1))
+  utils::write.table(ct_ras_to_mri_ras, paste0(outprefix, "CT_RAS_to_MR_RAS.txt"),
+                     row.names = FALSE, col.names = FALSE)
+
+  # convert to R object
+  structure(
+    list(
+      description = "Rigid-body CT-MRI co-registration",
+      prefix = outprefix,
+      fixed_is_ct = fixed_is_ct,
+      fixed = "orig_fixed.nii.gz",
+      moving = "orig_moving.nii.gz",
+      warped = "Warped.nii.gz",
+      transform = list(
+        raw = "0GenericAffine.mat",
+        ct_vox_to_mri_ras = "CT_IJK_to_MR_RAS.txt",
+        ct_ras_to_mri_ras = "CT_RAS_to_MR_RAS.txt"
+      )
+    ),
+    class = "rpyANTs.halpern_register_ct_mri"
+  )
+}
+
+#' @rdname halpern_preprocess
+#' @export
+halpern_register_template_mri <- function(fixed, moving, outprefix, mask = NULL, verbose = TRUE) {
+
+  # DIPSAUS DEBUG START
+  # moving <- "~/rave_data/raw_dir/testtest/rave-imaging/coregistration/MRI_RAW.nii.gz"
+  # fixed <- "~/Dropbox (PennNeurosurgery)/RAVE/Samples/Tower-related/templates 2/Lead-DBS_atlases_MNI_ICBM_2009b_NLIN_ASYM/MNI_ICBM_2009b_NLIN_ASYM/t1_brain.nii.gz"
+  # outprefix = "/Users/dipterix/rave_data/raw_dir/testtest/rave-imaging/coregistration/outputs/t1_to_mri_"
+  # verbose <- TRUE
+  # type_of_transform <- "Rigid"
+  # mask <- NULL
+  # raveio::backup_file(dirname(outprefix), remove = TRUE)
+  # mask <- "~/Dropbox (PennNeurosurgery)/RAVE/Samples/Tower-related/templates 2/Lead-DBS_atlases_MNI_ICBM_2009b_NLIN_ASYM/MNI_ICBM_2009b_NLIN_ASYM/t1_brain_mask.nii.gz"
+
+  ants <- load_ants()
+
+  verbose <- convert_if_not_python(verbose, as.logical(verbose))
+
+  fixed_img <- as_ANTsImage(fixed, strict = TRUE)
+  moving_img <- as_ANTsImage(moving, strict = TRUE)
+  mask_img <- as_ANTsImage(mask, strict = FALSE)
+
+  # # initial affine register
+  # AffBasename = 't1_to_MNI_aff_'
+  # OutputAff = str(dpReg + AffBasename)
+  # ANTs_command = AntsPth + str('antsRegistrationSyN.sh -d 3 -m %fnBrainNii -f %fnMNI -o %OutputAff -n %numcores -t a -r 2 -j 1') % (fnBrainNii, fnMNI, OutputAff, numcores)
+  #
+  # SyNbasename = 't1_to_MNI_opt_';
+  # AffBrainNii = str(dpReg + str(str(AffBasename) + 'Warped.nii.gz'))
+  # OutNonl = str(dpReg + SyNbasename)
+  # cmd = AntsPth + str('antsRegistrationSyN.sh -d 3 -m %s -f %s -o %s -n %s -t b -r 2 -j 1 -x %s') % (AffBrainNii, fnMNI, OutNonl, numcores, fnVDCmask)
+
+  outprefix <- normalizePath(to_r(outprefix), mustWork = FALSE, winslash = "/")
+  dir.create(dirname(outprefix), showWarnings = FALSE, recursive = TRUE)
+
+  outprefix1 <- r_to_py(sprintf("%saffine_", outprefix))
+  outprefix2 <- r_to_py(sprintf("%sdeformable_", outprefix))
+
+  # -t a -r 2 -j 1
+  affine_reg <- ants$registration(
+    fixed = fixed_img,
+    moving = moving_img,
+    mask = mask_img,
+    outprefix = outprefix1,
+    type_of_transform = "antsRegistrationSyN[a]",
+    # aff_metric = "CC",
+    # syn_metric = "CC",
+    write_composite_transform = FALSE,
+    # aff_sampling = 2L,
+    # syn_sampling = 2L,
+    verbose = verbose
+  )
+
+  affine_reg_r <- py_to_r(affine_reg)
+  # Save transformed outputs
+  affine_reg_r$warpedmovout$to_file(sprintf("%saffine_warpedmovout.nii.gz", outprefix))
+  fixed_img$to_file(sprintf("%sorig_fixed.nii.gz", outprefix))
+  moving_img$to_file(sprintf("%sorig_moving.nii.gz", outprefix))
+
+  # -t b -r 2 -j 1 -x mask
+  syn_reg <- ants$registration(
+    fixed = fixed_img,
+    moving = affine_reg_r$warpedmovout,
+    mask = mask_img,
+    outprefix = outprefix2,
+    type_of_transform = "antsRegistrationSyN[b]",
+    # aff_metric = "CC",
+    # syn_metric = "CC",
+    write_composite_transform = FALSE,
+    # aff_sampling = 2L,
+    # syn_sampling = 2L,
+    verbose = verbose,
+  )
+  syn_reg_r <- py_to_r(syn_reg)
+
+  # Save transformed outputs
+  syn_reg_r$warpedmovout$to_file(sprintf("%sdeformable_warpedmovout.nii.gz", outprefix))
+
+  # 'antsApplyTransforms -d 3 -r %s -i \'%s\' -o %s -n NearestNeighbor -t [%s,1] -t [%s,1] -t [%s,1] -t %s' % (fnEpiBrainNii, fnROImask[i], fnOutput, fnBbrMat, fnAff_MNIaff, fnSyN_MNIaff, fnSyN_MNIwarp)
+  #
+  # root_path <- normalizePath("~/rave_data/raw_dir/testtest/rave-imaging/coregistration/")
+  # file.copy(affine_reg_r$fwdtransforms, file.path(root_path, "t1_to_mni_1_0GenericAffine.mat"))
+  #
+  # fixed_img$to_file(file.path(root_path, "template.nii.gz"))
+  # affine_reg_r$warpedmovout$to_file(file.path(root_path, "affine_warpedmovout.nii.gz"))
+  # file.copy(syn_reg_r$fwdtransforms[[1]], file.path(root_path, "t1_to_mni_2_deformable_1Warp.nii.gz"))
+  # file.copy(syn_reg_r$fwdtransforms[[2]], file.path(root_path, "t1_to_mni_2_deformable_0GenericAffine.mat"))
+  #
+  # syn_reg_r$warpedmovout$to_file(file.path(root_path, "syn_warpedmovout.nii.gz"))
+
+  re <- structure(
+    list(
+      description = "Affine+SYN registration to template",
+      prefix = outprefix,
+      orig = list(
+        fixed = "orig_fixed.nii.gz",
+        moving = "orig_moving.nii.gz"
+      ),
+      affine = list(
+        warped = "affine_warpedmovout.nii.gz",
+        description = "Transform is a 4x4 matrix for both forward and inverse transforms",
+        transform = "affine_0GenericAffine.mat"
+      ),
+      nonlinear = list(
+        warped = "deformable_warpedmovout.nii.gz",
+        description = "`forward_transforms` include transforms to move from moving to fixed image, and `inverse_transforms` are transforms to move from fixed to moving image.",
+        forward_transforms = c(
+          "deformable_1Warp.nii.gz",
+          "deformable_0GenericAffine.mat"
+        ),
+        inverse_transforms = c(
+          "deformable_0GenericAffine.mat",
+          "deformable_1InverseWarp.nii.gz"
+        )
+      )
+    ),
+    class = "rpyANTs.halpern_register_template_mri"
+  )
+
+  re
+}
+
+#' @rdname halpern_preprocess
+#' @export
+halpern_apply_transform_template_mri <- function(roi_folder, outprefix, verbose = TRUE) {
+  # DIPSAUS DEBUG START
+  # prefix = "/Users/dipterix/rave_data/raw_dir/testtest/rave-imaging/coregistration/outputs/t1_to_mri_"
+  # roi_folder <- "~/Dropbox (PennNeurosurgery)/RAVE/Samples/Tower-related/templates 2/Lead-DBS_atlases_MNI_ICBM_2009b_NLIN_ASYM/MNI_ICBM_2009b_NLIN_ASYM/atlases/Functional Connectivity Atlas 7 Networks (Yeo 2011)/mixed"
+  # verbose <- TRUE
+
+  prefix <- normalize_path(outprefix, must_work = FALSE)
+
+  rois <- list.files(
+    roi_folder,
+    pattern = "(nii|nii\\.gz)$",
+    full.names = FALSE,
+    recursive = TRUE,
+    include.dirs = FALSE,
+    all.files = FALSE,
+    ignore.case = TRUE
+  )
+  mask_root <- sprintf("%smasks", prefix)
+  dir.create(mask_root, showWarnings = FALSE, recursive = TRUE)
+
+  # `warpedmovout`: Moving image warped to space of fixed image.
+  # `warpedfixout`: Fixed image warped to space of moving image.
+  # `fwdtransforms`: Transforms to move from moving to fixed image.
+  # `invtransforms`: Transforms to move from fixed to moving image.
+  # gather transforms from template to native
+  infiles <- sprintf(
+    "%s%s", prefix, c(
+      "orig_fixed.nii.gz",
+      "orig_moving.nii.gz",
+      "affine_0GenericAffine.mat",
+      "deformable_0GenericAffine.mat",
+      "deformable_1InverseWarp.nii.gz"
+    )
+  )
+  infiles <- normalize_path(infiles, must_work = TRUE)
+
+  native_img <- as_ANTsImage(infiles[[2]])
+
+  # reverse fixed and moving because we want the final image to sit
+  # in native space
+  transformed <- ants_apply_transforms(
+    fixed = native_img,
+    moving = infiles[[1]],
+    transformlist = infiles[c(3,4,5)],
+    interpolator = "nearestNeighbor",
+    whichtoinvert = c(TRUE, TRUE, FALSE),
+    verbose = verbose
+  )
+
+  transformed$to_file(filename = sprintf("%soverall_warpedfixinmov.nii.gz", prefix))
+
+  lapply(rois, function(mask) {
+    mask_infile <- normalize_path(file_path(roi_folder, mask), must_work = TRUE)
+    mask_outfile <- normalize_path(file_path(mask_root, mask), must_work = FALSE)
+    dir.create(dirname(mask_outfile), showWarnings = FALSE, recursive = TRUE)
+
+    mask_out <- ants_apply_transforms(
+      fixed = native_img,
+      moving = mask_infile,
+      transformlist = infiles[c(3,4,5)],
+      interpolator = "nearestNeighbor",
+      whichtoinvert = c(TRUE, TRUE, FALSE),
+      verbose = verbose
+    )
+    mask_out$to_file(filename = mask_outfile)
+    return(NULL)
+  })
+
+  invisible()
 }
 
 

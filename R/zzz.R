@@ -89,6 +89,47 @@ inject_ants <- function(ants) {
   )
 })
 
+.rpyants <- local({
+
+  rpyants_module <- NULL
+
+  get_rpyants <- function(force = FALSE, error_if_missing = TRUE) {
+    if(!force && inherits(rpyants_module, "python.builtin.module")) {
+      return( rpyants_module )
+    }
+    if( !rpymat_is_setup() ) {
+      if( error_if_missing ) {
+        stop("Please configure ANTsPy environment first. Run the following command:\n  rpyANTs::install_ants()\nIf you would like a specific Python version (e.g. python=3.9), \n  rpyANTs::install_ants(python_ver = '3.9')")
+      }
+      return( NULL )
+    }
+    tryCatch({
+      rpymat::ensure_rpymat(verbose = FALSE)
+      m <- reticulate::import_from_path("rpyants", path = system.file("rpyants", package = "rpyANTs"), convert = FALSE, delay_load = FALSE)
+      # m <- reticulate::import("rpyants", convert = FALSE, delay_load = FALSE)
+      # m <- inject_ants(m)
+      class(m) <- c('ants.proxy', class(m))
+      rpyants_module <<- m
+      return( rpyants_module )
+    }, error = function(e) {
+      if( error_if_missing ) {
+        stop(e)
+      }
+      return(NULL)
+    })
+  }
+
+  clean_rpyants <- function() {
+    rpyants_module <<- NULL
+  }
+
+  list(
+    get = get_rpyants,
+    clean = clean_rpyants
+  )
+})
+
+
 .antspynet <- local({
 
   antspynet <- NULL
@@ -167,16 +208,16 @@ load_py <- local({
       load_ants(error_if_missing = FALSE)
     }
   )
-  makeActiveBinding(
-    "antspynet", env = pkg,
-    fun = function() {
-      load_antspynet(error_if_missing = FALSE)
-    }
-  )
+  # makeActiveBinding(
+  #   "antspynet", env = pkg,
+  #   fun = function() {
+  #     load_antspynet(error_if_missing = FALSE)
+  #   }
+  # )
 }
 
 .onUnload <- function(libpath) {
-
+  .rpyants$clean()
   .antspynet$clean()
   .ants$clean()
 }
@@ -218,6 +259,8 @@ NULL
 #' @export
 load_ants <- .ants$get
 
+load_rpyants <- .rpyants$get
+
 
 #' @name antspynet
 #' @title Get \code{'ANTsPyNet'} module
@@ -226,12 +269,7 @@ load_ants <- .ants$get
 #' load; default is true.
 #' @returns A 'Python' module if successfully loaded. If \code{error_if_missing}
 #' is set to false and module is unable to load, return \code{NULL}
-#' @usage antspynet
 #' @seealso \code{\link{ants}}
-#' @export
-NULL
-
-#' @rdname antspynet
 #' @export
 load_antspynet <- .antspynet$get
 

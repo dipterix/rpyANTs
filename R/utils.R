@@ -260,3 +260,24 @@ get_os <- function(){
   }
   return('unknown')
 }
+
+
+normalize_path <- function(path, must_work = NA) {
+  path <- unlist(lapply(path, function(p) {
+    if(!file.exists(p)) {
+      dname <- dirname(p)
+      dname <- normalizePath(dname, winslash = "/", mustWork = must_work)
+      p <- file.path(dname, basename(p), fsep = "/")
+    } else {
+      p <- normalizePath(p, winslash = "/", mustWork = must_work)
+    }
+    p
+  }))
+
+  gsub("[/|\\\\]+", "/", path)
+}
+
+file_path <- function(...) {
+  path <- file.path(..., fsep = "/")
+  gsub("[/|\\\\]+", "/", path)
+}
