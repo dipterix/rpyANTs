@@ -367,15 +367,21 @@ halpern_apply_transform_template_mri <- function(roi_folder, outprefix, verbose 
 
   prefix <- normalize_path(outprefix, must_work = FALSE)
 
-  rois <- list.files(
-    roi_folder,
-    pattern = "(nii|nii\\.gz)$",
-    full.names = FALSE,
-    recursive = TRUE,
-    include.dirs = FALSE,
-    all.files = FALSE,
-    ignore.case = TRUE
-  )
+  if(endsWith(roi_folder, "nii") || endsWith(roi_folder, "nii.gz")) {
+    # roi_folder is a file
+    rois <- basename(roi_folder)
+    roi_folder <- dirname(roi_folder)
+  } else {
+    rois <- list.files(
+      roi_folder,
+      pattern = "(nii|nii\\.gz)$",
+      full.names = FALSE,
+      recursive = TRUE,
+      include.dirs = FALSE,
+      all.files = FALSE,
+      ignore.case = TRUE
+    )
+  }
   mask_root <- sprintf("%smasks", prefix)
   dir.create(mask_root, showWarnings = FALSE, recursive = TRUE)
 
@@ -626,7 +632,7 @@ ants_apply_transforms_to_points <- function(
   } else if(length(whichtoinvert) != n_transforms){
     stop("ants_apply_transforms_to_points: `whichtoinvert` must be either NULL or have the same length as `transformlist`")
   } else {
-    whichtoinvert <- py_list(as.logical(whichtoinvert))
+    whichtoinvert <- py_list(as.list(as.logical(whichtoinvert)))
   }
 
   re <- ants$apply_transforms_to_points(
