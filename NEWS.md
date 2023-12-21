@@ -1,3 +1,10 @@
+# rpyANTs 0.0.3
+
+* Added registration code that reproduces `Halpern` lab results
+* Added `t1_preprocess` to align `MRI` to template using non-linear registration
+* No more injection to `Python` on `Windows` as the memory pointer crash has been fixed by upstream developers
+* No active binding to `antspynet` as this `Python` package might fail to load on some systems
+
 # rpyANTs 0.0.2
 
 * Added `antspynet` to the installation
