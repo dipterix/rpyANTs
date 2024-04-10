@@ -18,3 +18,4 @@ junk.*
 build
 package-lock.json
 yarn.lock
+debug.py

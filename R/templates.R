@@ -1,11 +1,18 @@
 template_urls <- list(
   `mni_icbm152_nlin_asym_09a` = list(
     coord_sys = "MNI152",
+    name = "MNI152NLin2009aAsym",
     url = "https://github.com/dipterix/threeBrain-sample/releases/download/1.0.1/mni_icbm152_nlin_asym_09a.zip"
   ),
   `mni_icbm152_nlin_asym_09b` = list(
     coord_sys = "MNI152",
-    "https://github.com/dipterix/threeBrain-sample/releases/download/1.0.1/mni_icbm152_nlin_asym_09b.zip"
+    name = "MNI152NLin2009bAsym",
+    url = "https://github.com/dipterix/threeBrain-sample/releases/download/1.0.1/mni_icbm152_nlin_asym_09b.zip"
+  ),
+  `mni_icbm152_nlin_asym_09c` = list(
+    coord_sys = "MNI152",
+    name = "MNI152NLin2009cAsym",
+    url = "https://github.com/dipterix/threeBrain-sample/releases/download/1.0.1/mni_icbm152_nlin_asym_09c.zip"
   )
 )
 
