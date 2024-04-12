@@ -24,7 +24,16 @@ ensure_template <- function(name = BUILTIN_TEMPLATES) {
   if(!dir.exists(template_path)) {
     url <- template_urls[[name]]$url
     f <- tempfile(fileext = ".zip")
-    # options("timeout" = 3600)
+    current_timeout <- getOption("timeout", default = 60)
+    if( current_timeout < 3600 ) {
+      # message("Setting timeout for current connection to 60 min.")
+      # Template file size might be >1GB, and there might not be enough time.
+      options("timeout" = 3600)
+
+      # Always set timeout back to default
+      on.exit({ options("timeout" = current_timeout) })
+    }
+
     utils::download.file(url, destfile = f)
     utils::unzip(f, exdir = dirname(template_path), overwrite = TRUE)
   }
