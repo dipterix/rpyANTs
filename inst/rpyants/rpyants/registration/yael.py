@@ -633,6 +633,54 @@ class YAELPreprocess():
             mapped_points['z'].values
         ]).transpose()
 
+    def transform_points_from_template(self, points : np.ndarray, template_name : str, native_type : str = "T1w", verbose : bool=True):
+        '''
+        Map the points from the template to the native image.
+
+        @param points: The points (`nx3`) in the template space (specified by `template_name`), `RAS` (right-anterior-superior) coordinate system.
+        @type points: np.ndarray
+
+        @param template_name: The name of the template image (e.g., `MNI152NLin2009bAsym`)
+        @type template_name: str
+
+        @param native_type: The type of the image (e.g., `CT`, `T1w`, `T2w`, "FLAIR", "DWI", "BOLD"), default is `T1w`.
+        @type native_type: str
+
+        @return: The mapped points.
+        @rtype: np.ndarray
+        @raise FileNotFoundError: If the mapping is missing.
+
+        @example:
+        ```
+        import numpy as np
+        points = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+        # preprocess.set_image("T1w", "/path/to/T1w.nii.gz")
+        # preprocess.map_to_template(template_path = "/path/to/MNI152NLin2009bAsym.nii.gz", template_name = "MNI152NLin2009bAsym")
+        mapped_points = preprocess.map_points_to_template(points, template_name = "MNI152NLin2009bAsym")
+        ```
+
+        '''
+        map_info = self.get_template_mapping(template_name = template_name, native_type = native_type)
+        if map_info is None:
+            raise FileNotFoundError(f"Missing mapping from {native_type} to {template_name}. Please register the image to the template first.")
+        map_args = map_info['native_to_template']
+        import pandas as pd
+        df = pd.DataFrame({
+            'x' : - points[:, 0],
+            'y' : - points[:, 1],
+            'z' : points[:, 2]
+        })
+        mapped_points = ants.apply_transforms_to_points(
+            dim = 3, points = df, 
+            verbose = verbose,
+            **map_args
+        )
+        return np.array([
+            - mapped_points['x'].values,
+            - mapped_points['y'].values,
+            mapped_points['z'].values
+        ]).transpose()
+    
     def generate_atlas_from_template(self, template_name : str, template_atlas_folder : str, native_folder : str = None, verbose : bool=True) -> str:
         '''
         Generate a native atlas from the template atlas.
