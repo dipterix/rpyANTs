@@ -35,9 +35,17 @@ class YAELPreprocess():
         @type work_path: str
 
         '''
-        self.allowed_image_types = ["CT", "T1w", "T2w", "FLAIR", "DWI", "BOLD"]
+        
+        # List of allowed image types
+        # CT: postop CT
+        # T1w: preop T1w MRI without contrast
+        # T2w: preop T2w MRI 
+        # FLAIR: preop FLAIR MRI
+        # preopCT: preop CT (for showing blood vessels)
+        # T1wContrast: preop T1w MRI with contrast (for showing blood vessels)
+        # fGATIR: preop fast Gray Matter Acquisition T1 Inversion Recovery
+        self.allowed_image_types = ["CT", "T1w", "T2w", "FLAIR", "preopCT", "T1wContrast", "fGATIR"]
         # Each item is a dictionary returned by `parse_bids_filename`
-        # Keys are image types (e.g., `CT`, `T1w`, `T2w`, `FLAIR`, `DWI`, `BOLD`)
         self._images = {}
 
         self._subject_code = subject_code
@@ -89,7 +97,7 @@ class YAELPreprocess():
         '''
         Get the path to the image.
 
-        @param type: The type of the image (e.g., `CT`, `T1w`, "T2w", "FLAIR", "DWI", "BOLD")
+        @param type: The type of the image (e.g., `CT`, `T1w`, "T2w", "FLAIR", "preopCT", "T1wContrast", "fGATIR")
         @type type: str
 
         @param relative: If True, return the relative path (to the working directory). 
@@ -141,7 +149,7 @@ class YAELPreprocess():
         '''
         Get the expected path to the image.
 
-        @param type: The type of the image (e.g., `CT`, `T1w`, "T2w", "FLAIR", "DWI", "BOLD")
+        @param type: The type of the image (e.g., `CT`, `T1w`, "T2w", "FLAIR", "preopCT", "T1wContrast", "fGATIR")
         @type type: str
 
         @param folder: The folder where the image is expected to be found.
@@ -171,7 +179,7 @@ class YAELPreprocess():
         '''
         Set the path to the image.
 
-        @param type: The type of the image (e.g., `CT`, `T1w`, "T2w", "FLAIR", "DWI", "BOLD")
+        @param type: The type of the image (e.g., `CT`, `T1w`, "T2w", "FLAIR", "preopCT", "T1wContrast", "fGATIR")
         @type type: str
 
         @param path: The path to the image.
@@ -192,10 +200,12 @@ class YAELPreprocess():
             raise FileExistsError(f"Image type {type} already exists. If you want to overwrite it, set `overwrite=True`.")
         try:
             parsed = parse_bids_filename(os.path.basename(path))
-            parsed['folder'] = "inputs/anat"
-            parsed = self._fix_image_path(parsed)
             if parsed is None:
                 raise ValueError("Invalid BIDS filename")
+            parsed['folder'] = "inputs/anat"
+            parsed['type'] = type
+            parsed['ext'] = "nii.gz"
+            parsed = self._fix_image_path(parsed)
         except:
             parsed = self._fix_image_path({
                 'folder': "inputs/anat",
@@ -228,18 +238,22 @@ class YAELPreprocess():
         return self.input_image_path("FLAIR")
     
     @property
-    def input_dwi_path(self):
-        return self.input_image_path("DWI")
+    def input_preopCT_path(self):
+        return self.input_image_path("preopCT")
     
     @property
-    def input_bold_path(self):
-        return self.input_image_path("BOLD")
+    def input_fGATIR_path(self):
+        return self.input_image_path("fGATIR")
+    
+    @property
+    def input_t1wcontrast_path(self):
+        return self.input_image_path("T1wContrast")
     
     def register_to_T1w(self, type : str, reverse : bool= False, verbose : bool=True):
         '''
         Register an image to the T1w image.
 
-        @param type: The type of the image (e.g., `CT`, `T2w`, "FLAIR", "DWI", "BOLD")
+        @param type: The type of the image (e.g., `CT`, `T2w`, "FLAIR", "preopCT", "T1wContrast", "fGATIR")
         @type type: str
 
         @param reverse: If True, register the T1w image to the image (switch the fixed and moving images).
@@ -307,17 +321,17 @@ class YAELPreprocess():
         ct_img.set_qform(new_sform)
         ct_img.to_filename( ensure_basename( self.expected_image_path( type, "coregistration/anat", space = "scanner" ) ) )
         # save the mapping configurations
-        mappings = self.get_native_mappings(type, relative = True)
+        mappings = self.get_native_mapping(type, relative = True)
         log_file = ensure_basename( self.format_path(folder="coregistration/log", name = "mapping", ext="json", space = "scanner", orig = type) )
         with open(log_file, "w") as f:
             json.dump(mappings, f)
         return mappings
 
-    def get_native_mappings(self, type : str = "CT", relative : bool = False):
+    def get_native_mapping(self, type : str = "CT", relative : bool = False):
         '''
         Get the mappings for the native image.
 
-        @param type: The type of the image modality (e.g., "CT", "T2w", "FLAIR", "DWI", "BOLD")
+        @param type: The type of the image modality (e.g., "CT", "T2w", "FLAIR", "preopCT", "T1wContrast", "fGATIR")
         @type type: str
 
         @param relative: If True, return the relative path (to the working directory).
@@ -344,6 +358,8 @@ class YAELPreprocess():
             'mappings': {},
         }
         mappings = result['mappings']
+        if not os.path.exists(tranform_rootdir):
+            ensure_dir(tranform_rootdir)
         for filename in os.listdir( tranform_rootdir ):
             if os.path.isfile( file_path(tranform_rootdir, filename) ):
                 try:
@@ -353,6 +369,8 @@ class YAELPreprocess():
                         mappings[parsed['type']] = file_path(transform_prefix, filename)
                 except:
                     continue
+        if not os.path.exists(aligned_rootdir):
+            ensure_dir(aligned_rootdir)
         for filename in os.listdir( aligned_rootdir ):
             if os.path.isfile( file_path(aligned_rootdir, filename) ):
                 try:
@@ -378,7 +396,7 @@ class YAELPreprocess():
         @param template_name: The name of the template image (e.g., `MNI152NLin2009bAsym`)
         @type template_name: str
 
-        @param native_type: The type of the image (e.g., `CT`, `T1w`, `T2w`, "FLAIR", "DWI", "BOLD")
+        @param native_type: The type of the image (e.g., `CT`, `T1w`, `T2w`, "FLAIR", "preopCT", "T1wContrast", "fGATIR")
         @type native_type: str
 
         @param reverse: If True, register the template image to the image (switch the fixed and moving images).
@@ -503,7 +521,7 @@ class YAELPreprocess():
         @param template_name: The name of the template image (e.g., `MNI152NLin2009bAsym`)
         @type template_name: str
 
-        @param native_type: The type of the image (e.g., `CT`, `T1w`, `T2w`, "FLAIR", "DWI", "BOLD"), default is `T1w`.
+        @param native_type: The type of the image (e.g., `CT`, `T1w`, `T2w`, "FLAIR", "preopCT", "T1wContrast", "fGATIR"), default is `T1w`.
         @type native_type: str
 
         @param relative: If True, return the relative path (to the working directory).
@@ -515,6 +533,8 @@ class YAELPreprocess():
         if native_type not in self.allowed_image_types:
             raise ValueError(f"Invalid image type: {native_type}. Must be one of {self.allowed_image_types}")
         tranform_rootdir = file_path(self._work_path, "normalization/transformations")
+        if not os.path.exists(tranform_rootdir):
+            return None
         forward_list = []
         inverse_list = []
         for filename in os.listdir( tranform_rootdir ):
@@ -564,7 +584,7 @@ class YAELPreprocess():
         @param template_name: The name of the template image (e.g., `MNI152NLin2009bAsym`)
         @type template_name: str
 
-        @param native_type: The type of the image (e.g., `CT`, `T1w`, `T2w`, "FLAIR", "DWI", "BOLD"), default is `T1w`.
+        @param native_type: The type of the image (e.g., `CT`, `T1w`, `T2w`, "FLAIR", "preopCT", "T1wContrast", "fGATIR"), default is `T1w`.
         @type native_type: str
 
         @return: The mapped image.
@@ -595,7 +615,7 @@ class YAELPreprocess():
         @param template_name: The name of the template image (e.g., `MNI152NLin2009bAsym`)
         @type template_name: str
 
-        @param native_type: The type of the image (e.g., `CT`, `T1w`, `T2w`, "FLAIR", "DWI", "BOLD"), default is `T1w`.
+        @param native_type: The type of the image (e.g., `CT`, `T1w`, `T2w`, "FLAIR", "preopCT", "T1wContrast", "fGATIR"), default is `T1w`.
         @type native_type: str
 
         @return: The mapped points.
@@ -643,7 +663,7 @@ class YAELPreprocess():
         @param template_name: The name of the template image (e.g., `MNI152NLin2009bAsym`)
         @type template_name: str
 
-        @param native_type: The type of the image (e.g., `CT`, `T1w`, `T2w`, "FLAIR", "DWI", "BOLD"), default is `T1w`.
+        @param native_type: The type of the image (e.g., `CT`, `T1w`, `T2w`, "FLAIR", "preopCT", "T1wContrast", "fGATIR"), default is `T1w`.
         @type native_type: str
 
         @return: The mapped points.
