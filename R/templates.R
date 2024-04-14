@@ -18,11 +18,34 @@ template_urls <- list(
 
 BUILTIN_TEMPLATES <- names(template_urls)
 
+#' Ensure the template directory is downloaded
+#' @param name name of the template, commonly known as \code{'MNI152'}
+#' templates; choices are \code{"mni_icbm152_nlin_asym_09a"},
+#' \code{"mni_icbm152_nlin_asym_09b"}, and \code{"mni_icbm152_nlin_asym_09c"}.
+#' @returns The downloaded template path
+#' @examples
+#'
+#' # Do not run for testing as this will download the template
+#' if(FALSE) {
+#'
+#' # Default is `mni_icbm152_nlin_asym_09a`
+#' ensure_template()
+#' ensure_template("mni_icbm152_nlin_asym_09a")
+#'
+#' # Using MNI152b
+#' ensure_template("mni_icbm152_nlin_asym_09b")
+#'
+#' }
+#'
+#'
+#' @export
 ensure_template <- function(name = BUILTIN_TEMPLATES) {
   name <- match.arg(name)
   template_path <- file.path(R_user_dir(package = "rpyANTs", which = "data"), "templates", name)
+
+  item <- template_urls[[name]]
   if(!dir.exists(template_path)) {
-    url <- template_urls[[name]]$url
+    url <- item$url
     f <- tempfile(fileext = ".zip")
     current_timeout <- getOption("timeout", default = 60)
     if( current_timeout < 3600 ) {
@@ -37,7 +60,12 @@ ensure_template <- function(name = BUILTIN_TEMPLATES) {
     utils::download.file(url, destfile = f)
     utils::unzip(f, exdir = dirname(template_path), overwrite = TRUE)
   }
-  normalize_path(template_path, must_work = TRUE)
+  re <- normalize_path(template_path, must_work = TRUE)
+  attr(re, "url") <- item$url
+  attr(re, "name") <- name
+  attr(re, "camelName") <- item$name
+  attr(re, "coord_sys") <- item$coord_sys
+  re
 }
 
 
