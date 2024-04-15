@@ -353,8 +353,8 @@ class YAELPreprocess():
         result = {
             'subject': self._subject_code,
             'work_path': self._work_path,
-            f'{type}_path': self.input_image_path(type, relative = True),
-            'T1w_path': self.input_image_path("T1w", relative = True),
+            f'{type}_path': self.input_image_path(type, relative = relative),
+            'T1w_path': self.input_image_path("T1w", relative = relative),
             'mappings': {},
         }
         mappings = result['mappings']
