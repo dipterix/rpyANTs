@@ -413,7 +413,7 @@ class YAELPreprocess():
         if native_path is None:
             raise FileNotFoundError(f"Missing image for type `{native_type}`. Please set the image first via `preprocess.set_image`.")
         fix_path, mov_path = template_path, native_path
-        ants_outputdir = file_path(self._work_path, "tmp", f"coregister_{native_type}_with_template")
+        ants_outputdir = file_path(self._work_path, "tmp", f"coregister_{native_type}_with_${template_name}")
         resultdir = file_path(self._work_path, "normalization")
         if os.path.exists(ants_outputdir):
             unlink(ants_outputdir)
