@@ -1,96 +1,34 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>http://dipterix.org/rpyANTs/404.html</loc>
-  </url>
-  <url>
-    <loc>http://dipterix.org/rpyANTs/authors.html</loc>
-  </url>
-  <url>
-    <loc>http://dipterix.org/rpyANTs/index.html</loc>
-  </url>
-  <url>
-    <loc>http://dipterix.org/rpyANTs/news/index.html</loc>
-  </url>
-  <url>
-    <loc>http://dipterix.org/rpyANTs/reference/ants.html</loc>
-  </url>
-  <url>
-    <loc>http://dipterix.org/rpyANTs/reference/ants_apply_transforms.html</loc>
-  </url>
-  <url>
-    <loc>http://dipterix.org/rpyANTs/reference/ants_apply_transforms_to_points.html</loc>
-  </url>
-  <url>
-    <loc>http://dipterix.org/rpyANTs/reference/ants_available.html</loc>
-  </url>
-  <url>
-    <loc>http://dipterix.org/rpyANTs/reference/ants_motion_correction.html</loc>
-  </url>
-  <url>
-    <loc>http://dipterix.org/rpyANTs/reference/ants_plot.html</loc>
-  </url>
-  <url>
-    <loc>http://dipterix.org/rpyANTs/reference/ants_plot_grid.html</loc>
-  </url>
-  <url>
-    <loc>http://dipterix.org/rpyANTs/reference/ants_registration.html</loc>
-  </url>
-  <url>
-    <loc>http://dipterix.org/rpyANTs/reference/ants_resample_image.html</loc>
-  </url>
-  <url>
-    <loc>http://dipterix.org/rpyANTs/reference/antspynet.html</loc>
-  </url>
-  <url>
-    <loc>http://dipterix.org/rpyANTs/reference/antspynet_brain_extraction.html</loc>
-  </url>
-  <url>
-    <loc>http://dipterix.org/rpyANTs/reference/antspynet_preprocess_brain_image.html</loc>
-  </url>
-  <url>
-    <loc>http://dipterix.org/rpyANTs/reference/antspynet_segmentation.html</loc>
-  </url>
-  <url>
-    <loc>http://dipterix.org/rpyANTs/reference/as_ANTsImage.html</loc>
-  </url>
-  <url>
-    <loc>http://dipterix.org/rpyANTs/reference/as_ANTsTransform.html</loc>
-  </url>
-  <url>
-    <loc>http://dipterix.org/rpyANTs/reference/correct_intensity.html</loc>
-  </url>
-  <url>
-    <loc>http://dipterix.org/rpyANTs/reference/ensure_template.html</loc>
-  </url>
-  <url>
-    <loc>http://dipterix.org/rpyANTs/reference/halpern_preprocess.html</loc>
-  </url>
-  <url>
-    <loc>http://dipterix.org/rpyANTs/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>http://dipterix.org/rpyANTs/reference/install_ants.html</loc>
-  </url>
-  <url>
-    <loc>http://dipterix.org/rpyANTs/reference/is_affine3D.html</loc>
-  </url>
-  <url>
-    <loc>http://dipterix.org/rpyANTs/reference/py.html</loc>
-  </url>
-  <url>
-    <loc>http://dipterix.org/rpyANTs/reference/py_builtin.html</loc>
-  </url>
-  <url>
-    <loc>http://dipterix.org/rpyANTs/reference/py_list.html</loc>
-  </url>
-  <url>
-    <loc>http://dipterix.org/rpyANTs/reference/py_slice.html</loc>
-  </url>
-  <url>
-    <loc>http://dipterix.org/rpyANTs/reference/reexports.html</loc>
-  </url>
-  <url>
-    <loc>http://dipterix.org/rpyANTs/reference/t1_preprocess.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>http://dipterix.org/rpyANTs/404.html</loc></url>
+<url><loc>http://dipterix.org/rpyANTs/authors.html</loc></url>
+<url><loc>http://dipterix.org/rpyANTs/index.html</loc></url>
+<url><loc>http://dipterix.org/rpyANTs/news/index.html</loc></url>
+<url><loc>http://dipterix.org/rpyANTs/reference/ants.html</loc></url>
+<url><loc>http://dipterix.org/rpyANTs/reference/ants_apply_transforms.html</loc></url>
+<url><loc>http://dipterix.org/rpyANTs/reference/ants_apply_transforms_to_points.html</loc></url>
+<url><loc>http://dipterix.org/rpyANTs/reference/ants_available.html</loc></url>
+<url><loc>http://dipterix.org/rpyANTs/reference/ants_motion_correction.html</loc></url>
+<url><loc>http://dipterix.org/rpyANTs/reference/ants_plot.html</loc></url>
+<url><loc>http://dipterix.org/rpyANTs/reference/ants_plot_grid.html</loc></url>
+<url><loc>http://dipterix.org/rpyANTs/reference/ants_registration.html</loc></url>
+<url><loc>http://dipterix.org/rpyANTs/reference/ants_resample_image.html</loc></url>
+<url><loc>http://dipterix.org/rpyANTs/reference/antspynet.html</loc></url>
+<url><loc>http://dipterix.org/rpyANTs/reference/antspynet_brain_extraction.html</loc></url>
+<url><loc>http://dipterix.org/rpyANTs/reference/antspynet_preprocess_brain_image.html</loc></url>
+<url><loc>http://dipterix.org/rpyANTs/reference/antspynet_segmentation.html</loc></url>
+<url><loc>http://dipterix.org/rpyANTs/reference/as_ANTsImage.html</loc></url>
+<url><loc>http://dipterix.org/rpyANTs/reference/as_ANTsTransform.html</loc></url>
+<url><loc>http://dipterix.org/rpyANTs/reference/correct_intensity.html</loc></url>
+<url><loc>http://dipterix.org/rpyANTs/reference/ensure_template.html</loc></url>
+<url><loc>http://dipterix.org/rpyANTs/reference/halpern_preprocess.html</loc></url>
+<url><loc>http://dipterix.org/rpyANTs/reference/index.html</loc></url>
+<url><loc>http://dipterix.org/rpyANTs/reference/install_ants.html</loc></url>
+<url><loc>http://dipterix.org/rpyANTs/reference/is_affine3D.html</loc></url>
+<url><loc>http://dipterix.org/rpyANTs/reference/py.html</loc></url>
+<url><loc>http://dipterix.org/rpyANTs/reference/py_builtin.html</loc></url>
+<url><loc>http://dipterix.org/rpyANTs/reference/py_list.html</loc></url>
+<url><loc>http://dipterix.org/rpyANTs/reference/py_slice.html</loc></url>
+<url><loc>http://dipterix.org/rpyANTs/reference/reexports.html</loc></url>
+<url><loc>http://dipterix.org/rpyANTs/reference/t1_preprocess.html</loc></url>
 </urlset>
+
