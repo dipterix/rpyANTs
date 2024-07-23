@@ -605,6 +605,37 @@ class YAELPreprocess():
         )
         return mapped_img
     
+    def transform_image_to_template(self, path : str, template_name : str, native_type : str = "T1w", interpolator="nearestNeighbor", verbose : bool=True):
+        '''
+        Map the image from the native image to the template.
+
+        @param path: The path to the native image.
+        @type path: str
+
+        @param template_name: The name of the template image (e.g., `MNI152NLin2009bAsym`)
+        @type template_name: str
+
+        @param native_type: The type of the image (e.g., `CT`, `T1w`, `T2w`, "FLAIR", "preopCT", "T1wContrast", "fGATIR"), default is `T1w`.
+        @type native_type: str
+
+        @return: The mapped image.
+        @rtype: ANTsImage
+        '''
+        if not os.path.exists(path):
+            raise FileNotFoundError(f"Invalid image path: {path}")
+        map_info = self.get_template_mapping(template_name = template_name, native_type = native_type)
+        if map_info is None:
+            raise FileNotFoundError(f"Missing mapping from {native_type} to {template_name}. Please register the image to the template first.")
+        map_args = map_info['native_to_template']
+        mapped_img = ants.apply_transforms(
+            fixed = ants.image_read(path),
+            moving = ants.image_read(self.input_image_path(native_type)),
+            interpolator = interpolator,
+            verbose = verbose,
+            **map_args
+        )
+        return mapped_img
+    
     def transform_points_to_template(self, points : np.ndarray, template_name : str, native_type : str = "T1w", verbose : bool=True):
         '''
         Map the points from the template to the native image.
