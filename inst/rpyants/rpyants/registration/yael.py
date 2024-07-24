@@ -7,6 +7,7 @@
 
 import os
 import json
+from typing import Union
 import numpy as np
 import nibabel as nib
 import ants
@@ -574,12 +575,12 @@ class YAELPreprocess():
             }
         }
     
-    def transform_image_from_template(self, path : str, template_name : str, native_type : str = "T1w", interpolator="nearestNeighbor", verbose : bool=True):
+    def transform_image_from_template(self, path : Union[str, ants.ANTsImage], template_name : str, native_type : str = "T1w", interpolator="nearestNeighbor", verbose : bool=True):
         '''
         Map the image from the template to the native image.
 
         @param path: The path to the image.
-        @type path: str
+        @type path: str | ANTsImage
 
         @param template_name: The name of the template image (e.g., `MNI152NLin2009bAsym`)
         @type template_name: str
@@ -590,30 +591,37 @@ class YAELPreprocess():
         @return: The mapped image.
         @rtype: ANTsImage
         '''
-        if not os.path.exists(path):
-            raise FileNotFoundError(f"Invalid image path: {path}")
+        if isinstance(path, ants.ANTsImage):
+            moving_img = path
+        else:
+            if not os.path.exists(path):
+                raise FileNotFoundError(f"Invalid image path: {path}")
+            moving_img = ants.image_read(path)
         map_info = self.get_template_mapping(template_name = template_name, native_type = native_type)
         if map_info is None:
             raise FileNotFoundError(f"Missing mapping from {native_type} to {template_name}. Please register the image to the template first.")
         map_args = map_info['template_to_native']
         mapped_img = ants.apply_transforms(
             fixed = ants.image_read(self.input_image_path(native_type)),
-            moving = ants.image_read(path),
+            moving = moving_img,
             interpolator = interpolator,
             verbose = verbose,
             **map_args
         )
         return mapped_img
     
-    def transform_image_to_template(self, path : str, template_name : str, native_type : str = "T1w", interpolator="nearestNeighbor", verbose : bool=True):
+    def transform_image_to_template(self, path : Union[str, ants.ANTsImage], template_name : str, template_path : Union[str, ants.ANTsImage], native_type : str = "T1w", interpolator="nearestNeighbor", verbose : bool=True):
         '''
         Map the image from the native image to the template.
 
         @param path: The path to the native image.
-        @type path: str
+        @type path: str | ANTsImage
 
         @param template_name: The name of the template image (e.g., `MNI152NLin2009bAsym`)
         @type template_name: str
+
+        @param template_path: The path to the template image
+        @type template_path: str | ANTsImage
 
         @param native_type: The type of the image (e.g., `CT`, `T1w`, `T2w`, "FLAIR", "preopCT", "T1wContrast", "fGATIR"), default is `T1w`.
         @type native_type: str
@@ -621,15 +629,25 @@ class YAELPreprocess():
         @return: The mapped image.
         @rtype: ANTsImage
         '''
-        if not os.path.exists(path):
-            raise FileNotFoundError(f"Invalid image path: {path}")
         map_info = self.get_template_mapping(template_name = template_name, native_type = native_type)
         if map_info is None:
             raise FileNotFoundError(f"Missing mapping from {native_type} to {template_name}. Please register the image to the template first.")
+        if isinstance(path, ants.ANTsImage):
+            moving_img = path
+        else:
+            if not os.path.exists(path):
+                raise FileNotFoundError(f"Invalid image path: {path}")
+            moving_img = ants.image_read(path)
+        if isinstance(template_path, ants.ANTsImage):
+            template_img = template_path
+        else:
+            if not os.path.exists(template_path):
+                raise FileNotFoundError(f"Invalid template path: {template_path}")
+            template_img = ants.image_read(template_path)
         map_args = map_info['native_to_template']
         mapped_img = ants.apply_transforms(
-            fixed = ants.image_read(path),
-            moving = ants.image_read(self.input_image_path(native_type)),
+            fixed = template_img,
+            moving = moving_img,
             interpolator = interpolator,
             verbose = verbose,
             **map_args
