@@ -1,8 +1,8 @@
 pandoc: 3.1.11
-pkgdown: 2.1.0
+pkgdown: 2.1.1
 pkgdown_sha: ~
 articles: {}
-last_built: 2024-07-24T21:04Z
+last_built: 2024-11-08T18:16Z
 urls:
   reference: http://dipterix.org/rpyANTs/reference
   article: http://dipterix.org/rpyANTs/articles
