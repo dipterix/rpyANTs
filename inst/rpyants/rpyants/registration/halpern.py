@@ -6,6 +6,7 @@
 
 import ants
 from ..utils.paths import normalize_path
+from ..utils.internals import get_lib_fn, ants_process_arguments
 
 def halpern_coregister_ct_mri(fixed_path, moving_path, outprefix, verbose=True):
   '''
@@ -17,8 +18,7 @@ def halpern_coregister_ct_mri(fixed_path, moving_path, outprefix, verbose=True):
   moving_path = normalize_path(moving_path, sep="/")
   outprefix = normalize_path(outprefix, sep="/")
   verbose = "1" if verbose else "0"
-  from ants import utils
-  libfn = utils.get_lib_fn("antsRegistration")
+  libfn = get_lib_fn("antsRegistration")
   # Build arguments, see https://github.com/ANTsX/ANTsPy/blob/78dad33ca4e12ae605e80d8d990ec73a52abe273/ants/registration/interface.py
   # The difference is we fit coreg twice
   args = [
@@ -42,7 +42,7 @@ def halpern_coregister_ct_mri(fixed_path, moving_path, outprefix, verbose=True):
     "-v", verbose
   ]
   # Clean args
-  processed_args = utils._int_antsProcessArguments(args)
+  processed_args = ants_process_arguments(args)
   reg_exit = libfn(processed_args)
   if verbose == "1":
     print("---- Call arguments --------------------------------")

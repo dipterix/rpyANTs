@@ -25,7 +25,7 @@ class YAELPreprocess():
     def work_path(self):
         return self._work_path
     
-    def __init__(self, subject_code : str, work_path : str):
+    def __init__(self, subject_code : str, work_path : str, image_types : list | tuple = ["CT", "T1w", "T2w", "FLAIR", "preopCT", "T1wContrast", "fGATIR", "DWI"] ):
         '''
         Initialize a YAELPreprocess object.
         
@@ -34,6 +34,9 @@ class YAELPreprocess():
 
         @param work_path: The path to the working directory, for example, `rave-imaging/`.
         @type work_path: str
+
+        @param image_types: Image types allowed to query
+        @type image_types: list or tuple
 
         '''
         
@@ -45,7 +48,7 @@ class YAELPreprocess():
         # preopCT: preop CT (for showing blood vessels)
         # T1wContrast: preop T1w MRI with contrast (for showing blood vessels)
         # fGATIR: preop fast Gray Matter Acquisition T1 Inversion Recovery
-        self.allowed_image_types = ["CT", "T1w", "T2w", "FLAIR", "preopCT", "T1wContrast", "fGATIR"]
+        self.allowed_image_types = [ *image_types ]
         # Each item is a dictionary returned by `parse_bids_filename`
         self._images = {}
 
@@ -65,7 +68,12 @@ class YAELPreprocess():
         if parsed['ext'] == "nii":
             parsed['ext'] = "nii.gz"
         if parsed['components'].get('ses', None) is None:
-            if parsed['type'] in self.allowed_image_types:
+            image_type = parsed['type']
+            if image_type.startswith("preop"):
+                parsed['components']['ses'] = 'preop'
+            elif image_type.startswith("preop"):
+                parsed['components']['ses'] = 'postop'
+            elif image_type in self.allowed_image_types:
                 if parsed['type'] == "CT":
                     parsed['components']['ses'] = 'postop'
                 else:
@@ -191,10 +199,11 @@ class YAELPreprocess():
             * overwrite : If True, overwrite the existing image. Otherwise throw an error if image exists.
             * Other argument keys are BIDS components (e.g., `sub`, `ses`, `space`, `rec`, `desc`)
         '''
-        if type not in self.allowed_image_types:
-            raise ValueError(f"Invalid image type: {type}. Must be one of {self.allowed_image_types}")
         if not os.path.exists(path):
             raise FileNotFoundError(f"Invalid image path: {path}")
+        if type not in self.allowed_image_types:
+            # raise ValueError(f"Invalid image type: {type}. Must be one of {self.allowed_image_types}")
+            self.allowed_image_types.append(type)
         overwrite = kwargs.get('overwrite', False)
         existing_path = self.input_image_path(type)
         if not overwrite and existing_path is not None:
@@ -431,11 +440,19 @@ class YAELPreprocess():
             native_mask = ants.image_read(native_mask_path)
         else:
             native_mask = None
-        affine_reg = ants.registration(fixed = fix_img, moving = mov_img, 
+        affine_reg = ants.registration(
+            fixed = fix_img, moving = mov_img, 
             mask = template_mask, moving_mask = native_mask,
-            outprefix = file_path(ants_outputdir, "affine_"), type_of_transform = "antsRegistrationSyN[a]", 
-            aff_metric = "CC", syn_metric = "CC", write_composite_transform = False, 
-            aff_sampling = 2, syn_sampling = 2, verbose = verbose)
+            outprefix = file_path(ants_outputdir, "affine_"), 
+            type_of_transform = "antsRegistrationSyN[a]", 
+            write_composite_transform = False, 
+            aff_metric = "mattes",  
+            aff_random_sampling_rate=0.25,
+            aff_iterations=(1000, 500, 250, 0),
+            aff_shrink_factors=(12, 8, 4, 1),
+            aff_smoothing_sigmas=(5, 4, 3, 1),
+            verbose = verbose
+        )
         # save the registration result
         transform_from_template_prefix = to_bids_prefix({ 'sub': self._subject_code, 'from': template_name, 'to': native_type, 'desc': 'affine+SyN', })
         transform_to_template_prefix = to_bids_prefix({ 'sub': self._subject_code, 'from': native_type, 'to': template_name, 'desc': 'affine+SyN', })
@@ -453,9 +470,18 @@ class YAELPreprocess():
         deformable_reg = ants.registration(
             fixed = fix_img, moving = affine_reg['warpedmovout'],
             mask = template_mask, moving_mask = native_mask,
-            outprefix = file_path(ants_outputdir, "deformable_"), type_of_transform = "antsRegistrationSyN[b]",
-            aff_metric = "CC", syn_metric = "CC", write_composite_transform = False,
-            aff_sampling = 2, syn_sampling = 2, verbose = verbose)
+            outprefix = file_path(ants_outputdir, "deformable_"), 
+            type_of_transform = "antsRegistrationSyNQuick[s]",
+            write_composite_transform = False,
+            aff_metric = "mattes", 
+            aff_random_sampling_rate=0.25,
+            aff_iterations=(1000, 500, 250, 0),
+            aff_shrink_factors=(12, 8, 4, 1),
+            aff_smoothing_sigmas=(5, 4, 3, 1),
+            syn_metric="mattes", 
+            reg_iterations=(1000, 500, 500, 0),
+            verbose = verbose
+        )
         # save forward (mov -> fix) transforms
         # simple experiment to check the composition of the transforms: the following two are the same
         # np.matmul(ants_AffineTransform_to_m44(affine_1), ants_AffineTransform_to_m44(affine_0))

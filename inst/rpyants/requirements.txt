@@ -1,1 +1,2 @@
 antspyx>=0.3.8
+nibabel>=5.0.1
