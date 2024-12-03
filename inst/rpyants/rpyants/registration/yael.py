@@ -5,6 +5,9 @@
 # fixed = ants.image_read(fixed_path)
 # moving = ants.image_read(moving_path)
 
+# import rpyants
+# yael = rpyants.registration.YAELPreprocess("PAV038", "/Users/dipterix/rave_data/raw_dir/PAV038/rave-imaging")
+# yael.get_native_mapping("CT")
 import os
 import json
 from typing import Union
@@ -15,6 +18,7 @@ import ants
 from ..utils.paths import normalize_path, ensure_dir, file_path, parse_bids_filename, to_bids_prefix, file_copy, ensure_basename, unlink
 from ..utils.transforms import ants_AffineTransform_to_m44, M44_LPS_to_RAS
 from .halpern import halpern_coregister_ct_mri
+from .normalization import normalize_to_template_syn
 
 
 # There are N types of registrations:
@@ -49,6 +53,15 @@ class YAELPreprocess():
         # T1wContrast: preop T1w MRI with contrast (for showing blood vessels)
         # fGATIR: preop fast Gray Matter Acquisition T1 Inversion Recovery
         self.allowed_image_types = [ *image_types ]
+        # Normalization weights relative to T1w (weight=1)
+        self.normalization_weights = {
+            "CT"      : 0.60,
+            "preopCT" : 0.80,
+            "postopCT": 0.60,
+            "FLAIR"   : 0.25,
+            "postopFLAIR" : 0.2,
+            "preopFLAIR"  : 0.3,
+        }
         # Each item is a dictionary returned by `parse_bids_filename`
         self._images = {}
 
@@ -396,24 +409,33 @@ class YAELPreprocess():
     def map_to_template(self, 
                         template_name : str, template_path : str, template_mask_path = None,
                         native_type : str = "T1w", native_mask_path = None,
-                        verbose : bool=True):
+                        use_images : str | list = "all",
+                        verbose : bool=True, **kwargs):
         '''
         Register an image to the template.
-
-        @param template_path: The path to the template image.
-        @type template: str
 
         @param template_name: The name of the template image (e.g., `MNI152NLin2009bAsym`)
         @type template_name: str
 
+        @param template_path: The path to the template image.
+        @type template: str
+
+        @param template_mask_path: The path to the template brain mask
+        @type template: str
+
         @param native_type: The type of the image (e.g., `CT`, `T1w`, `T2w`, "FLAIR", "preopCT", "T1wContrast", "fGATIR")
         @type native_type: str
 
-        @param reverse: If True, register the template image to the image (switch the fixed and moving images).
-        @type reverse: bool
+        @param native_mask_path: The path to the native underlay brain mask
+        @type template: str
+
+        @param use_images: Images to use for normalization besides underlaying images. This can be "all" for all the image types, "none" for none, or a list of image types
+        @type use_images: str or list of image types
 
         @param verbose: If True, print verbose output.
         @type verbose: bool
+        
+        @param **kwargs: additional parameters passed to `normalize_to_template_syn`
         '''
         if not os.path.exists(template_path):
             raise FileNotFoundError(f"Invalid template path: {template_path}")
@@ -422,16 +444,39 @@ class YAELPreprocess():
         native_path = self.input_image_path(native_type)
         if native_path is None:
             raise FileNotFoundError(f"Missing image for type `{native_type}`. Please set the image first via `preprocess.set_image`.")
+        # Check the image registrations for other modalities
+        other_modalities = []
+        other_images = {}
+        if use_images is not None:
+            if isinstance(use_images, str):
+                if use_images == "all":
+                    other_modalities = [*self.allowed_image_types]
+                else:
+                    other_modalities = [use_images]
+            else:
+                other_modalities = [*use_images]
+        other_modalities = [x for x in other_modalities if x in self.allowed_image_types]
+        for modality in other_modalities:
+            if modality == native_type:
+                continue
+            mapping=self.get_native_mapping(type=modality, relative=False)
+            mapped_path=mapping['mappings'].get(f"{modality}_in_{native_type}", None)
+            # register to T1 if the mapping is missing
+            if native_type == "T1w" and mapped_path is None:
+                orig_path=mapping.get(f"{modality}_path")
+                if orig_path is not None:
+                    self.register_to_T1w(type=modality, verbose=verbose)
+                    mapping=self.get_native_mapping(type=modality, relative=False)
+                    mapped_path=mapping['mappings'].get(f"{modality}_in_{native_type}", None)
+            if mapped_path is not None:
+                other_images[modality] = mapped_path
         fix_path, mov_path = template_path, native_path
-        ants_outputdir = file_path(self._work_path, "tmp", f"coregister_{native_type}_with_${template_name}")
+        ants_outputdir = file_path(self._work_path, "tmp", f"coregister_{native_type}_with_{template_name}")
         resultdir = file_path(self._work_path, "normalization")
         if os.path.exists(ants_outputdir):
             unlink(ants_outputdir)
         ensure_dir(ants_outputdir)
         ensure_dir(resultdir)
-        # step 1: align moving image to fixing image with affine registration
-        fix_img = ants.image_read(fix_path)
-        mov_img = ants.image_read(mov_path)
         if template_mask_path is not None and os.path.exists(template_mask_path):
             template_mask = ants.image_read(template_mask_path)
         else:
@@ -440,60 +485,39 @@ class YAELPreprocess():
             native_mask = ants.image_read(native_mask_path)
         else:
             native_mask = None
-        affine_reg = ants.registration(
-            fixed = fix_img, moving = mov_img, 
-            mask = template_mask, moving_mask = native_mask,
-            outprefix = file_path(ants_outputdir, "affine_"), 
-            type_of_transform = "antsRegistrationSyN[a]", 
-            write_composite_transform = False, 
-            aff_metric = "mattes",  
-            aff_random_sampling_rate=0.25,
-            aff_iterations=(1000, 500, 250, 0),
-            aff_shrink_factors=(12, 8, 4, 1),
-            aff_smoothing_sigmas=(5, 4, 3, 1),
-            verbose = verbose
-        )
-        # save the registration result
+        # for saving the registration result
         transform_from_template_prefix = to_bids_prefix({ 'sub': self._subject_code, 'from': template_name, 'to': native_type, 'desc': 'affine+SyN', })
         transform_to_template_prefix = to_bids_prefix({ 'sub': self._subject_code, 'from': native_type, 'to': template_name, 'desc': 'affine+SyN', })
-        # self.expected_image_path(native_type, "normalization/anat", name = "CT_resampled", space = "T1RAS")
-        fix_img.to_file(ensure_basename(file_path(resultdir, "anat", f"{template_name}_orig.nii.gz")))
-        # fix_img is the template
-        # mov_img is the native image
-        # affine_reg['warpedmovout'] is the registered T1w image in template
-        affine_reg['warpedmovout'].to_file(ensure_basename(
-            self.expected_image_path(native_type, "normalization/anat", name = native_type, space = template_name, transform = "affine")
-        ))
-        affine_reg['warpedfixout'].to_file(ensure_basename(
-            self.expected_image_path(native_type, "normalization/anat", name = template_name, space = native_type, transform = "affine")
-        ))
-        deformable_reg = ants.registration(
-            fixed = fix_img, moving = affine_reg['warpedmovout'],
-            mask = template_mask, moving_mask = native_mask,
-            outprefix = file_path(ants_outputdir, "deformable_"), 
-            type_of_transform = "antsRegistrationSyNQuick[s]",
-            write_composite_transform = False,
-            aff_metric = "mattes", 
-            aff_random_sampling_rate=0.25,
-            aff_iterations=(1000, 500, 250, 0),
-            aff_shrink_factors=(12, 8, 4, 1),
-            aff_smoothing_sigmas=(5, 4, 3, 1),
-            syn_metric="mattes", 
-            reg_iterations=(1000, 500, 500, 0),
-            verbose = verbose
+        mov_paths = [mov_path]
+        weights = [1.25]
+        for modality, path in other_images.items():
+            mov_paths.append( path )
+            weights.append( self.normalization_weights.get(modality, 0.9) )
+        # if True:
+        #     from rpyants.registration.normalization import normalize_to_template_syn
+        #     from rpyants.utils.paths import file_path
+        #     fix_path='/Users/dipterix/rave_data/raw_dir/PAV038/rave-imaging/normalization/anat/MNI152NLin2009bAsym_orig.nii.gz'
+        #     mov_paths=['/Users/dipterix/rave_data/raw_dir/PAV038/rave-imaging/inputs/anat/sub-PAV038_ses-preop_desc-preproc_T1w.nii.gz']
+        #     weights = [1.25]
+        #     ants_outputdir='/Users/dipterix/rave_data/raw_dir/PAV038/rave-imaging/tmp/coregister_T1w_with_MNI152NLin2009bAsym'
+        #     verbose=True
+        deformable_reg = normalize_to_template_syn(
+            fix_path=fix_path,
+            mov_paths=mov_paths,
+            outprefix=file_path(ants_outputdir, "deformable_"),
+            weights = weights,
+            verbose = verbose, 
+            **kwargs
         )
         # save forward (mov -> fix) transforms
         # simple experiment to check the composition of the transforms: the following two are the same
         # np.matmul(ants_AffineTransform_to_m44(affine_1), ants_AffineTransform_to_m44(affine_0))
         # ants_AffineTransform_to_m44(ants.compose_ants_transforms([affine_0, affine_1]))
-        file_copy( affine_reg['fwdtransforms'][0], ensure_basename(
+        file_copy( deformable_reg['fwdtransforms'][1], ensure_basename(
             file_path( self._work_path, "normalization/transformations", transform_to_template_prefix + "ants0.mat" )
         ))
-        file_copy( deformable_reg['fwdtransforms'][1], ensure_basename(
-            file_path( self._work_path, "normalization/transformations", transform_to_template_prefix + "ants1.mat" )
-        ))
         file_copy( deformable_reg['fwdtransforms'][0], ensure_basename(
-            file_path( self._work_path, "normalization/transformations", transform_to_template_prefix + "ants2.nii.gz" )
+            file_path( self._work_path, "normalization/transformations", transform_to_template_prefix + "ants1.nii.gz" )
         ))
         # calculate and save the inverse transforms (fix -> mov)
         file_copy( deformable_reg['invtransforms'][1], ensure_basename(
@@ -502,10 +526,6 @@ class YAELPreprocess():
         ants.write_transform(
             ants.read_transform(deformable_reg['fwdtransforms'][1]).invert(),
             file_path( self._work_path, "normalization/transformations", transform_from_template_prefix + "ants1.mat" )
-        )
-        ants.write_transform(
-            ants.read_transform(affine_reg['fwdtransforms'][0]).invert(),
-            file_path( self._work_path, "normalization/transformations", transform_from_template_prefix + "ants2.mat" )
         )
         # help(ants.apply_transforms)
         # The commented code reproduces the same result as `deformable_reg['warpedmovout']`
@@ -517,22 +537,37 @@ class YAELPreprocess():
         # warped_T1_img.to_file(ensure_basename(
         #     self.expected_image_path(native_type, "normalization/anat", name = native_type, space = template_name, transform = "deformable")
         # ))
-        deformable_reg['warpedmovout'].to_file(ensure_basename(
-            self.expected_image_path(native_type, "normalization/anat", name = native_type, space = template_name, transform = "deformable")
-        ))
-        # fix_img.plot(overlay = deformable_reg['warpedmovout'].iMath_canny(0.1, -1, 1), overlay_alpha = 0.5)
-        warped_template_img = ants.apply_transforms(
-            fixed = mov_img, moving = fix_img,
-            transformlist=[
-                file_path( self._work_path, "normalization/transformations", transform_from_template_prefix + "ants2.mat" ),
-                file_path( self._work_path, "normalization/transformations", transform_from_template_prefix + "ants1.mat" ),
-                file_path( self._work_path, "normalization/transformations", transform_from_template_prefix + "ants0.nii.gz" )
-            ],
-            whichtoinvert = [False, False, False]
+        ###
+        # deformable_reg['warpedmovout'].to_file(ensure_basename(
+        #     self.expected_image_path(native_type, "normalization/anat", name = native_type, space = template_name, transform = "deformable")
+        # ))
+        file_copy(
+            src = deformable_reg['warpedmovout'], 
+            dst = self.expected_image_path(native_type, "normalization/anat", name = native_type, space = template_name, transform = "deformable")
         )
-        warped_template_img.to_file(ensure_basename(
-            self.expected_image_path(native_type, "normalization/anat", name = template_name, space = native_type, transform = "deformable")
-        ))
+        ###
+        # fix_img = ants.image_read(fix_path)
+        # mov_img = ants.image_read(mov_path)
+        # warped_template_img = ants.apply_transforms(
+        #     fixed = mov_img, moving = fix_img,
+        #     transformlist=[
+        #         # file_path( self._work_path, "normalization/transformations", transform_from_template_prefix + "ants2.mat" ),
+        #         file_path( self._work_path, "normalization/transformations", transform_from_template_prefix + "ants1.mat" ),
+        #         file_path( self._work_path, "normalization/transformations", transform_from_template_prefix + "ants0.nii.gz" )
+        #     ],
+        #     whichtoinvert = [
+        #         # False,
+        #         False, 
+        #         False
+        #     ]
+        # )
+        # warped_template_img.to_file(ensure_basename(
+        #     self.expected_image_path(native_type, "normalization/anat", name = template_name, space = native_type, transform = "deformable")
+        # ))
+        file_copy(
+            src = deformable_reg['warpedfixout'], 
+            dst = self.expected_image_path(native_type, "normalization/anat", name = template_name, space = native_type, transform = "deformable")
+        )
         mappings = self.get_template_mapping(template_name = template_name, native_type = native_type, relative = True)
         if mappings is not None:
             log_file = ensure_basename( self.format_path(folder="normalization/log", name="mappings", ext="json", 
