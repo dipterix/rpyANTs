@@ -61,9 +61,9 @@ def halpern_coregister_ct_mri(fixed_path, moving_path, outprefix, verbose=True):
 #   Register MRI to template for Casey Halpern's lab.
 #   '''
 #   # Make sure images are valid
-#   if not isinstance(fixed, ants.ANTsImage):
+#   if not isinstance(fixed, ants.core.ants_image.ANTsImage):
 #     raise Exception("`fixed` is not an instance of `ANTsImage`")
-#   if not isinstance(moving, ants.ANTsImage):
+#   if not isinstance(moving, ants.core.ants_image.ANTsImage):
 #     raise Exception("`moving` is not an instance of `ANTsImage`")
 #   # use forward slash to avoid escaping issues on windows
 #   outprefix = normalize_path(outprefix, sep="/")

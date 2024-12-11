@@ -636,7 +636,7 @@ class YAELPreprocess():
             }
         }
     
-    def transform_image_from_template(self, path : Union[str, ants.ANTsImage], template_name : str, native_type : str = "T1w", interpolator="nearestNeighbor", verbose : bool=True):
+    def transform_image_from_template(self, path : Union[str, ants.core.ants_image.ANTsImage], template_name : str, native_type : str = "T1w", interpolator="nearestNeighbor", verbose : bool=True):
         '''
         Map the image from the template to the native image.
 
@@ -652,7 +652,7 @@ class YAELPreprocess():
         @return: The mapped image.
         @rtype: ANTsImage
         '''
-        if isinstance(path, ants.ANTsImage):
+        if isinstance(path, ants.core.ants_image.ANTsImage):
             moving_img = path
         else:
             if not os.path.exists(path):
@@ -671,7 +671,7 @@ class YAELPreprocess():
         )
         return mapped_img
     
-    def transform_image_to_template(self, path : Union[str, ants.ANTsImage], template_name : str, template_path : Union[str, ants.ANTsImage], native_type : str = "T1w", interpolator="nearestNeighbor", verbose : bool=True):
+    def transform_image_to_template(self, path : Union[str, ants.core.ants_image.ANTsImage], template_name : str, template_path : Union[str, ants.core.ants_image.ANTsImage], native_type : str = "T1w", interpolator="nearestNeighbor", verbose : bool=True):
         '''
         Map the image from the native image to the template.
 
@@ -693,13 +693,13 @@ class YAELPreprocess():
         map_info = self.get_template_mapping(template_name = template_name, native_type = native_type)
         if map_info is None:
             raise FileNotFoundError(f"Missing mapping from {native_type} to {template_name}. Please register the image to the template first.")
-        if isinstance(path, ants.ANTsImage):
+        if isinstance(path, ants.core.ants_image.ANTsImage):
             moving_img = path
         else:
             if not os.path.exists(path):
                 raise FileNotFoundError(f"Invalid image path: {path}")
             moving_img = ants.image_read(path)
-        if isinstance(template_path, ants.ANTsImage):
+        if isinstance(template_path, ants.core.ants_image.ANTsImage):
             template_img = template_path
         else:
             if not os.path.exists(template_path):
