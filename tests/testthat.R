@@ -6,7 +6,7 @@
 # * https://r-pkgs.org/tests.html
 # * https://testthat.r-lib.org/reference/test_package.html#special-files
 
-library(testthat)
+
 library(rpyANTs)
 
 
@@ -17,6 +17,8 @@ if(rpyANTs:::rpymat_is_setup()) {
   if( rpyANTs:::ants_available() ) {
 
     message("ANTsPy is set up, run tests...")
+
+    library(testthat)
     test_check("rpyANTs")
 
   }
