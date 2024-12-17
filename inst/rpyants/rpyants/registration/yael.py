@@ -29,7 +29,7 @@ class YAELPreprocess():
     def work_path(self):
         return self._work_path
     
-    def __init__(self, subject_code : str, work_path : str, image_types : list | tuple = ["CT", "T1w", "T2w", "FLAIR", "preopCT", "T1wContrast", "fGATIR", "DWI"] ):
+    def __init__(self, subject_code : str, work_path : str, image_types : Union[list, tuple] = ["CT", "T1w", "T2w", "FLAIR", "preopCT", "T1wContrast", "fGATIR", "DWI"] ):
         '''
         Initialize a YAELPreprocess object.
         
@@ -412,7 +412,7 @@ class YAELPreprocess():
     def map_to_template(self, 
                         template_name : str, template_path : str, template_mask_path = None,
                         native_type : str = "T1w", native_mask_path = None,
-                        use_images : str | list = "all",
+                        use_images : Union[str, list] = "all",
                         verbose : bool=True, **kwargs):
         '''
         Register an image to the template.

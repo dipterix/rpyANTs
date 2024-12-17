@@ -3,6 +3,7 @@
 #########################################################
 
 import ants
+from typing import Union
 from ..utils.paths import normalize_path
 from ..utils.internals import get_lib_fn, ants_process_arguments
 
@@ -13,8 +14,8 @@ from ..utils.internals import get_lib_fn, ants_process_arguments
 # normalize_to_template_syn(fix_path, moving_path, outprefix, verbose=True)
 
 def normalize_to_template_syn(
-    fix_path : str, mov_paths : list | tuple, outprefix : str, 
-    weights : float | int | list | tuple = 1, verbose : bool = True,
+    fix_path : str, mov_paths : Union[list, tuple], outprefix : str, 
+    weights : Union[float, int, list, tuple] = 1, verbose : bool = True,
     rigid_parameters = {
       "convergence" : "[1000x500x250x0,1e-7,10]",
       "shrink-factors" : "12x8x4x1",
