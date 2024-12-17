@@ -12,8 +12,8 @@ status](https://www.r-pkg.org/badges/version/rpyANTs)](https://CRAN.R-project.or
 <!-- badges: end -->
 
 `rpyANTs` was detached from a `RAVE` ([Reproducible Analysis and
-Visualization of `iEEG`](https://openwetware.org/wiki/RAVE)) module. It
-is now a standalone package that connects `ANTsPy` with R using seamless
+Visualization of `iEEG`](https://rave.wiki)) module. It is now a
+standalone package that connects `ANTsPy` with R using seamless
 shared-memory.
 
 This package was originally created for the following three purposes:
@@ -87,13 +87,11 @@ In R, we use `$` to get module functions or class members. For example:
 ``` r
 ants$add_noise_to_image
 #> <ANTs Python Wrapper>
-#> Help on function add_noise_to_image in module ants.utils.add_noise_to_image:
+#> Help on function add_noise_to_image in module ants.ops.add_noise_to_image:
 #> 
 #> add_noise_to_image(image, noise_model, noise_parameters)
-#>     Add noise to an image using additive Guassian, salt-and-pepper,
+#>     Add noise to an image using additive Gaussian, salt-and-pepper,
 #>     shot, or speckle noise.
-#>     
-#>     ANTsR function: `addNoiseToImage`
 #>     
 #>     Arguments
 #>     ---------
@@ -124,7 +122,8 @@ ants$add_noise_to_image
 #> 
 #> *** Above documentation is for Python. 
 #> *** Please use `$` instead of `.` for modules and functions in R
-#> <function add_noise_to_image at 0x113867060>
+#> <function add_noise_to_image at 0x163af8360>
+#>  signature: (image, noise_model, noise_parameters)
 ```
 
 The following R code translates Python code into R:
@@ -217,6 +216,7 @@ print(ants.__version__)
 )")
 
 run_script(script_path)
+#> 0.5.4
 ```
 
 You can also run `Python` interactive in R (yes, you are correct).

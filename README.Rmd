@@ -23,7 +23,7 @@ library(rpyANTs)
 [![R-check](https://github.com/dipterix/rpyANTs/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/dipterix/rpyANTs/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-`rpyANTs` was detached from a `RAVE` ([Reproducible Analysis and Visualization of `iEEG`](https://openwetware.org/wiki/RAVE)) module. It is now a standalone package that connects `ANTsPy` with R using seamless shared-memory. 
+`rpyANTs` was detached from a `RAVE` ([Reproducible Analysis and Visualization of `iEEG`](https://rave.wiki)) module. It is now a standalone package that connects `ANTsPy` with R using seamless shared-memory. 
 
 This package was originally created for the following three purposes:
 
