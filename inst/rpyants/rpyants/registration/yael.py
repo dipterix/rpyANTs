@@ -12,13 +12,13 @@ import os
 import json
 from typing import Union
 import numpy as np
-import nibabel as nib
 import ants
 
 from ..utils.paths import normalize_path, ensure_dir, file_path, parse_bids_filename, to_bids_prefix, file_copy, ensure_basename, unlink
-from ..utils.transforms import ants_AffineTransform_to_m44, M44_LPS_to_RAS
+from ..utils.transforms import ants_AffineTransform_to_m44, M44_LPS_to_RAS, get_xform, set_xform
 from .halpern import halpern_coregister_ct_mri
 from .normalization import normalize_to_template_syn
+
 
 
 # There are N types of registrations:
@@ -333,15 +333,18 @@ class YAELPreprocess():
         )
         # copy the output image to the expected location
         ct_path = self.input_image_path(type)
-        ct_img = nib.load(ct_path)
-        current_sform = ct_img.get_sform()
+        # ct_img = nib.load(ct_path)
+        # current_sform = ct_img.get_sform()
+        ct_img = ants.image_read(ct_path)
+        current_sform = get_xform(ct_img)
         new_sform = np.matmul(ct_ras_to_mr_ras, current_sform)
         np.savetxt(
             file_path( self._work_path, "coregistration/transformations", transform_to_t1_prefix + "vox2ras.tsv" ),
             new_sform, fmt = "%f", delimiter = "\t", newline="\n"
         )
-        ct_img.set_sform(new_sform)
-        ct_img.set_qform(new_sform)
+        # ct_img.set_sform(new_sform)
+        # ct_img.set_qform(new_sform)
+        ct_img = set_xform(ct_img, new_sform)
         ct_img.to_filename( ensure_basename( self.expected_image_path( type, "coregistration/anat", space = "scanner" ) ) )
         # save the mapping configurations
         mappings = self.get_native_mapping(type, relative = True)

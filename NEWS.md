@@ -1,3 +1,22 @@
+# rpyANTs 0.0.4
+
+* Added `get_xform` and `set_xform` to get and set `qform` in `ANTsImage`
+* Removed dependence `nibabel`, which might conflict with `ANTsPy` on certain platforms
+* Using the full path to `ANTsImage` class instead of the shortcut one from `Python` to avoid issues where `ANTsImage` is not exported (`ANTsPyx==0.5.3`)
+* Using multiple imaging files and faster normalization parameters when normalizing the native images to template
+* Fixed `get_lib_fn` not available under `ANTsPyx>=0.5.3`
+* Changed default `Python` version
+* Fixed bugs when mapping native `ROI` to template
+* Supported `YAEL` processing pipeline and use `ANTsImage` as inputs
+* Added mapping images from native to template
+* Fixed a typo in folder naming
+* Method `get_native_mapping` gets correct absolute paths
+* Allowed `YAEL` class to add default images through constructor
+* Added intensity correction
+* Exported `ensure_template` and added extra information
+* Set time-out to ensure downloading the correct templates
+* Added `YAEL` class to support pipelines mentioned in the paper for image registration and normalization
+
 # rpyANTs 0.0.3
 
 * Added registration code that reproduces `Halpern` lab results
