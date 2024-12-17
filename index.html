@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">rpyANTs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.3.9010</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,7 +51,7 @@
 </h1></div>
 <!-- badges: start -->
 
-<p><code>rpyANTs</code> was detached from a <code>RAVE</code> (<a href="https://openwetware.org/wiki/RAVE" class="external-link">Reproducible Analysis and Visualization of <code>iEEG</code></a>) module. It is now a standalone package that connects <code>ANTsPy</code> with R using seamless shared-memory.</p>
+<p><code>rpyANTs</code> was detached from a <code>RAVE</code> (<a href="https://rave.wiki" class="external-link">Reproducible Analysis and Visualization of <code>iEEG</code></a>) module. It is now a standalone package that connects <code>ANTsPy</code> with R using seamless shared-memory.</p>
 <p>This package was originally created for the following three purposes:</p>
 <ul>
 <li>Portability
@@ -118,13 +118,11 @@
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ants</span><span class="op">$</span><span class="va">add_noise_to_image</span></span>
 <span><span class="co">#&gt; &lt;ANTs Python Wrapper&gt;</span></span>
-<span><span class="co">#&gt; Help on function add_noise_to_image in module ants.utils.add_noise_to_image:</span></span>
+<span><span class="co">#&gt; Help on function add_noise_to_image in module ants.ops.add_noise_to_image:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; add_noise_to_image(image, noise_model, noise_parameters)</span></span>
-<span><span class="co">#&gt;     Add noise to an image using additive Guassian, salt-and-pepper,</span></span>
+<span><span class="co">#&gt;     Add noise to an image using additive Gaussian, salt-and-pepper,</span></span>
 <span><span class="co">#&gt;     shot, or speckle noise.</span></span>
-<span><span class="co">#&gt;     </span></span>
-<span><span class="co">#&gt;     ANTsR function: `addNoiseToImage`</span></span>
 <span><span class="co">#&gt;     </span></span>
 <span><span class="co">#&gt;     Arguments</span></span>
 <span><span class="co">#&gt;     ---------</span></span>
@@ -155,7 +153,8 @@
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; *** Above documentation is for Python. </span></span>
 <span><span class="co">#&gt; *** Please use `$` instead of `.` for modules and functions in R</span></span>
-<span><span class="co">#&gt; &lt;function add_noise_to_image at 0x113867060&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt; &lt;function add_noise_to_image at 0x163af8360&gt;</span></span>
+<span><span class="co">#&gt;  signature: (image, noise_model, noise_parameters)</span></span></code></pre></div>
 <p>The following R code translates Python code into R:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># &gt;&gt;&gt; img = ants.image_read(ants.get_ants_data('r16'))</span></span>
@@ -239,7 +238,8 @@
 <span><span class="st"></span></span>
 <span><span class="st">)"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="http://dipterix.org/rpymat/reference/run_pyscript.html" class="external-link">run_script</a></span><span class="op">(</span><span class="va">script_path</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="http://dipterix.org/rpymat/reference/run_pyscript.html" class="external-link">run_script</a></span><span class="op">(</span><span class="va">script_path</span><span class="op">)</span></span>
+<span><span class="co">#&gt; 0.5.4</span></span></code></pre></div>
 <p>You can also run <code>Python</code> interactive in R (yes, you are correct). Simply run</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">rpyANTs</span><span class="fu">::</span><span class="fu"><a href="http://dipterix.org/rpymat/reference/repl_python.html" class="external-link">repl_python</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">rpyANTs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.3.9010</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,6 +32,27 @@
       <small>Source: <a href="https://github.com/dipterix/rpyANTs/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.0.4" id="rpyants-004">rpyANTs 0.0.4<a class="anchor" aria-label="anchor" href="#rpyants-004"></a></h2>
+<ul><li>Added <code>get_xform</code> and <code>set_xform</code> to get and set <code>qform</code> in <code>ANTsImage</code>
+</li>
+<li>Removed dependence <code>nibabel</code>, which might conflict with <code>ANTsPy</code> on certain platforms</li>
+<li>Using the full path to <code>ANTsImage</code> class instead of the shortcut one from <code>Python</code> to avoid issues where <code>ANTsImage</code> is not exported (<code>ANTsPyx==0.5.3</code>)</li>
+<li>Using multiple imaging files and faster normalization parameters when normalizing the native images to template</li>
+<li>Fixed <code>get_lib_fn</code> not available under <code>ANTsPyx&gt;=0.5.3</code>
+</li>
+<li>Changed default <code>Python</code> version</li>
+<li>Fixed bugs when mapping native <code>ROI</code> to template</li>
+<li>Supported <code>YAEL</code> processing pipeline and use <code>ANTsImage</code> as inputs</li>
+<li>Added mapping images from native to template</li>
+<li>Fixed a typo in folder naming</li>
+<li>Method <code>get_native_mapping</code> gets correct absolute paths</li>
+<li>Allowed <code>YAEL</code> class to add default images through constructor</li>
+<li>Added intensity correction</li>
+<li>Exported <code>ensure_template</code> and added extra information</li>
+<li>Set time-out to ensure downloading the correct templates</li>
+<li>Added <code>YAEL</code> class to support pipelines mentioned in the paper for image registration and normalization</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.3" id="rpyants-003">rpyANTs 0.0.3<a class="anchor" aria-label="anchor" href="#rpyants-003"></a></h2><p class="text-muted">CRAN release: 2023-12-21</p>
 <ul><li>Added registration code that reproduces <code>Halpern</code> lab results</li>
