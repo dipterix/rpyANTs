@@ -48,7 +48,7 @@ def set_xform(img, vox2ras):
     # linear part
     linear_matrix = vox2lps[:ndims, :ndims]
     # normalize each column, axis=0 means L2 norm for each column
-    spacing = np.sqrt(np.sum(np.pow(linear_matrix, 2.), 0))
+    spacing = np.sqrt(np.sum(np.power(linear_matrix, 2.), 0))
     direction = linear_matrix / spacing
     img.set_direction(direction)
     img.set_spacing(spacing.tolist())
