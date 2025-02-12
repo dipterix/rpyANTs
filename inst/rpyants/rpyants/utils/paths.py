@@ -116,6 +116,27 @@ def file_copy(src, dst, auto_mkdirs : bool = True):
   shutil.copyfile(src, dst)
   return normalize_path(dst)
 
+def file_move(src, dst, auto_mkdirs : bool = True):
+  '''
+  Move a file from `src` to `dst`.
+
+  @param src: The source file.
+  @type src: str
+
+  @param dst: The destination file.
+  @type dst: str
+
+  @param auto_mkdirs: Automatically create the parent directories if they do not exist.
+  @type auto_mkdirs: bool
+
+  @return: The destination file.
+  @rtype: str
+  '''
+  if auto_mkdirs:
+    ensure_dir(os.path.dirname(dst))
+  shutil.move(src, dst)
+  return normalize_path(dst)
+
 def to_bids_prefix(components : dict, **kwargs) -> str:
   '''
   Convert a parsed BIDS filename to a BIDS file name prefix.

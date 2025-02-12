@@ -17,7 +17,7 @@ import ants
 from ..utils.paths import normalize_path, ensure_dir, file_path, parse_bids_filename, to_bids_prefix, file_copy, ensure_basename, unlink
 from ..utils.transforms import ants_AffineTransform_to_m44, M44_LPS_to_RAS, get_xform, set_xform
 from .halpern import halpern_coregister_ct_mri
-from .normalization import normalize_to_template_syn
+from .normalization import normalize_to_template_syn, normalization_with_atropos
 
 
 
@@ -438,7 +438,7 @@ class YAELPreprocess():
         @param verbose: If True, print verbose output.
         @type verbose: bool
         
-        @param **kwargs: additional parameters passed to `normalize_to_template_syn`
+        @param **kwargs: additional parameters passed to `normalization_with_atropos`
         '''
         if not os.path.exists(template_path):
             raise FileNotFoundError(f"Invalid template path: {template_path}")
@@ -504,10 +504,10 @@ class YAELPreprocess():
         #     weights = [1.25]
         #     ants_outputdir='/Users/dipterix/rave_data/raw_dir/PAV038/rave-imaging/tmp/coregister_T1w_with_MNI152NLin2009bAsym'
         #     verbose=True
-        deformable_reg = normalize_to_template_syn(
+        deformable_reg = normalization_with_atropos(
             fix_path=fix_path,
             mov_paths=mov_paths,
-            outprefix=file_path(ants_outputdir, "deformable_"),
+            working_path = ants_outputdir,
             weights = weights,
             verbose = verbose, 
             **kwargs
@@ -544,10 +544,14 @@ class YAELPreprocess():
         # deformable_reg['warpedmovout'].to_file(ensure_basename(
         #     self.expected_image_path(native_type, "normalization/anat", name = native_type, space = template_name, transform = "deformable")
         # ))
-        file_copy(
-            src = deformable_reg['warpedmovout'], 
-            dst = self.expected_image_path(native_type, "normalization/anat", name = native_type, space = template_name, transform = "deformable")
-        )
+        if isinstance(deformable_reg['warpedmovout'], str):
+            file_copy(
+                src = deformable_reg['warpedmovout'], 
+                dst = self.expected_image_path(native_type, "normalization/anat", name = native_type, space = template_name, transform = "deformable")
+            )
+        else:
+            normalization_morph_path = self.expected_image_path(native_type, "normalization/anat", name = native_type, space = template_name, transform = "deformable")
+            deformable_reg['warpedmovout'].to_file(ensure_basename(normalization_morph_path))
         ###
         # fix_img = ants.image_read(fix_path)
         # mov_img = ants.image_read(mov_path)
@@ -567,10 +571,14 @@ class YAELPreprocess():
         # warped_template_img.to_file(ensure_basename(
         #     self.expected_image_path(native_type, "normalization/anat", name = template_name, space = native_type, transform = "deformable")
         # ))
-        file_copy(
-            src = deformable_reg['warpedfixout'], 
-            dst = self.expected_image_path(native_type, "normalization/anat", name = template_name, space = native_type, transform = "deformable")
-        )
+        if isinstance(deformable_reg['warpedfixout'], str):
+            file_copy(
+                src = deformable_reg['warpedfixout'], 
+                dst = self.expected_image_path(native_type, "normalization/anat", name = template_name, space = native_type, transform = "deformable")
+            )
+        else:
+            normalization_morph_path = self.expected_image_path(native_type, "normalization/anat", name = template_name, space = native_type, transform = "deformable")
+            deformable_reg['warpedfixout'].to_file(ensure_basename(normalization_morph_path))
         mappings = self.get_template_mapping(template_name = template_name, native_type = native_type, relative = True)
         if mappings is not None:
             log_file = ensure_basename( self.format_path(folder="normalization/log", name="mappings", ext="json", 
