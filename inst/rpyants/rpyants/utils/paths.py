@@ -2,6 +2,52 @@ import os
 import re
 import shutil
 
+def r_user_data_dir() -> str:
+  package = "rpyANTs"
+  which = "data"
+  re = os.environ.get("R_USER_DATA_DIR", None)
+  if re is None:
+    re = os.environ.get("XDG_DATA_HOME", None)
+  if re is None:
+    os_type = "unknown"
+    try:
+      import platform
+      os_type = platform.system().lower()
+    except ImportError:
+      if os.name == "nt":
+        os_type = "windows"
+      elif os.name == "posix":
+        # check if file_path(home, "Library", "Application Support", "org.R-project.R") exists
+        mac_data_path = os.path.join(os.path.expanduser("~"), "Library", "Application Support", "org.R-project.R")
+        if os.path.exists(mac_data_path):
+          os_type = "darwin"
+        else:
+          os_type = "linux"
+    
+    if os_type == "windows":
+      appdata = os.environ.get("APPDATA", None)
+      if appdata is not None:
+        re = os.path.join(appdata, "R", "data")
+    elif os_type == "darwin":
+      re = os.path.join(os.path.expanduser("~"), "Library", "Application Support", "org.R-project.R")
+    if re is None:
+      re = os.path.join(os.path.expanduser("~"), ".local", "share")
+  re = os.path.join(re, "R", package)
+  return re
+
+def antspynet_cache_dir() -> str:
+  return os.path.join(r_user_data_dir(), "keras", "ANTsXNet")
+
+def try_import_antspynet():
+  try:
+    import antspynet
+    cache_dir = ensure_dir(antspynet_cache_dir())
+    if os.path.exists(cache_dir):
+      antspynet.set_antsxnet_cache_directory(cache_dir)
+    return antspynet
+  except ImportError:
+    return None
+
 def normalize_path(path, sep="/"):
   path = os.path.normpath(path)
   return sep.join(re.split(r"[\\/]+", path))

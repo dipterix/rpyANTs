@@ -145,8 +145,17 @@ inject_ants <- function(ants) {
       return( NULL )
     }
     tryCatch({
-      rpymat::ensure_rpymat(verbose = FALSE)
-      m <- reticulate::import("antspynet", convert = FALSE, delay_load = FALSE)
+      rpyants <- load_rpyants()
+      if(is.null(rpyants) || !"try_import_antspynet" %in% names(rpyants$utils$paths)) {
+        rpymat::ensure_rpymat(verbose = FALSE)
+        m <- reticulate::import("antspynet", convert = FALSE, delay_load = FALSE)
+        # set cache directory
+        cache_dir <- file_path(R_user_dir(package = "rpyANTs", which = "data"), "keras", "ANTsXNet")
+        cache_dir <- dir_create2(cache_dir)
+        m$set_antsxnet_cache_directory(cache_dir)
+      } else {
+        m <- rpyants$utils$paths$try_import_antspynet()
+      }
       class(m) <- c('ants.proxy', class(m))
       antspynet <<- m
       return( antspynet )

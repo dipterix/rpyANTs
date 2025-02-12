@@ -5,7 +5,7 @@
 import os
 import ants
 from typing import Union
-from ..utils.paths import normalize_path, file_path
+from ..utils.paths import normalize_path, file_path, try_import_antspynet
 from ..utils.internals import get_lib_fn, ants_process_arguments
 from ..utils.cache import _, StageContext, stage_image
 
@@ -217,10 +217,7 @@ def normalization_with_atropos(
     '''
     # Check whether antspynet is available
     if use_antspynet:
-        try:
-            import antspynet
-        except Exception as e:
-            antspynet = None
+        antspynet = try_import_antspynet()
     else:
         antspynet = None
     # make fix_path a list
