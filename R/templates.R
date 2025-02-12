@@ -41,30 +41,70 @@ BUILTIN_TEMPLATES <- names(template_urls)
 #' @export
 ensure_template <- function(name = BUILTIN_TEMPLATES) {
   name <- match.arg(name)
+  current_timeout <- getOption("timeout", default = 60)
+
+  if( current_timeout < 3600 ) {
+    # message("Setting timeout for current connection to 60 min.")
+    # Template file size might be >1GB, and there might not be enough time.
+    options("timeout" = 3600)
+
+    # Always set timeout back to default
+    on.exit({ options("timeout" = current_timeout) })
+  }
+
   template_path <- file.path(R_user_dir(package = "rpyANTs", which = "data"), "templates", name)
 
   item <- template_urls[[name]]
   if(!dir.exists(template_path)) {
     url <- item$url
+    message("Template is missing. Downloading the template from\n\t", url)
     f <- tempfile(fileext = ".zip")
-    current_timeout <- getOption("timeout", default = 60)
-    if( current_timeout < 3600 ) {
-      # message("Setting timeout for current connection to 60 min.")
-      # Template file size might be >1GB, and there might not be enough time.
-      options("timeout" = 3600)
-
-      # Always set timeout back to default
-      on.exit({ options("timeout" = current_timeout) })
-    }
-
     utils::download.file(url, destfile = f)
     utils::unzip(f, exdir = dirname(template_path), overwrite = TRUE)
+    unlink(f)
   }
   re <- normalize_path(template_path, must_work = TRUE)
+
+  # check atropos
+  atropos0_path <- file_path(re, "atropos_0.nii.gz")
+  if(!file.exists(atropos0_path)) {
+    # check if other templates have the same files
+    all_template_names <- names(template_urls)
+    all_template_names <- all_template_names[!all_template_names %in% name]
+    for(template_name2 in all_template_names) {
+      if(identical(template_urls[[template_name2]]$coord_sys, item$coord_sys)) {
+        template_path2 <- file.path(R_user_dir(package = "rpyANTs", which = "data"), "templates", template_name2)
+        atropos_path2 <- file_path(template_path2, sprintf("atropos_%d.nii.gz", 0:7))
+        if(all(file.exists(atropos_path2))) {
+          for(atropos_path2_f in atropos_path2) {
+            file.copy(atropos_path2_f, file_path(template_path, basename(atropos_path2_f)))
+          }
+        }
+      }
+    }
+
+    if(!file.exists(atropos0_path)) {
+      atropos_url <- switch(
+        item$coord_sys,
+        "MNI152" = "https://github.com/dipterix/threeBrain-sample/releases/download/1.0.1/mni_icbm152_nlin_asym_09b-atropos-class06.zip",
+        { NA_character_ }
+      )
+      if(!is.na(atropos_url)) {
+        message("Atropos-06 segmentation is missing. Downloading from URL:\n\t", atropos_url)
+        f <- tempfile(fileext = ".zip")
+        utils::download.file(atropos_url, destfile = f)
+        utils::unzip(f, exdir = template_path, overwrite = TRUE)
+        unlink(f)
+      }
+    }
+  }
+
+
   attr(re, "url") <- item$url
   attr(re, "name") <- name
   attr(re, "camelName") <- item$name
   attr(re, "coord_sys") <- item$coord_sys
+  attr(re, "atropos_class06") <- file.exists(atropos0_path)
   re
 }
 
