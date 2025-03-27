@@ -364,6 +364,7 @@ def normalization_with_atropos(
                     type_of_transform='antsRegistrationSyNQuick[so]',
                     mask=fixing_mask,
                     moving_mask=brain_mask,
+                    mask_all_stages=True,
                     initial_transform=[res_abp['fwdtransforms'][1]],
                     multivariate_extras=multivariate_extras, 
                     verbose=verbose
@@ -436,6 +437,7 @@ def normalization_with_atropos(
                     type_of_transform='antsRegistrationSyNQuick[s]',
                     mask=fixing_mask,
                     moving_mask=brain_mask,
+                    mask_all_stages=True,
                     # initial_transform=[res_abp['fwdtransforms'][1]],
                     multivariate_extras=multivariate_extras, 
                     verbose=verbose
