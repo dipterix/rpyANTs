@@ -424,7 +424,7 @@ def normalization_with_atropos(
                 moving_deepGM_path = file_path(working_path, "deep_atropos_5.nii.gz")
                 fix_paths2 = fix_paths + [fixing_csf_path, fixing_deepGM_path]
                 mov_paths2 = mov_paths + [moving_csf_path, moving_deepGM_path]
-                weights2 = weights + [0.5]
+                weights2 = weights + [0.02, 0.5]
                 fix_paths2.pop(0)
                 mov_paths2.pop(0)
                 weights2.pop(0)
