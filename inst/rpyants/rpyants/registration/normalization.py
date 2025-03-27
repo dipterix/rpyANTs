@@ -271,18 +271,18 @@ def normalization_with_atropos(
 
     stage_image(fixing_img, name="fixing.nii.gz", root=working_path)
 
+    # antspynet is not available, use ants.atropos
+    # Need to get brain mask and find initial registration to template
+    # Register brain using `SyNabp`: SyN optimized for abpBrainExtraction.
+    with StageContext("SyNabp", "registration", working_path) as (ctx, res_abp):
+        if res_abp is None:
+            res_abp = ants.registration(
+                fixed=fixing_img, moving=moving_img,
+                type_of_transform='SyNabp', verbose=verbose)
+            ctx.result = res_abp
     
     # Atropos: Check whether antspynet is available
     if antspynet is None:
-        # antspynet is not available, use ants.atropos
-        # Need to get brain mask and find initial registration to template
-        # Register brain using `SyNabp`: SyN optimized for abpBrainExtraction.
-        with StageContext("SyNabp", "registration", working_path) as (ctx, res_abp):
-            if res_abp is None:
-                res_abp = ants.registration(
-                    fixed=fixing_img, moving=moving_img,
-                    type_of_transform='SyNabp', verbose=verbose)
-                ctx.result = res_abp
         
         # extract brain 
         with StageContext("brainmask", "image", working_path) as (ctx, brain_mask):
@@ -408,6 +408,13 @@ def normalization_with_atropos(
                 #     interpolator="nearestNeighbor")
                 stage_image(moving_img * brain_mask, "brain.nii.gz", root=working_path)
                 ctx.result = brain_mask
+        
+        # extracted brain
+        with StageContext("brain", "image", working_path) as (ctx, brain_skulstrip):
+            if brain_skulstrip is None:
+                brain_skulstrip = moving_img * brain_mask
+                ctx.result = brain_skulstrip
+        
         # fixing_deep_atropos_list = None
         moving_deep_atropos_list = None
 
@@ -424,7 +431,7 @@ def normalization_with_atropos(
                 moving_deepGM_path = file_path(working_path, "deep_atropos_5.nii.gz")
                 fix_paths2 = fix_paths + [fixing_csf_path, fixing_deepGM_path]
                 mov_paths2 = mov_paths + [moving_csf_path, moving_deepGM_path]
-                weights2 = weights + [0.02, 0.5]
+                weights2 = weights + [0.5, 0.5]
                 fix_paths2.pop(0)
                 mov_paths2.pop(0)
                 weights2.pop(0)
@@ -434,11 +441,11 @@ def normalization_with_atropos(
                 res_syn = ants.registration(
                     fixed=fixing_img,
                     moving=moving_img,
-                    type_of_transform='antsRegistrationSyNQuick[s]',
+                    type_of_transform='antsRegistrationSyNQuick[so]',
                     mask=fixing_mask,
                     moving_mask=brain_mask,
                     mask_all_stages=True,
-                    # initial_transform=[res_abp['fwdtransforms'][1]],
+                    initial_transform=[res_abp['fwdtransforms'][1]],
                     multivariate_extras=multivariate_extras, 
                     verbose=verbose
                 )
