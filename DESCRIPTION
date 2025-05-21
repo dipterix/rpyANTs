@@ -1,6 +1,6 @@
 Package: rpyANTs
 Title: An Alternative Advanced Normalization Tools ('ANTs')
-Version: 0.0.4.4
+Version: 0.0.4.5
 Authors@R: 
     person("Zhengjia", "Wang", email = "dipterix.wang@gmail.com", 
             role = c("aut", "cre"))
@@ -17,6 +17,7 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Imports: 
     grDevices,
+    stats,
     rpymat (>= 0.1.6),
     reticulate (>= 1.26),
     RNifti (>= 1.5.0)
