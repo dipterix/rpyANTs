@@ -13,11 +13,11 @@
 <url><loc>http://dipterix.org/rpyANTs/reference/ants_registration.html</loc></url>
 <url><loc>http://dipterix.org/rpyANTs/reference/ants_resample_image.html</loc></url>
 <url><loc>http://dipterix.org/rpyANTs/reference/antspynet.html</loc></url>
-<url><loc>http://dipterix.org/rpyANTs/reference/antspynet_brain_extraction.html</loc></url>
 <url><loc>http://dipterix.org/rpyANTs/reference/antspynet_preprocess_brain_image.html</loc></url>
 <url><loc>http://dipterix.org/rpyANTs/reference/antspynet_segmentation.html</loc></url>
 <url><loc>http://dipterix.org/rpyANTs/reference/as_ANTsImage.html</loc></url>
 <url><loc>http://dipterix.org/rpyANTs/reference/as_ANTsTransform.html</loc></url>
+<url><loc>http://dipterix.org/rpyANTs/reference/brain_extraction.html</loc></url>
 <url><loc>http://dipterix.org/rpyANTs/reference/correct_intensity.html</loc></url>
 <url><loc>http://dipterix.org/rpyANTs/reference/ensure_template.html</loc></url>
 <url><loc>http://dipterix.org/rpyANTs/reference/halpern_preprocess.html</loc></url>
