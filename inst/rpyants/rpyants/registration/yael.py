@@ -71,7 +71,7 @@ class YAELPreprocess():
         self._work_path = normalize_path( work_path )
         self.reload_images()
     
-    def _fix_image_path(self, parsed : dict, name = None) -> dict:
+    def _fix_image_path(self, parsed : dict, name = None) -> Union[dict, None]:
         if parsed is None:
             return None
         if parsed.get('components', None) is None:
@@ -115,7 +115,7 @@ class YAELPreprocess():
                         pass
         self._images = paths
     
-    def input_image_path(self, type : str, relative : bool = False):
+    def input_image_path(self, type : str, relative : bool = False) -> Union[str, None]:
         '''
         Get the path to the image.
 
@@ -167,7 +167,7 @@ class YAELPreprocess():
         if relative:
             return file_path(parsed['folder'], parsed['fullname'])
         return file_path(self._work_path, parsed['folder'], parsed['fullname'])
-    def expected_image_path(self, type : str, folder : str = None, name = None, **kwargs):
+    def expected_image_path(self, type : str, folder : Union[str, None] = None, name = None, **kwargs):
         '''
         Get the expected path to the image.
 
@@ -195,6 +195,8 @@ class YAELPreprocess():
         }
         parsed['components'].update(kwargs)
         parsed = self._fix_image_path(parsed, name = name)
+        if parsed is None:
+            raise ValueError(f"Unable to get image path for `{name}`")
         return file_path(self._work_path, parsed['folder'], parsed['fullname'])
     
     def set_image(self, type : str, path : str, **kwargs):
@@ -242,7 +244,10 @@ class YAELPreprocess():
         if existing_path is not None:
             unlink(existing_path)
         # file_copy(path, self.input_image_path(type))
-        ants.image_read(path).to_file(ensure_basename(self.input_image_path(type)))
+        target_path = self.input_image_path(type)
+        if target_path is None:
+            raise ValueError(f"Unable to determine path for image type `{ type }`")
+        ants.image_read(path).to_file(ensure_basename(target_path))
     
     @property
     def input_ct_path(self):
@@ -822,7 +827,7 @@ class YAELPreprocess():
             mapped_points['z'].values
         ]).transpose()
     
-    def generate_atlas_from_template(self, template_name : str, template_atlas_folder : str, native_folder : str = None, verbose : bool=True) -> str:
+    def generate_atlas_from_template(self, template_name : str, template_atlas_folder : str, native_folder : Union[str, None] = None, verbose : bool=True) -> str:
         '''
         Generate a native atlas from the template atlas.
 

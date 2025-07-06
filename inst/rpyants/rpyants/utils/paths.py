@@ -1,6 +1,7 @@
 import os
 import re
 import shutil
+from typing import Union
 
 def r_user_data_dir() -> str:
   package = "rpyANTs"
@@ -84,7 +85,7 @@ def ensure_dir(path: str) -> str:
     os.makedirs(path)
   return normalize_path(path)
 
-def ensure_basename(filepath: str) -> str:
+def ensure_basename(filepath: Union[str, None]) -> str:
   '''
   Ensure that the directory of the file exists. If not, create it.
 
@@ -94,6 +95,8 @@ def ensure_basename(filepath: str) -> str:
   @return: The path to the file.
   @rtype: str
   '''
+  if filepath is None:
+    raise TypeError("Unable to find basename of path `None`")
   ensure_dir(os.path.dirname(filepath))
   return normalize_path(filepath)
 
@@ -134,10 +137,18 @@ def parse_bids_filename(path):
     'type': file_type,
     'components': {},
   }
+  last_entity = None
   for i, c in enumerate(components):
-    k, v = c.split("-")
-    parsed['components'][k] = v
-  
+    if c.find("-") == -1:
+      k, v = last_entity, c
+    else:
+      k, v = c.split("-")
+      last_entity = k
+    if k is not None:
+      if parsed['components'].get(k, None):
+        old_v = parsed['components'][k]
+        v = f"{ old_v }_{ v }"
+      parsed['components'][k] = v
   return parsed
 
 

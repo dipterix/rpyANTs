@@ -120,7 +120,7 @@ def normalize_to_template_syn(
         else:
             raise ValueError("normalize_to_template_syn: `fix_path` and `mov_paths` must have the same length or `fix_path` must be a single path")
     outprefix = normalize_path(outprefix, sep="/")
-    verbose = "1" if verbose else "0"
+    verbose_flag = "1" if verbose else "0"
     if isinstance(weights, (float, int)):
         weights = [weights] * len(mov_paths)
     elif len(weights) == 1:
@@ -139,7 +139,7 @@ def normalize_to_template_syn(
         "-o", "[%s,%s,%s]" % (outprefix, outprefix + "Warped.nii.gz", outprefix + "InverseWarped.nii.gz"),
         "--interpolation", "Linear",
         "--use-histogram-matching", "1",
-        "-v", verbose,
+        "-v", verbose_flag,
         # Stage 1: Rigid Transformation
         "--transform", "Rigid[2.0]",
     ] + metrics + [
@@ -168,7 +168,7 @@ def normalize_to_template_syn(
     # Clean args
     processed_args = ants_process_arguments(args)
     reg_exit = libfn(processed_args)
-    if verbose == "1":
+    if verbose_flag == "1":
         print("---- Call arguments --------------------------------")
         print("antsRegistration.sh %s" % " ".join(processed_args))
     if not reg_exit == 0:
@@ -191,7 +191,7 @@ def normalization_with_atropos(
     fix_path: Union[list, tuple, str], mov_paths: Union[list, tuple], working_path: str, 
     weights: Union[float, int, list, tuple] = 1,
     use_antspynet: bool = True,
-    verbose: bool = True):
+    verbose: bool = True) -> dict:
     '''
     Normalize images to template with ANTs Atropos as constraints.
 
