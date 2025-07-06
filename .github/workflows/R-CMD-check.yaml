@@ -67,7 +67,7 @@ jobs:
 
       - name: Install ANTsPy
         run: |
-          python_ver <- "3.9"
+          python_ver <- "3.11"
           verbose <- TRUE
           # Install conda and create a conda environment
           if(!dir.exists(rpymat::env_path())) {
