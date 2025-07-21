@@ -21,3 +21,4 @@ node_modules
 package-lock\.json$
 yarn\.lock$
 ^inst/rpyants/\.venv$
+\.V8history$
