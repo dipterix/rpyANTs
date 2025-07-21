@@ -13,6 +13,11 @@ template_urls <- list(
     coord_sys = "MNI152",
     name = "MNI152NLin2009cAsym",
     url = "https://github.com/dipterix/threeBrain-sample/releases/download/1.0.1/mni_icbm152_nlin_asym_09c.zip"
+  ),
+  `fsaverage` = list(
+    coord_sys = "MNI305",
+    name = "fsaverage",
+    url = "https://github.com/dipterix/threeBrain-sample/releases/download/1.0.1/fsaverage.zip"
   )
 )
 
