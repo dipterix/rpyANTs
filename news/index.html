@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">rpyANTs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.4.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,6 +32,22 @@
       <small>Source: <a href="https://github.com/dipterix/rpyANTs/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.0.5" id="rpyants-005">rpyANTs 0.0.5<a class="anchor" aria-label="anchor" href="#rpyants-005"></a></h2>
+<ul><li>Added backward compatibility support for <code>Py39</code>
+</li>
+<li>Fixed the missing <code>pow</code> function from <code>numpy</code>
+</li>
+<li>Added <code>atropos</code> segments for templates</li>
+<li>New normalization: added <code>atropos</code> segments for normalization to templates</li>
+<li>
+<code>ANTsPyNet</code> model locations are stored in package data directory to comply with <code>CRAN</code> policy</li>
+<li>Always run <code>abp</code> during normalization</li>
+<li>Added brain extraction function using base <code>ANTs</code>
+</li>
+<li>Fixed issue when subject code contains underscore, causing non-comply <code>BIDS</code> format, causing parsing errors</li>
+<li>Added <code>fsaverage</code> template for normalization</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.4" id="rpyants-004">rpyANTs 0.0.4<a class="anchor" aria-label="anchor" href="#rpyants-004"></a></h2><p class="text-muted">CRAN release: 2024-12-17</p>
 <ul><li>Added <code>get_xform</code> and <code>set_xform</code> to get and set <code>qform</code> in <code>ANTsImage</code>
