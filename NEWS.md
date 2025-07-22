@@ -1,3 +1,15 @@
+# rpyANTs 0.0.5
+
+* Added backward compatibility support for `Py39`
+* Fixed the missing `pow` function from `numpy` 
+* Added `atropos` segments for templates
+* New normalization: added `atropos` segments for normalization to templates
+* `ANTsPyNet` model locations are stored in package data directory to comply with `CRAN` policy
+* Always run `abp` during normalization
+* Added brain extraction function using base `ANTs`
+* Fixed issue when subject code contains underscore, causing non-comply `BIDS` format, causing parsing errors
+* Added `fsaverage` template for normalization
+
 # rpyANTs 0.0.4
 
 * Added `get_xform` and `set_xform` to get and set `qform` in `ANTsImage`

@@ -120,8 +120,8 @@ brain_extraction <- function(x, skull_alpha = 0,
       }
       threshold <- stats::quantile(pixel_values, threshold_quantile)
 
-      skull_mask = (image > threshold)
-      skull_mask[mask] = 0
+      skull_mask <- (image > threshold)
+      skull_mask[mask] <- 0
       skull <- image * skull_mask * skull_alpha
       brain <- brain + skull
     }
