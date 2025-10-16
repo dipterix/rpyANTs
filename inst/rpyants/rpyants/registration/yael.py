@@ -417,7 +417,7 @@ class YAELPreprocess():
     def map_to_template(self, 
                         template_name : str, template_path : str, template_mask_path = None,
                         native_type : str = "T1w", native_mask_path = None,
-                        use_images : Union[str, list] = "all",
+                        use_images : Union[str, list] = "all", use_antspynet : bool = True,
                         verbose : bool=True, **kwargs):
         '''
         Register an image to the template.
@@ -439,7 +439,10 @@ class YAELPreprocess():
 
         @param use_images: Images to use for normalization besides underlaying images. This can be "all" for all the image types, "none" for none, or a list of image types
         @type use_images: str or list of image types
-
+        
+        @param use_antspynet: Whether to try `antspynet` deep atropos; default is `True` and will use antspynet if possible, or fall-back to traditional atropos
+        @type use_antspynet: bool
+        
         @param verbose: If True, print verbose output.
         @type verbose: bool
         
@@ -515,6 +518,7 @@ class YAELPreprocess():
             working_path = ants_outputdir,
             weights = weights,
             verbose = verbose, 
+            use_antspynet = use_antspynet,
             **kwargs
         )
         # save forward (mov -> fix) transforms

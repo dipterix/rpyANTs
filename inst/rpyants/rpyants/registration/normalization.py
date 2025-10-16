@@ -4,22 +4,23 @@
 
 import os
 import ants
+import numpy as np
 from typing import Union
 from ..utils.paths import normalize_path, file_path, try_import_antspynet
 from ..utils.internals import get_lib_fn, ants_process_arguments
-from ..utils.cache import _, StageContext, stage_image
+from ..utils.cache import _, StageContext, stage_image, restore_image
 
 if False:
     import os
     import ants
     from typing import Union
-    from rpyants.utils.paths import file_path, ensure_basename, file_copy, file_move, normalize_path, unlink
+    from rpyants.utils.paths import file_path, ensure_basename, file_copy, file_move, normalize_path, unlink, try_import_antspynet
     from rpyants.utils.internals import get_lib_fn, ants_process_arguments
-    from rpyants.utils.cache import _, StageContext, stage_image
+    from rpyants.utils.cache import _, StageContext, stage_image, restore_image
     from rpyants.registration.normalization import normalization_with_atropos
-    working_path = "/Users/dipterix/rave_data/raw_dir/Precision002/rave-imaging/work"
-    mov_paths = ["/Users/dipterix/rave_data/raw_dir/Precision002/rave-imaging/inputs/MRI/MRI_RAW.nii"]
-    fix_path = "/Users/dipterix/rave_data/others/three_brain/templates/mni_icbm152_nlin_asym_09b/T1.nii.gz"
+    working_path = "/Users/dipterix/rave_data/raw_dir/Liming03/rave-imaging/work"
+    mov_paths = ["/Users/dipterix/rave_data/raw_dir/Liming03/rave-imaging/3d.nii.gz"]
+    fix_path = "/Users/dipterix/Library/Application Support/org.R-project.R/R/rpyANTs/templates/mni_icbm152_nlin_asym_09b/T1.nii.gz"
     weights = 1
     verbose = True
     use_antspynet = True
@@ -190,7 +191,7 @@ def normalize_to_template_syn(
 def normalization_with_atropos(
     fix_path: Union[list, tuple, str], mov_paths: Union[list, tuple], working_path: str, 
     weights: Union[float, int, list, tuple] = 1,
-    use_antspynet: bool = True,
+    use_antspynet: bool = True, 
     verbose: bool = True) -> dict:
     '''
     Normalize images to template with ANTs Atropos as constraints.
@@ -261,26 +262,68 @@ def normalization_with_atropos(
         if moving_img is None:
             moving_img = ants.image_read(moving_path)
             ctx.result = moving_img
-    # apply intensity normalization
+    
+    # apply intensity normalization (pass 1)
     with StageContext("nu", "image", working_path, verbose=verbose) as (ctx, _._):
         if ctx.result is None:
             ctx.result = ants.abp_n4(moving_img)
-        moving_img = ctx.result
+        nu_img = ctx.result
+    # # apply intensity normalization
+    # with StageContext("nu3", "image", working_path, verbose=verbose) as (ctx, _._):
+    #     if ctx.result is None:
+    #         ctx.result = ants.abp_n4(moving_img, usen3=True)
     fixing_img = ants.image_read(fixing_path)
     fixing_mask = ants.image_read(fixing_mask_path)
 
     stage_image(fixing_img, name="fixing.nii.gz", root=working_path)
 
+    # n4_bias_field_correction(image, mask=None, rescale_intensities=False, shrink_factor=4, convergence={'iters': [50, 50, 50, 50], 'tol': 1e-07}, spline_param=None, return_bias_field=False, verbose=False, weight_mask=None)
     # antspynet is not available, use ants.atropos
     # Need to get brain mask and find initial registration to template
     # Register brain using `SyNabp`: SyN optimized for abpBrainExtraction.
     with StageContext("SyNabp", "registration", working_path) as (ctx, res_abp):
         if res_abp is None:
             res_abp = ants.registration(
-                fixed=fixing_img, moving=moving_img,
+                fixed=fixing_img, moving=nu_img,
                 type_of_transform='SyNabp', verbose=verbose)
             ctx.result = res_abp
     
+    # Quick 3-way atropos to get white-matter, or whatever the brightest
+    # Use the mask to normalize intensity again
+    with StageContext("nu2", "image", working_path, verbose=verbose) as (ctx, _._):
+        if ctx.result is None:
+            # Quick brain-mask
+            brain_mask0 = ants.apply_transforms(
+                fixed=moving_img, 
+                moving=fixing_mask, 
+                transformlist=res_abp["invtransforms"], 
+                interpolator="nearestNeighbor")
+            # Quick 3-way atropos to get white-matter, or whatever the brightest
+            seg3 = ants.atropos(a=moving_img, x = brain_mask0, i="kmeans[3]", m="[0.1,1x1x1]", c="[5,0]")
+            probs3 = seg3["probabilityimages"]  # list of 3 probability maps
+            means = []
+            for p in probs3:
+                mu = (moving_img*p).sum() / (p.sum() + 1e-8)
+                means.append(mu)
+            wm_idx = int(np.argmax(means))
+            wm_mean = float(means[wm_idx])
+            scale = 110.0 / (wm_mean if wm_mean > 0 else 1.0)
+            t1_norm = moving_img * scale                   # like FS T1.mgz inside brain
+            ctx.result = ants.abp_n4(moving_img)
+            wm_prob = probs3[wm_idx]
+            n4c = ants.n4_bias_field_correction(
+                t1_norm, weight_mask=wm_prob,
+                rescale_intensities=True,
+                shrink_factor=1,
+                convergence={'iters':[50,50,30,20],'tol':1e-7}
+                # spline_param=200
+            )
+            ctx.result = n4c
+        moving_img = ctx.result
+
+    # Denoise image and also smooth intensities
+    # dn = ants.denoise_image(moving_img, shrink_factor=1, p=1, r=3, noise_model="Rician")
+
     # Atropos: Check whether antspynet is available
     if antspynet is None:
         
@@ -353,19 +396,38 @@ def normalization_with_atropos(
                 mov_paths2.pop(0)
                 mov_paths2 = [ants.image_read(x) for x in mov_paths2] + [moving_csf, moving_dGWbS]
                 
-                weights2 = weights + [0.5, 0.5]
+                weights2 = weights + [0.1, 0.5]
                 weights2.pop(0)
                 multivariate_extras = [
                     ("MI", fpath, mpath, weight, '32,Random,0.25') for fpath, mpath, weight in zip(fix_paths2, mov_paths2, weights2)
                 ]
+                stage_image(fixing_img * fixing_mask, "fixed_brain.nii.gz", root=working_path)
+                mov_skullstrip = restore_image("brain.nii.gz", root=working_path)
+                fix_skullstrip = restore_image("fixed_brain.nii.gz", root=working_path)
+                # res_syn = ants.registration(
+                #     fixed=fixing_img,
+                #     moving=moving_img,
+                #     type_of_transform='antsRegistrationSyNQuick[so]',
+                #     mask=fixing_mask,
+                #     moving_mask=brain_mask,
+                #     mask_all_stages=False,
+                #     initial_transform=[res_abp['fwdtransforms'][1]],
+                #     multivariate_extras=multivariate_extras, 
+                #     verbose=verbose
+                # )
                 res_syn = ants.registration(
-                    fixed=fixing_img,
-                    moving=moving_img,
-                    type_of_transform='antsRegistrationSyNQuick[so]',
+                    fixed=fix_skullstrip,
+                    moving=mov_skullstrip,
+                    type_of_transform='SyNAggro',
+                    grad_step = 0.15, 
+                    flow_sigma=3.5, total_sigma=0,        # mild extra smoothing of total field
+                    aff_metric='mattes', aff_sampling=32, 
+                    aff_random_sampling_rate=0.2, 
+                    syn_metric="CC", syn_sampling=4,        # CC radius ~4
+                    reg_iterations=(100,70,50,0),    
                     mask=fixing_mask,
                     moving_mask=brain_mask,
                     mask_all_stages=True,
-                    initial_transform=[res_abp['fwdtransforms'][1]],
                     multivariate_extras=multivariate_extras, 
                     verbose=verbose
                 )
@@ -416,7 +478,14 @@ def normalization_with_atropos(
                 ctx.result = brain_skulstrip
         
         # fixing_deep_atropos_list = None
+        stage_image(fixing_img * fixing_mask, "fixed_brain.nii.gz", root=working_path)
+        brain_mask_no_csf = moving_deep_atropos_list[0] > 0
+        brain_mask_no_csf[moving_deep_atropos_list[1] > 0.05] = 0
+        stage_image(moving_img * brain_mask_no_csf, "brain.nii.gz", root=working_path)
+        mov_skullstrip = restore_image("brain.nii.gz", root=working_path)
+        fix_skullstrip = restore_image("fixed_brain.nii.gz", root=working_path)
         moving_deep_atropos_list = None
+        brain_mask_no_csf = None
 
         # gc.collect()
         with StageContext("SyN_w_deep_atropos", "registration", working_path) as (ctx, res_syn):
@@ -438,17 +507,29 @@ def normalization_with_atropos(
                 multivariate_extras = [
                     ("MI", ants.image_read(fpath), ants.image_read(mpath), weight, '32,Random,0.25') for fpath, mpath, weight in zip(fix_paths2, mov_paths2, weights2)
                 ]
+                # with StageContext("nu2", "image", working_path, verbose=verbose) as (ctx, _._):
+                # registration(fixed, moving, type_of_transform='SyN', initial_transform=None, outprefix='', mask=None, moving_mask=None, mask_all_stages=False, 
+                #              grad_step=0.2, flow_sigma=3, total_sigma=0, aff_metric='mattes', aff_sampling=32, aff_random_sampling_rate=0.2, 
+                #              syn_metric='mattes', syn_sampling=32, reg_iterations=(40, 20, 0), aff_iterations=(2100, 1200, 1200, 10), aff_shrink_factors=(6, 4, 2, 1), 
+                #              aff_smoothing_sigmas=(3, 2, 1, 0), write_composite_transform=False, random_seed=None, verbose=False, multivariate_extras=None, 
+                #              restrict_transformation=None, smoothing_in_mm=False, singleprecision=True, use_legacy_histogram_matching=False, **kwargs)
                 res_syn = ants.registration(
-                    fixed=fixing_img,
-                    moving=moving_img,
-                    type_of_transform='antsRegistrationSyNQuick[so]',
+                    fixed=fix_skullstrip,
+                    moving=mov_skullstrip,
+                    type_of_transform='SyNAggro',
+                    grad_step = 0.15, 
+                    flow_sigma=3.5, total_sigma=0,        # mild extra smoothing of total field
+                    aff_metric='mattes', aff_sampling=32, 
+                    aff_random_sampling_rate=0.2, 
+                    syn_metric="CC", syn_sampling=4,        # CC radius ~4
+                    reg_iterations=(100,70,50,0),    
                     mask=fixing_mask,
                     moving_mask=brain_mask,
                     mask_all_stages=True,
-                    initial_transform=[res_abp['fwdtransforms'][1]],
                     multivariate_extras=multivariate_extras, 
                     verbose=verbose
                 )
+                # initial_transform=[res_abp['fwdtransforms'][1]],
                 ctx.result = res_syn
                 # StageContext("SyN_w_deep_atropos", "registration", working_path)._store_result(res_syn)
     return res_syn
