@@ -859,7 +859,10 @@ class YAELPreprocess():
             root_relpath = os.path.relpath(root_dir, template_atlas_folder)
             native_abspath = ensure_dir(file_path(self._work_path, "atlases", root_relpath))
             for filename in filenames:
-                if filename.endswith(".nii.gz") and not filename.startswith("."):
+                if filename.startswith("."):
+                    continue
+                filename_lowercase = filename.lower()
+                if filename_lowercase.endswith(".nii.gz") or filename_lowercase.endswith(".nii"):
                     template_path = file_path(root_dir, filename)
                     native_path = file_path(native_abspath, filename)
                     original_img = ants.image_read(template_path)

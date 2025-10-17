@@ -1,6 +1,6 @@
 Package: rpyANTs
 Title: An Alternative Advanced Normalization Tools ('ANTs')
-Version: 0.0.5.1
+Version: 0.0.5.2
 Authors@R: 
     person("Zhengjia", "Wang", email = "dipterix.wang@gmail.com", 
             role = c("aut", "cre"))
