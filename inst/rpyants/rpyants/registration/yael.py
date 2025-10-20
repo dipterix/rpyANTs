@@ -850,7 +850,7 @@ class YAELPreprocess():
         @return: The path to the native atlas.
         @rtype: str
         '''
-        # template_atlas_folder = "/Users/dipterix/Dropbox (PennNeurosurgery)/RAVE/Samples/Tower-related/templates 2/Lead-DBS_atlases_MNI_ICBM_2009b_NLIN_ASYM/MNI_ICBM_2009b_NLIN_ASYM/atlases/OCD Response Tract Atlas (Li 2020)"
+        # template_atlas_folder = "/Users/dipterix/Dropbox (Personal)/projects/threeBrain/adhoc/YBA"
         if not os.path.exists(template_atlas_folder) or not os.path.isdir(template_atlas_folder):
             raise FileNotFoundError(f"Invalid template atlas folder: {template_atlas_folder}")
         if native_folder is None:

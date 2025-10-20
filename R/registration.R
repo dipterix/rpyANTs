@@ -149,6 +149,65 @@ ants_registration <- function(
 
 }
 
+#' @title Extract transform in right-anterior-superior coordinate system
+#' @description
+#' Extract transform from 'ANTs' and moving image, save the transform matrices.
+#' @param transform_path path to the transform
+#' (\code{'ANTs_0GenericAffine.mat'} matrix) file
+#' @param moving_img path to the moving image, for example, if \code{'CT'} is
+#' aligned to \code{'T1w'}, then \code{'CT'} is the moving image
+#' @param outprefix output prefix, where the matrices are saved to; default is
+#' at the same folder as \code{transform_path}
+#' @returns A list of two matrices: \code{new_sform} is the new index to image
+#' transform (see \code{'sform'} in 'NIfTI' header definition). This is a
+#' four-by-four matrix transforming from the voxel index (moving image) to the
+#' fixed image 'RAS' coordinates. \code{ras_transform} is a four-by-four matrix
+#' from the moving image to the fixed image in 'RAS' coordinates.
+#'
+#' @export
+extract_coregistration <- function(transform_path, moving_img, outprefix = NULL) {
+
+  # transform_path <- "~/rave_data/raw_dir/Precision012/rave-imaging/coregistration/ANTs_0GenericAffine.mat"
+  # moving_img <- "~/rave_data/raw_dir/Precision012/rave-imaging/coregistration/CT_RAW.nii.gz"
+
+  transform_path <- normalizePath(transform_path, mustWork = TRUE, winslash = "/")
+  moving_img <- normalizePath(moving_img, mustWork = TRUE, winslash = "/")
+
+  if(length(outprefix) != 1 || is.na(outprefix)) {
+    outprefix <- paste0(dirname(transform_path), .Platform$file.sep, "MOV_")
+  }
+
+  moving_img <- as_ANTsImage(moving_img, strict = TRUE)
+
+  mov_lps_to_fix_lps <- as.matrix(as_ANTsTransform(transform_path))
+
+  ct_lps_to_mri_lps <- solve(mov_lps_to_fix_lps)
+  ct_ijk_to_lps <- t(t(py_to_r(moving_img$direction)) *
+                       as.double(py_to_r(moving_img$spacing)))
+  ct_ijk_to_lps <- rbind(cbind(ct_ijk_to_lps, as.double(py_to_r(moving_img$origin))), c(0, 0, 0, 1))
+  ct_ijk_to_mri_lps <- ct_lps_to_mri_lps %*% ct_ijk_to_lps
+  ct_ijk_to_mri_ras <- diag(c(-1, -1, 1, 1)) %*% ct_ijk_to_mri_lps
+
+  # read.table("~/rave_data/raw_dir/yael_demo_001/rave-imaging/coregistration/CT_IJK_to_MR_RAS.txt") - ct_ijk_to_mri_ras
+  utils::write.table(ct_ijk_to_mri_ras, paste0(outprefix, "IJK_to_FIX_RAS.txt"),
+                     row.names = FALSE, col.names = FALSE)
+
+  ct_ras_to_mri_ras <- diag(c(-1, -1, 1, 1)) %*%
+    ct_lps_to_mri_lps %*% diag(c(-1, -1, 1, 1))
+  utils::write.table(ct_ras_to_mri_ras, paste0(outprefix, "RAS_to_FIX_RAS.txt"),
+                     row.names = FALSE, col.names = FALSE)
+
+  # validate
+  # range(read.table("~/rave_data/raw_dir/Precision012/rave-imaging/coregistration/CT_IJK_to_MR_RAS.txt") - ct_ijk_to_mri_ras)
+  # range(read.table("~/rave_data/raw_dir/Precision012/rave-imaging/coregistration/CT_RAS_to_MR_RAS.txt") - ct_ras_to_mri_ras)
+
+  return(list(
+    new_sform = ct_ijk_to_mri_ras,
+    ras_transform = ct_ras_to_mri_ras
+  ))
+
+}
+
 #' @name halpern_preprocess
 #' @title 'ANTs' functions for 'Halpern' lab
 #' @param fixed fixed image as template
