@@ -190,7 +190,7 @@ def normalize_to_template_syn(
 
 def normalization_with_atropos(
     fix_path: Union[list, tuple, str], mov_paths: Union[list, tuple], working_path: str, 
-    weights: Union[float, int, list, tuple] = 1,
+    weights: Union[float, int, list, tuple] = 1, with_skull = False, cost_function = "CC",
     use_antspynet: bool = True, 
     verbose: bool = True) -> dict:
     '''
@@ -207,6 +207,12 @@ def normalization_with_atropos(
 
     @param weights: A single number or a list of numbers indicating the weights for each moving image
     @type weights: float | int | list | tuple
+
+    @param with_skull: Whether to normalize with skulls or skull-striped
+    @type with_skull: bool
+
+    @param cost_function: Cost function for the T1w image; default is 'CC'; choices are 'MI', 'CC'
+    @type cost_function: str
 
     @param use_antspynet: Whether to use antspynet for deep_atropos
     @type use_antspynet: bool
@@ -415,22 +421,42 @@ def normalization_with_atropos(
                 #     multivariate_extras=multivariate_extras, 
                 #     verbose=verbose
                 # )
-                res_syn = ants.registration(
-                    fixed=fix_skullstrip,
-                    moving=mov_skullstrip,
-                    type_of_transform='SyNAggro',
-                    grad_step = 0.15, 
-                    flow_sigma=3.5, total_sigma=0,        # mild extra smoothing of total field
-                    aff_metric='mattes', aff_sampling=32, 
-                    aff_random_sampling_rate=0.2, 
-                    syn_metric="CC", syn_sampling=4,        # CC radius ~4
-                    reg_iterations=(100,70,50,0),    
-                    mask=fixing_mask,
-                    moving_mask=brain_mask,
-                    mask_all_stages=True,
-                    multivariate_extras=multivariate_extras, 
-                    verbose=verbose
-                )
+                syn_sampling = 32
+                if cost_function == 'CC':
+                    syn_sampling = 4   # CC radius ~4
+                if with_skull:
+                    res_syn = ants.registration(
+                        fixed=fixing_img,
+                        moving=moving_img,
+                        type_of_transform='SyNAggro',
+                        flow_sigma=3.5, total_sigma=0,        # mild extra smoothing of total field
+                        aff_metric='mattes', aff_sampling=32, 
+                        aff_random_sampling_rate=0.2, 
+                        syn_metric=cost_function, syn_sampling=syn_sampling,
+                        reg_iterations=(100,70,50,0),    
+                        mask=fixing_mask,
+                        moving_mask=brain_mask,
+                        mask_all_stages=True,
+                        multivariate_extras=multivariate_extras, 
+                        verbose=verbose
+                    )
+                else:
+                    res_syn = ants.registration(
+                        fixed=fix_skullstrip,
+                        moving=mov_skullstrip,
+                        type_of_transform='SyNAggro',
+                        grad_step = 0.15, 
+                        flow_sigma=3.5, total_sigma=0,        # mild extra smoothing of total field
+                        aff_metric='mattes', aff_sampling=32, 
+                        aff_random_sampling_rate=0.2, 
+                        syn_metric=cost_function, syn_sampling=syn_sampling,
+                        reg_iterations=(100,70,50,0),    
+                        mask=fixing_mask,
+                        moving_mask=brain_mask,
+                        mask_all_stages=True,
+                        multivariate_extras=multivariate_extras, 
+                        verbose=verbose
+                    )
                 # StageContext("SyN_w_atropos", "registration", working_path)._store_result(res_syn)
                 ctx.result = res_syn
     else:
@@ -513,22 +539,42 @@ def normalization_with_atropos(
                 #              syn_metric='mattes', syn_sampling=32, reg_iterations=(40, 20, 0), aff_iterations=(2100, 1200, 1200, 10), aff_shrink_factors=(6, 4, 2, 1), 
                 #              aff_smoothing_sigmas=(3, 2, 1, 0), write_composite_transform=False, random_seed=None, verbose=False, multivariate_extras=None, 
                 #              restrict_transformation=None, smoothing_in_mm=False, singleprecision=True, use_legacy_histogram_matching=False, **kwargs)
-                res_syn = ants.registration(
-                    fixed=fix_skullstrip,
-                    moving=mov_skullstrip,
-                    type_of_transform='SyNAggro',
-                    grad_step = 0.15, 
-                    flow_sigma=3.5, total_sigma=0,        # mild extra smoothing of total field
-                    aff_metric='mattes', aff_sampling=32, 
-                    aff_random_sampling_rate=0.2, 
-                    syn_metric="CC", syn_sampling=4,        # CC radius ~4
-                    reg_iterations=(100,70,50,0),    
-                    mask=fixing_mask,
-                    moving_mask=brain_mask,
-                    mask_all_stages=True,
-                    multivariate_extras=multivariate_extras, 
-                    verbose=verbose
-                )
+                syn_sampling = 32
+                if cost_function == 'CC':
+                    syn_sampling = 4   # CC radius ~4
+                if with_skull:
+                    res_syn = ants.registration(
+                        fixed=fixing_img,
+                        moving=moving_img,
+                        type_of_transform='SyNAggro',
+                        flow_sigma=3.5, total_sigma=0,        # mild extra smoothing of total field
+                        aff_metric='mattes', aff_sampling=32, 
+                        aff_random_sampling_rate=0.2, 
+                        syn_metric=cost_function, syn_sampling = syn_sampling,
+                        reg_iterations=(100,70,50,0),    
+                        mask=fixing_mask,
+                        moving_mask=brain_mask,
+                        mask_all_stages=True,
+                        multivariate_extras=multivariate_extras, 
+                        verbose=verbose
+                    )
+                else:
+                    res_syn = ants.registration(
+                        fixed=fix_skullstrip,
+                        moving=mov_skullstrip,
+                        type_of_transform='SyNAggro',
+                        grad_step = 0.15, 
+                        flow_sigma=3.5, total_sigma=0,        # mild extra smoothing of total field
+                        aff_metric='mattes', aff_sampling=32, 
+                        aff_random_sampling_rate=0.2, 
+                        syn_metric=cost_function, syn_sampling=syn_sampling,        
+                        reg_iterations=(100,70,50,0),    
+                        mask=fixing_mask,
+                        moving_mask=brain_mask,
+                        mask_all_stages=True,
+                        multivariate_extras=multivariate_extras, 
+                        verbose=verbose
+                    )
                 # initial_transform=[res_abp['fwdtransforms'][1]],
                 ctx.result = res_syn
                 # StageContext("SyN_w_deep_atropos", "registration", working_path)._store_result(res_syn)

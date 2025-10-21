@@ -14,6 +14,21 @@ template_urls <- list(
     name = "MNI152NLin2009cAsym",
     url = "https://github.com/dipterix/threeBrain-sample/releases/download/1.0.1/mni_icbm152_nlin_asym_09c.zip"
   ),
+  `mni_icbm152_nlin_sym_09a` = list(
+    coord_sys = "MNI152",
+    name = "MNI152NLin2009aSym",
+    url = "https://github.com/dipterix/threeBrain-sample/releases/download/1.0.1/mni_icbm152_nlin_sym_09a.zip"
+  ),
+  `mni_icbm152_nlin_sym_09b` = list(
+    coord_sys = "MNI152",
+    name = "MNI152NLin2009bSym",
+    url = "https://github.com/dipterix/threeBrain-sample/releases/download/1.0.1/mni_icbm152_nlin_sym_09b.zip"
+  ),
+  `mni_icbm152_nlin_sym_09c` = list(
+    coord_sys = "MNI152",
+    name = "MNI152NLin2009cSym",
+    url = "https://github.com/dipterix/threeBrain-sample/releases/download/1.0.1/mni_icbm152_nlin_sym_09c.zip"
+  ),
   `fsaverage` = list(
     coord_sys = "MNI305",
     name = "fsaverage",
