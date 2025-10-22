@@ -192,7 +192,7 @@ def normalization_with_atropos(
     fix_path: Union[list, tuple, str], mov_paths: Union[list, tuple], working_path: str, 
     weights: Union[float, int, list, tuple] = 1, with_skull = False, cost_function = "CC",
     use_antspynet: bool = True, 
-    verbose: bool = True) -> dict:
+    verbose: bool = True, **kwargs) -> dict:
     '''
     Normalize images to template with ANTs Atropos as constraints.
 
