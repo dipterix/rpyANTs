@@ -1,3 +1,13 @@
+# rpyANTs 0.0.6
+
+* Improved normalization for irregular brain
+* Fixed issues where atlases in `nii` are ignored
+* Added `extract_coregistartion` to extract index to world and world to world matrix
+* Added supports to the symmetric `MNI152` templates
+* Normalization allows `with_skull` or without skulls; `cost_function` can be customized too
+* Users have choices to disable `antspynet` for consistency
+* Suppressed a test on `MacOS` due to `ImageIO` issue
+
 # rpyANTs 0.0.5
 
 * Added backward compatibility support for `Py39`

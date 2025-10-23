@@ -161,8 +161,8 @@ ants_registration <- function(
 #' @returns A list of two matrices: \code{new_sform} is the new index to image
 #' transform (see \code{'sform'} in 'NIfTI' header definition). This is a
 #' four-by-four matrix transforming from the voxel index (moving image) to the
-#' fixed image 'RAS' coordinates. \code{ras_transform} is a four-by-four matrix
-#' from the moving image to the fixed image in 'RAS' coordinates.
+#' fixed image \code{'RAS'} coordinates. \code{ras_transform} is a four-by-four
+#' matrix from the moving image to the fixed image in \code{'RAS'} coordinates.
 #'
 #' @export
 extract_coregistration <- function(transform_path, moving_img, outprefix = NULL) {
