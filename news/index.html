@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">rpyANTs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.5.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.5.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,6 +32,16 @@
       <small>Source: <a href="https://github.com/dipterix/rpyANTs/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.0.6" id="rpyants-006">rpyANTs 0.0.6<a class="anchor" aria-label="anchor" href="#rpyants-006"></a></h2>
+<ul><li>Improved normalization for irregular brain</li>
+<li>Fixed issues where atlases in <code>nii</code> are ignored</li>
+<li>Added <code>extract_coregistartion</code> to extract index to world and world to world matrix</li>
+<li>Added supports to the symmetric <code>MNI152</code> templates</li>
+<li>Normalization allows <code>with_skull</code> or without skulls; <code>cost_function</code> can be customized too</li>
+<li>Users have choices to disable <code>antspynet</code> for consistency</li>
+<li>Suppressed a test on <code>MacOS</code> due to <code>ImageIO</code> issue</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.5" id="rpyants-005">rpyANTs 0.0.5<a class="anchor" aria-label="anchor" href="#rpyants-005"></a></h2><p class="text-muted">CRAN release: 2025-07-22</p>
 <ul><li>Added backward compatibility support for <code>Py39</code>
