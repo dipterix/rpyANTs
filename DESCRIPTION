@@ -1,6 +1,6 @@
 Package: rpyANTs
 Title: An Alternative Advanced Normalization Tools ('ANTs')
-Version: 0.0.5.6
+Version: 0.0.6
 Authors@R: 
     person("Zhengjia", "Wang", email = "dipterix.wang@gmail.com", 
             role = c("aut", "cre"))
@@ -14,7 +14,7 @@ License: Apache License 2.0
 Language: en-US
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Imports: 
     grDevices,
     stats,

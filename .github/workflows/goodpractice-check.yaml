@@ -27,6 +27,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Check for CRAN trigger
+        id: cran-trigger
+        run: |
+          if echo "${{ github.event.head_commit.message }}" | grep -iq "ready for cran"; then
+            echo "run_win_devel=true" >> $GITHUB_OUTPUT
+          else
+            echo "run_win_devel=false" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
       - uses: r-lib/actions/setup-pandoc@v2
 
       - uses: r-lib/actions/setup-tinytex@v2
@@ -111,9 +121,11 @@ jobs:
         shell: Rscript {0}
 
       # Step 3: Submit to Win-Devel (optional)
+      # Manual trigger: respects run_win_devel input
+      # Automatic trigger (push/PR): runs if commit message contains "ready for CRAN" (case-insensitive)
       - name: Submit to Win-Devel
         id: windevel
-        if: ${{ github.event.inputs.run_win_devel == 'true' }}
+        if: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.run_win_devel == 'true') || (github.event_name != 'workflow_dispatch' && steps.cran-trigger.outputs.run_win_devel == 'true') }}
         run: |
           cat("
           ╔══════════════════════════════════════════════════════════════╗
@@ -197,10 +209,16 @@ jobs:
             echo "📤 Package submitted to CRAN win-builder." >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "> **Note:** Results will be sent to the package maintainer's email address." >> $GITHUB_STEP_SUMMARY
-          elif [ "${{ github.event.inputs.run_win_devel }}" == "false" ]; then
-            echo "⏭️ Skipped (disabled in workflow inputs)." >> $GITHUB_STEP_SUMMARY
-          else
+          elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            if [ "${{ github.event.inputs.run_win_devel }}" == "true" ]; then
+              echo "❓ Win-devel submission did not complete." >> $GITHUB_STEP_SUMMARY
+            else
+              echo "⏭️ Skipped (disabled in workflow inputs)." >> $GITHUB_STEP_SUMMARY
+            fi
+          elif [ "${{ steps.cran-trigger.outputs.run_win_devel }}" == "true" ]; then
             echo "❓ Win-devel submission did not complete." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⏭️ Skipped (commit message doesn't contain 'ready for CRAN')." >> $GITHUB_STEP_SUMMARY
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
 
