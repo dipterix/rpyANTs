@@ -10,7 +10,8 @@ py
 
 ## Format
 
-An object of class `NULL` of length 0.
+An object of class `python.builtin.module` (inherits from
+`python.builtin.object`) of length 1.
 
 ## Value
 
