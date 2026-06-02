@@ -51,22 +51,22 @@
 #'
 #' @export
 ants_plot <- function(
-    image, overlay=NULL, blend=FALSE, alpha=1,
-    cmap='Greys_r', overlay_cmap='turbo',
-    overlay_alpha=0.9, vminol=NULL, vmaxol=NULL,
-    cbar=FALSE, cbar_length=0.8, cbar_dx=0.0, cbar_vertical=TRUE,
-    axis=0, nslices=12, slices=NULL, ncol=NULL, slice_buffer=NULL,
-    black_bg=TRUE, bg_thresh_quant=0.01, bg_val_quant=0.99,
-    domain_image_map=NULL, crop=FALSE, scale=FALSE, reverse=FALSE,
-    title="", title_fontsize=20, title_dx=0.0, title_dy=0.0,
-    filename=NULL, dpi=500, figsize=1.5, reorient=TRUE, resample=TRUE,
+    image, overlay = NULL, blend = FALSE, alpha = 1,
+    cmap = "Greys_r", overlay_cmap = "turbo",
+    overlay_alpha = 0.9, vminol = NULL, vmaxol = NULL,
+    cbar = FALSE, cbar_length = 0.8, cbar_dx = 0.0, cbar_vertical = TRUE,
+    axis = 0, nslices = 12, slices = NULL, ncol = NULL, slice_buffer = NULL,
+    black_bg = TRUE, bg_thresh_quant = 0.01, bg_val_quant = 0.99,
+    domain_image_map = NULL, crop = FALSE, scale = FALSE, reverse = FALSE,
+    title = "", title_fontsize = 20, title_dx = 0.0, title_dy = 0.0,
+    filename = NULL, dpi = 500, figsize = 1.5, reorient = TRUE, resample = TRUE,
     force_agg = FALSE, close_figure = TRUE
   ) {
 
   # DIPSAUS DEBUG START
-  # image <- '~/.antspy/r16slice.jpg'
+  # image <- "~/.antspy/r16slice.jpg"
   # list2env(list(overlay=NULL, blend=FALSE, alpha=1,
-  #               cmap='Greys_r', overlay_cmap='turbo',
+  #               cmap="Greys_r", overlay_cmap="turbo",
   #               overlay_alpha=0.4, vminol=NULL, vmaxol=NULL,
   #               cbar=FALSE, cbar_length=0.8, cbar_dx=0.0, cbar_vertical=TRUE,
   #               axis=0, nslices=12, slices=NULL, ncol=NULL, slice_buffer=NULL,
@@ -96,10 +96,10 @@ ants_plot <- function(
   cbar_length <- convert_if_not_python(cbar_length, { as.double(cbar_length) })
   cbar_dx <- convert_if_not_python(cbar_dx, { as.double(cbar_dx) })
   vminol <- convert_if_not_python(vminol, {
-    if(length(vminol)) { as.double(vminol) } else {NULL }
+    if (length(vminol)) { as.double(vminol) } else {NULL }
   })
   vmaxol <- convert_if_not_python(vmaxol, {
-    if(length(vmaxol)) { as.double(vmaxol) } else {NULL }
+    if (length(vmaxol)) { as.double(vmaxol) } else {NULL }
   })
 
   cmap <- convert_if_not_python(cmap, { as.character(cmap) })
@@ -111,13 +111,13 @@ ants_plot <- function(
   title_fontsize <- convert_if_not_python(title_fontsize, { as.integer(title_fontsize) })
   dpi <- convert_if_not_python(dpi, { as.integer(dpi) })
   slice_buffer <- convert_if_not_python(slice_buffer, {
-    if(length(slice_buffer)) { as.integer(slice_buffer) } else { NULL }
+    if (length(slice_buffer)) { as.integer(slice_buffer) } else { NULL }
   })
 
   slices <- convert_if_not_python(slices, {
-    if(length(slices)) {
+    if (length(slices)) {
       slices <- as.numeric(slices)
-      if(any(slices < 1 & slices > 0)) {
+      if (any(slices < 1 & slices > 0)) {
         slices <- as.double(slices)
       } else {
         slices <- as.integer(slices)
@@ -129,7 +129,7 @@ ants_plot <- function(
   })
   title <- convert_if_not_python(title, { paste(title, collapse = "") })
   filename <- convert_if_not_python(filename, {
-    if(length(filename) != 1) {
+    if (length(filename) != 1) {
       NULL
     } else {
       filename
@@ -143,7 +143,7 @@ ants_plot <- function(
 
   ants <- load_ants()
   matplotlib <- import("matplotlib", convert = FALSE)
-  if( force_agg ) {
+  if ( force_agg ) {
     matplotlib$use("Agg", force = TRUE)
   }
 
@@ -181,11 +181,11 @@ ants_plot <- function(
     dpi = dpi,
     figsize = figsize,
     reorient = reorient,
-    resample= resample
+    resample = resample
   )
 
 
-  if(close_figure) {
+  if (close_figure) {
     matplotlib$pyplot$close()
   }
   return(invisible())
@@ -246,13 +246,14 @@ ants_plot <- function(
 #'
 #' @export
 ants_plot_grid <- function(
-    images, shape = NULL, slices=0, axes=2, figsize=1.0, rpad=0, cpad=0,
-    vmin=NULL, vmax=NULL, colorbar=TRUE, cmap='Greys_r', title="",
-    tfontsize=20, title_dx=0, title_dy=0, rlabels=NULL, rfontsize=14,
-    rfontcolor='black', rfacecolor='white', clabels=NULL,
-    cfontsize=14, cfontcolor='black', cfacecolor='white',
-    filename=NULL, dpi=400, transparent=TRUE, ...,
+    images, shape = NULL, slices = 0, axes = 2, figsize = 1.0, rpad = 0,
+    cpad = 0, vmin = NULL, vmax = NULL, colorbar = TRUE, cmap = "Greys_r",
+    title = "", tfontsize = 20, title_dx = 0, title_dy = 0, rlabels = NULL,
+    rfontsize = 14, rfontcolor = "black", rfacecolor = "white", clabels = NULL,
+    cfontsize = 14, cfontcolor = "black", cfacecolor = "white",
+    filename = NULL, dpi = 400, transparent = TRUE, ...,
     force_agg = FALSE, close_figure = TRUE) {
+
 
   # DIPSAUS DEBUG START
   # mni1 = ants$image_read(ants$get_data('mni'))
@@ -270,33 +271,33 @@ ants_plot_grid <- function(
   np <- import("numpy", convert = FALSE)
   ants <- load_ants()
 
-  if(inherits(images, "ants.core.ants_image.ANTsImage")) {
+  if (inherits(images, "ants.core.ants_image.ANTsImage")) {
     images <- list(images)
   }
   images <- np$asarray(images)
 
-  if(length(shape)) {
+  if (length(shape)) {
     images <- images$reshape(tuple(as.list(as.integer(shape))))
   }
-  if(py_len(images$shape) == 1) {
+  if (py_len(images$shape) == 1) {
     n <- c(1L, as.integer(to_r(images$shape)))
     images <- images$reshape(n)
   }
 
   slices <- convert_if_not_python(slices, {
-    if(!length(slices)) {
+    if (!length(slices)) {
       slices <- 0L
     }
-    if(length(slices) == 1) {
+    if (length(slices) == 1) {
       slices <- rep(as.integer(slices), prod(as.integer(to_r(images$shape))))
     } else {
       slices <- np$asarray(as.integer(unlist(slices)), dtype = "int")
     }
   })
 
-  if(!inherits(slices, "python.builtin.NoneType")) {
-    if(!inherits(slices, c("python.builtin.int", "python.builtin.float"))) {
-      if(!inherits(slices, "numpy.ndarray")) {
+  if (!inherits(slices, "python.builtin.NoneType")) {
+    if (!inherits(slices, c("python.builtin.int", "python.builtin.float"))) {
+      if (!inherits(slices, "numpy.ndarray")) {
         slices <- np$asarray(slices, dtype = "int")
       }
       slices <- slices$reshape(images$shape)
@@ -304,7 +305,7 @@ ants_plot_grid <- function(
   }
 
   axes <- convert_if_not_python(axes, as.integer(axes))
-  if(length(axes) > 1) {
+  if (length(axes) > 1) {
     axes <- np$asarray(axes)
     axes <- axes$reshape(images$shape)
   }
@@ -312,8 +313,16 @@ ants_plot_grid <- function(
   figsize <- convert_if_not_python(figsize, as.double(figsize))
   rpad <- convert_if_not_python(rpad, as.double(rpad))
   cpad <- convert_if_not_python(cpad, as.double(cpad))
-  vmin <- convert_if_not_python(vmin, if(length(vmin)) { as.double(vmin) } else { py_none() })
-  vmax <- convert_if_not_python(vmax, if(length(vmax)) { as.double(vmax) } else { py_none() })
+  vmin <- convert_if_not_python(vmin, if (length(vmin)) {
+    as.double(vmin)
+  } else {
+    py_none()
+  })
+  vmax <- convert_if_not_python(vmax, if (length(vmax)) {
+    as.double(vmax)
+  } else {
+    py_none()
+  })
   colorbar <- convert_if_not_python(colorbar, isTRUE(as.logical(colorbar)))
   cmap <- convert_if_not_python(cmap, paste(as.character(cmap), collapse = ""))
   title <- convert_if_not_python(title, paste(as.character(title), collapse = ""))
@@ -321,10 +330,10 @@ ants_plot_grid <- function(
   title_dx <- convert_if_not_python(title_dx, as.double(title_dx))
   title_dy <- convert_if_not_python(title_dy, as.double(title_dy))
   rlabels <- convert_if_not_python(rlabels, {
-    if(length(rlabels)) { py_list(as.list(as.character(rlabels))) } else { py_none() }
+    if (length(rlabels)) { py_list(as.list(as.character(rlabels))) } else { py_none() }
   })
   clabels <- convert_if_not_python(clabels, {
-    if(length(clabels)) { py_list(as.list(as.character(clabels))) } else { py_none() }
+    if (length(clabels)) { py_list(as.list(as.character(clabels))) } else { py_none() }
   })
   rfontsize <- convert_if_not_python(rfontsize, as.double(rfontsize))
   rfontcolor <- convert_if_not_python(rfontcolor, as_hexcolor(rfontcolor))
@@ -334,7 +343,7 @@ ants_plot_grid <- function(
   cfacecolor <- convert_if_not_python(cfacecolor, as_hexcolor(cfacecolor))
 
   filename <- convert_if_not_python(filename, {
-    if(length(filename)) {
+    if (length(filename)) {
       paste(as.character(filename), collapse = "")
     } else {
       NULL
@@ -344,20 +353,38 @@ ants_plot_grid <- function(
   transparent <- convert_if_not_python(transparent, isTRUE(as.logical(transparent)))
 
   matplotlib <- import("matplotlib", convert = FALSE)
-  if( force_agg ) {
+  if ( force_agg ) {
     matplotlib$use("Agg", force = TRUE)
   }
 
-  ants$plot_grid(images=images, slices=slices, axes = axes, figsize = figsize,
-                 rpad = rpad, cpad = cpad, vmin = vmin, vmax = vmax,
-                 colorbar = colorbar, cmap = cmap, title = title,
-                 tfontsize = tfontsize, title_dx = title_dx,
-                 rlabels = rlabels, clabels = clabels,
-                 rfontsize = rfontsize, rfontcolor = rfontcolor, rfacecolor = rfacecolor,
-                 cfontsize = cfontsize, cfontcolor = cfontcolor, cfacecolor = cfacecolor,
-                 filename = filename, dpi = dpi, transparent = transparent)
+  ants$plot_grid(
+    images = images,
+    slices = slices,
+    axes = axes,
+    figsize = figsize,
+    rpad = rpad,
+    cpad = cpad,
+    vmin = vmin,
+    vmax = vmax,
+    colorbar = colorbar,
+    cmap = cmap,
+    title = title,
+    tfontsize = tfontsize,
+    title_dx = title_dx,
+    rlabels = rlabels,
+    clabels = clabels,
+    rfontsize = rfontsize,
+    rfontcolor = rfontcolor,
+    rfacecolor = rfacecolor,
+    cfontsize = cfontsize,
+    cfontcolor = cfontcolor,
+    cfacecolor = cfacecolor,
+    filename = filename,
+    dpi = dpi,
+    transparent = transparent
+  )
 
-  if(close_figure) {
+  if (close_figure) {
     matplotlib$pyplot$close()
   }
 

@@ -11,10 +11,10 @@ library(rpyANTs)
 
 
 message("Checking if rpymat is set up")
-if(rpyANTs:::rpymat_is_setup()) {
+if (rpyANTs:::rpymat_is_setup()) {
 
   message("Checking if ants is available")
-  if( rpyANTs:::ants_available() ) {
+  if ( rpyANTs:::ants_available() ) {
 
     message("ANTsPy is set up, run tests...")
 

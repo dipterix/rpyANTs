@@ -24,12 +24,12 @@
 NULL
 
 AFFINE_TRANSFORM_TYPES <- c(
-  'AffineTransform', 'CenteredAffineTransform',
-  'Euler2DTransform', 'Euler3DTransform', 'Rigid3DTransform',
-  'Rigid2DTransform', 'QuaternionRigidTransform',
-  'Similarity2DTransform', 'CenteredSimilarity2DTransform',
-  'Similarity3DTransform', 'CenteredRigid2DTransform',
-  'CenteredEuler3DTransform', "ScaleTransform",
+  "AffineTransform", "CenteredAffineTransform",
+  "Euler2DTransform", "Euler3DTransform", "Rigid3DTransform",
+  "Rigid2DTransform", "QuaternionRigidTransform",
+  "Similarity2DTransform", "CenteredSimilarity2DTransform",
+  "Similarity3DTransform", "CenteredRigid2DTransform",
+  "CenteredEuler3DTransform", "ScaleTransform",
   "ScaleVersor3DTransform", "ScaleSkewVersor3DTransform"
 )
 
@@ -38,7 +38,7 @@ MNI305_to_MNI152 <- structure(c(0.9975, 0.0146, -0.013, 0, -0.0073, 1.0009, -0.0
 
 validate_python <- function(verbose = TRUE) {
   verb <- function(expr) {
-    if(verbose) {
+    if (verbose) {
       force( expr )
     }
   }
@@ -57,7 +57,7 @@ validate_python <- function(verbose = TRUE) {
   verb(message("Trying to validate packages..."))
 
   package_missing <- NULL
-  for(package in c("numpy", "h5py", "cython", "pandas", "ants")) {
+  for (package in c("numpy", "h5py", "cython", "pandas", "ants")) {
     tryCatch({
       verb({ cat(sprintf("%s: ...", package)) })
       module <- reticulate::import(package)
@@ -80,7 +80,7 @@ validate_python <- function(verbose = TRUE) {
 #' @export
 install_ants <- function(python_ver = "3.11", verbose = TRUE) {
   # Install conda and create a conda environment
-  if(!dir.exists(rpymat::env_path())) {
+  if (!dir.exists(rpymat::env_path())) {
     standalone <- !file.exists(rpymat::conda_bin())
     rpymat::configure_conda(python_ver = python_ver, force = TRUE, standalone = standalone)
   }
@@ -89,14 +89,14 @@ install_ants <- function(python_ver = "3.11", verbose = TRUE) {
 
   # install necessary libraries
   pkgs <- c("h5py", "numpy", "scipy", "pandas", "cython")
-  if(!all(pkgs %in% installed_pkgs_tbl$package)) {
+  if (!all(pkgs %in% installed_pkgs_tbl$package)) {
     rpymat::add_packages(pkgs)
   }
 
   # install antspyx family
   ants_packages <- c("antspyx", "antspynet")
   ants_packages <- ants_packages[!ants_packages %in% installed_pkgs_tbl$package]
-  if(length(ants_packages)) {
+  if (length(ants_packages)) {
     rpymat::add_packages(packages = ants_packages, pip = TRUE)
   }
 

@@ -1,13 +1,13 @@
 #' @export
 `$.ants.proxy` <- function(x, name) {
   re <- NextMethod("$")
-  if(inherits(re, c(
+  if (inherits(re, c(
     "python.builtin.type",
     "python.builtin.function",
     "python.builtin.module"
   ))) {
     cls <- class(re)
-    if(!"ants.proxy" %in% cls) {
+    if (!"ants.proxy" %in% cls) {
       class(re) <- c("ants.proxy", cls)
     }
   }

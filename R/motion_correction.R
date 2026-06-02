@@ -26,10 +26,10 @@
 ants_motion_correction <- function(
     x,
     fixed = NULL,
-    type_of_transform = 'BOLDRigid',
+    type_of_transform = "BOLDRigid",
     mask = NULL,
     fdOffset = 50,
-    outprefix = '',
+    outprefix = "",
     verbose = FALSE,
     ...
 ) {
@@ -42,9 +42,9 @@ ants_motion_correction <- function(
   fdOffset <- convert_if_not_python(fdOffset, as.numeric(fdOffset))
   outprefix <- convert_if_not_python(outprefix, {
     outprefix_new <- ""
-    if(length(outprefix) >= 1) {
+    if (length(outprefix) >= 1) {
       outprefix <- outprefix[[1]]
-      if(!is.na(outprefix) && trimws(outprefix) != "") {
+      if (!is.na(outprefix) && trimws(outprefix) != "") {
         outprefix_new <- normalizePath(outprefix, winslash = "/", mustWork = FALSE)
       }
     }
@@ -57,10 +57,10 @@ ants_motion_correction <- function(
 
   type_of_transform <- convert_if_not_python(type_of_transform, {
     type_of_transform <- as.character(type_of_transform)
-    if(length(type_of_transform) >= 1) {
+    if (length(type_of_transform) >= 1) {
       type_of_transform <- type_of_transform[[1]]
-    } else if(length(type_of_transform) == 0) {
-      type_of_transform <- 'BOLDRigid'
+    } else if (length(type_of_transform) == 0) {
+      type_of_transform <- "BOLDRigid"
     }
     type_of_transform
   })

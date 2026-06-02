@@ -86,7 +86,7 @@ antspynet_deep_atropos <- function(
 
   use_spatial_priors <- convert_if_not_python(use_spatial_priors, {
     use_spatial_priors <- as.integer(use_spatial_priors)
-    if( is.na(use_spatial_priors) || use_spatial_priors < 0 || use_spatial_priors > 1) {
+    if ( is.na(use_spatial_priors) || use_spatial_priors < 0 || use_spatial_priors > 1) {
       use_spatial_priors <- 1L
     }
     use_spatial_priors
@@ -101,7 +101,7 @@ antspynet_deep_atropos <- function(
   # Performing AntsPyNet Segmentation
   antspynet_segmentation <- antspynet$deep_atropos(image_ants, do_preprocessing = do_preprocessing, use_spatial_priors = use_spatial_priors, verbose = verbose)
 
-  if( aseg_only ) {
+  if ( aseg_only ) {
     antspynet_segmentation <- antspynet_segmentation$segmentation_image
   }
 

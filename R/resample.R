@@ -18,7 +18,7 @@
 #'
 #'   sample_fpath <- as.character(ants$get_ants_data("r16"))
 #'
-#'   if(file.exists(sample_fpath)) {
+#'   if (file.exists(sample_fpath)) {
 #'
 #'     try(silent = TRUE, {
 #'
@@ -56,24 +56,24 @@ ants_resample_image <- function(x, resample_params, use_voxels = FALSE,
   # type <- "bspline"
 
   interp_type2 <- as.character(interp_type)
-  if(!length(interp_type2)) {
+  if (!length(interp_type2)) {
     interp_type2 <- "linear"
-  } else if(length(interp_type2) > 1 || !grepl("^[1-5]", interp_type2) ) {
+  } else if (length(interp_type2) > 1 || !grepl("^[1-5]", interp_type2) ) {
     interp_type2 <- match.arg(arg = interp_type2,
                               choices = c("linear", "nn", "guassian", "sinc", "bspline"),
                               several.ok = FALSE)
   } else {
     interp_type2 <- as.integer(interp_type2)
   }
-  if(is.na(interp_type2) || !is.integer(interp_type2)) {
+  if (is.na(interp_type2) || !is.integer(interp_type2)) {
     interp_type2 <- which(c("linear", "nn", "guassian", "sinc", "bspline") == interp_type2)
   }
-  if(is.na(interp_type2)) {
+  if (is.na(interp_type2)) {
     stop("ants_resample_image: Invalid `interp_type`: ", as.character(interp_type))
   }
 
   resample_params <- convert_if_not_python(resample_params, {
-    if(!is.numeric(resample_params) || any(resample_params < 0)) {
+    if (!is.numeric(resample_params) || any(resample_params < 0)) {
       stop("ants_resample_image: Invalid `resample_params`: all dimensions must be positive")
     }
     as.numeric(resample_params)

@@ -27,7 +27,7 @@
 #' @export
 antspynet_brain_extraction <- function(
     x, modality = c("t1", "t1nobrainer", "t1combined", "flair", "t2", "t2star", "bold", "fa", "t1t2infant", "t1infant", "t2infant"),
-    verbose=FALSE) {
+    verbose = FALSE) {
 
   antspynet <- load_antspynet()
   image <- as_ANTsImage(x)
@@ -56,7 +56,7 @@ brain_mask <- function(
   ants <- load_ants()
   rpyants <- load_rpyants()
 
-  if(use_temppath && auto_clean) {
+  if (use_temppath && auto_clean) {
     dir_create2(work_path, showWarnings = FALSE, recursive = TRUE)
     on.exit({
       unlink(work_path, recursive = TRUE)
@@ -65,7 +65,7 @@ brain_mask <- function(
   work_path <- normalize_path(work_path, must_work = TRUE)
   template_path <- normalize_path(template_path, must_work = TRUE)
 
-  if( verbose ) {
+  if ( verbose ) {
     verbose <- TRUE
   } else {
     verbose <- FALSE
@@ -104,16 +104,16 @@ brain_extraction <- function(x, skull_alpha = 0,
 
   brain <- image * mask
 
-  if( skull_alpha > 0 ) {
-    if( skull_alpha > 1 ) {
+  if ( skull_alpha > 0 ) {
+    if ( skull_alpha > 1 ) {
       skull_alpha <- 1
     }
     pixel_values <- image[mask == 0]
     pixel_values <- pixel_values[pixel_values > 0]
     threshold <- 0
-    if(length(pixel_values)) {
+    if (length(pixel_values)) {
       threshold_quantile <- as.numeric(threshold_quantile)
-      if(threshold_quantile < 0) {
+      if (threshold_quantile < 0) {
         threshold_quantile <- 0
       } else if (threshold_quantile > 1) {
         threshold_quantile <- 1

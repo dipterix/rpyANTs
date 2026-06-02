@@ -68,17 +68,17 @@
 #'
 #' @export
 ants_registration <- function(
-    fixed, moving, type_of_transform='SyN', initial_transform = NULL,
-    outprefix=tempfile(), mask=NULL, grad_step=0.2, flow_sigma=3, total_sigma=0,
-    aff_metric=c('mattes', 'GC', 'meansquares'),
-    aff_sampling=32, aff_random_sampling_rate=0.2,
-    syn_metric=c('mattes', 'CC', 'meansquares', 'demons'),
-    syn_sampling=32, reg_iterations=c(40, 20, 0),
-    aff_iterations=c(2100, 1200, 1200, 10),
-    aff_shrink_factors=c(6, 4, 2, 1),
-    aff_smoothing_sigmas=c(3, 2, 1, 0),
-    write_composite_transform=FALSE, verbose=FALSE,
-    smoothing_in_mm=FALSE, ...) {
+    fixed, moving, type_of_transform = "SyN", initial_transform = NULL,
+    outprefix = tempfile(), mask = NULL, grad_step = 0.2, flow_sigma = 3, total_sigma = 0,
+    aff_metric = c("mattes", "GC", "meansquares"),
+    aff_sampling = 32, aff_random_sampling_rate = 0.2,
+    syn_metric = c("mattes", "CC", "meansquares", "demons"),
+    syn_sampling = 32, reg_iterations = c(40, 20, 0),
+    aff_iterations = c(2100, 1200, 1200, 10),
+    aff_shrink_factors = c(6, 4, 2, 1),
+    aff_smoothing_sigmas = c(3, 2, 1, 0),
+    write_composite_transform = FALSE, verbose = FALSE,
+    smoothing_in_mm = FALSE, ...) {
 
   # DIPSAUS DEBUG START
   # moving <- "~/Dropbox (PennNeurosurgery)/RAVE/Samples/raw/PAV006/rave-imaging/derivative/CT_RAW.nii.gz"
@@ -111,8 +111,8 @@ ants_registration <- function(
   moving_img <- as_ANTsImage(moving, strict = TRUE)
   mask <- as_ANTsImage(mask, strict = FALSE)
 
-  if(length(initial_transform)) {
-    if(length(initial_transform) == 1 && is.character(initial_transform) && file.exists(initial_transform)) {
+  if (length(initial_transform)) {
+    if (length(initial_transform) == 1 && is.character(initial_transform) && file.exists(initial_transform)) {
       initial_transform <- as_ANTsTransform(initial_transform, fixed_img$dimension)
     }
   } else {
@@ -127,21 +127,28 @@ ants_registration <- function(
   ants <- load_ants()
   tfiles1 <- snapshot_tempfiles()
   py_results <- ants$registration(
-    fixed = fixed_img, moving = moving_img,
+    fixed = fixed_img,
+    moving = moving_img,
     type_of_transform = type_of_transform,
     initial_transform = initial_transform,
-    outprefix = outprefix, mask = mask,
-    grad_step=grad_step, flow_sigma=flow_sigma, total_sigma=total_sigma,
-    aff_metric=aff_metric, aff_sampling=aff_sampling,
-    aff_random_sampling_rate=aff_random_sampling_rate,
-    syn_metric=syn_metric, syn_sampling=syn_sampling,
-    reg_iterations=reg_iterations,
-    aff_iterations=aff_iterations,
-    aff_shrink_factors=aff_shrink_factors,
-    aff_smoothing_sigmas=aff_smoothing_sigmas,
-    write_composite_transform=write_composite_transform,
-    verbose=verbose,
-    smoothing_in_mm=smoothing_in_mm)
+    outprefix = outprefix,
+    mask = mask,
+    grad_step = grad_step,
+    flow_sigma = flow_sigma,
+    total_sigma = total_sigma,
+    aff_metric = aff_metric,
+    aff_sampling = aff_sampling,
+    aff_random_sampling_rate = aff_random_sampling_rate,
+    syn_metric = syn_metric,
+    syn_sampling = syn_sampling,
+    reg_iterations = reg_iterations,
+    aff_iterations = aff_iterations,
+    aff_shrink_factors = aff_shrink_factors,
+    aff_smoothing_sigmas = aff_smoothing_sigmas,
+    write_composite_transform = write_composite_transform,
+    verbose = verbose,
+    smoothing_in_mm = smoothing_in_mm
+  )
   tfiles2 <- snapshot_tempfiles()
   remove_tmpfiles(setdiff(tfiles2, tfiles1))
 
@@ -173,7 +180,7 @@ extract_coregistration <- function(transform_path, moving_img, outprefix = NULL)
   transform_path <- normalizePath(transform_path, mustWork = TRUE, winslash = "/")
   moving_img <- normalizePath(moving_img, mustWork = TRUE, winslash = "/")
 
-  if(length(outprefix) != 1 || is.na(outprefix)) {
+  if (length(outprefix) != 1 || is.na(outprefix)) {
     outprefix <- paste0(dirname(transform_path), .Platform$file.sep, "MOV_")
   }
 
@@ -251,7 +258,7 @@ halpern_register_ct_mri <- function(fixed, moving, outprefix, fixed_is_ct = TRUE
 
   transform <- py_to_r(py_results$transforms)
   ct_lps_to_mri_lps <- as.matrix(as_ANTsTransform(transform))
-  if( fixed_is_ct ) {
+  if ( fixed_is_ct ) {
     fixed_is_ct <- TRUE
     ct_ijk_to_lps <- t(t(py_to_r(fixed_img$direction)) *
                          as.double(py_to_r(fixed_img$spacing)))
@@ -426,7 +433,7 @@ halpern_apply_transform_template_mri <- function(roi_folder, outprefix, verbose 
 
   prefix <- normalize_path(outprefix, must_work = FALSE)
 
-  if(endsWith(roi_folder, "nii") || endsWith(roi_folder, "nii.gz")) {
+  if (endsWith(roi_folder, "nii") || endsWith(roi_folder, "nii.gz")) {
     # roi_folder is a file
     rois <- basename(roi_folder)
     roi_folder <- dirname(roi_folder)
@@ -467,7 +474,7 @@ halpern_apply_transform_template_mri <- function(roi_folder, outprefix, verbose 
   transformed <- ants_apply_transforms(
     fixed = native_img,
     moving = infiles[[1]],
-    transformlist = infiles[c(3,4,5)],
+    transformlist = infiles[c(3, 4, 5)],
     interpolator = "nearestNeighbor",
     whichtoinvert = c(TRUE, TRUE, FALSE),
     verbose = verbose
@@ -478,12 +485,14 @@ halpern_apply_transform_template_mri <- function(roi_folder, outprefix, verbose 
   lapply(rois, function(mask) {
     mask_infile <- normalize_path(file_path(roi_folder, mask), must_work = TRUE)
     mask_outfile <- normalize_path(file_path(mask_root, mask), must_work = FALSE)
-    dir.create(dirname(mask_outfile), showWarnings = FALSE, recursive = TRUE)
+    dir.create(dirname(mask_outfile),
+               showWarnings = FALSE,
+               recursive = TRUE)
 
     mask_out <- ants_apply_transforms(
       fixed = native_img,
       moving = mask_infile,
-      transformlist = infiles[c(3,4,5)],
+      transformlist = infiles[c(3, 4, 5)],
       interpolator = "nearestNeighbor",
       whichtoinvert = c(TRUE, TRUE, FALSE),
       verbose = verbose
@@ -556,13 +565,13 @@ ants_apply_transforms <- function(
   verbose <- convert_if_not_python(verbose, isTRUE(as.logical(verbose)))
   defaultvalue <- convert_if_not_python(defaultvalue, {
     defaultvalue <- as.numeric(defaultvalue)
-    if( is.na(defaultvalue) || defaultvalue < 0 ) { defaultvalue <- 0 }
+    if ( is.na(defaultvalue) || defaultvalue < 0 ) { defaultvalue <- 0 }
     defaultvalue
   })
 
 
   compose <- convert_if_not_python(compose, {
-    if(length(compose)) {
+    if (length(compose)) {
       compose <- normalizePath(compose, mustWork = FALSE)
     } else {
       compose <- NULL
@@ -572,7 +581,7 @@ ants_apply_transforms <- function(
 
   imagetype <- convert_if_not_python(imagetype, {
     imagetype <- as.integer(imagetype)
-    if( length(imagetype) != 1 || is.na(imagetype) || imagetype < 0 || imagetype > 3 ) {
+    if ( length(imagetype) != 1 || is.na(imagetype) || imagetype < 0 || imagetype > 3 ) {
       stop("ants_apply_transforms: invalid `imagetype`: choose 0/1/2/3 mapping to scalar/vector/tensor/time-series")
     }
     imagetype
@@ -580,6 +589,7 @@ ants_apply_transforms <- function(
 
 
   interpolator <- convert_if_not_python(interpolator, { match.arg(interpolator) })
+
 
   fixed <- as_ANTsImage(fixed, strict = TRUE)
   moving <- as_ANTsImage(moving, strict = TRUE)
@@ -590,10 +600,12 @@ ants_apply_transforms <- function(
   n_transforms <- length(transformlist)
 
 
-  if(!length(whichtoinvert)) {
+  if (!length(whichtoinvert)) {
     whichtoinvert <- py_none()
-  } else if(length(whichtoinvert) != n_transforms){
-    stop("ants_apply_transforms: `whichtoinvert` must be either NULL or have the same length as `transformlist`")
+  } else if (length(whichtoinvert) != n_transforms) {
+    stop(
+      "ants_apply_transforms: `whichtoinvert` must be either NULL or have the same length as `transformlist`"
+    )
   } else {
     whichtoinvert <- py_list(as.logical(whichtoinvert))
   }
@@ -655,28 +667,28 @@ ants_apply_transforms <- function(
 #'
 #' @export
 ants_apply_transforms_to_points <- function(
-    dim, points, transformlist, whichtoinvert=NULL, verbose=FALSE, ...) {
+    dim, points, transformlist, whichtoinvert = NULL, verbose = FALSE, ...) {
 
   ants <- load_ants()
 
-  if(inherits(dim, "python.builtin.object")) {
+  if (inherits(dim, "python.builtin.object")) {
     dim <- py_to_r(dim)
   }
   dim <- as.integer(dim)
   verbose <- convert_if_not_python(verbose, isTRUE(as.logical(verbose)))
 
-  if(inherits(points, "python.builtin.object")) {
+  if (inherits(points, "python.builtin.object")) {
     points <- py_to_r(points)
   }
   points <- as.data.frame(points)
   required_columns <- c("x", "y", "z", "t")
   required_columns <- required_columns[seq_len(dim)]
-  if(!all(required_columns %in% names(points))) {
+  if (!all(required_columns %in% names(points))) {
     stop("ants_apply_transforms_to_points: `points` must be a data.frame containing names: ['", paste(required_columns, collapse = "', '"), "'].")
   }
   npts <- nrow(points)
-  if( npts == 0 ) { return(points) }
-  if( npts == 1 ) {
+  if ( npts == 0 ) { return(points) }
+  if ( npts == 1 ) {
     points <- rbind(points, points)
   }
 
@@ -686,9 +698,9 @@ ants_apply_transforms_to_points <- function(
   n_transforms <- length(transformlist)
 
 
-  if(!length(whichtoinvert)) {
+  if (!length(whichtoinvert)) {
     whichtoinvert <- py_none()
-  } else if(length(whichtoinvert) != n_transforms){
+  } else if (length(whichtoinvert) != n_transforms) {
     stop("ants_apply_transforms_to_points: `whichtoinvert` must be either NULL or have the same length as `transformlist`")
   } else {
     whichtoinvert <- py_list(as.list(as.logical(whichtoinvert)))
@@ -702,7 +714,7 @@ ants_apply_transforms_to_points <- function(
     verbose = verbose
   )
   re <- py_to_r(re)
-  if(npts == 1) {
+  if (npts == 1) {
     re <- re[1, , drop = FALSE]
   }
   return(re)

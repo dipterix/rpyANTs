@@ -26,16 +26,16 @@ test_that("ANTsTransform generics", {
   expect_equal(vector_trans, expected_trans, tolerance = 1e-4)
 
   cat("Sanity-check on sample data with SyN registration\n")
-  ipath1 <- ants$get_ants_data('r16')
-  ipath2 <- ants$get_ants_data('r64')
+  ipath1 <- ants$get_ants_data("r16")
+  ipath2 <- ants$get_ants_data("r64")
 
   print(ipath1)
   print(ipath2)
   print(class(ipath1))
 
   cat("Load images\n")
-  fi <- ants$image_read(ants$get_ants_data('r16'))
-  mo <- ants$image_read(ants$get_ants_data('r64'))
+  fi <- ants$image_read(ants$get_ants_data("r16"))
+  mo <- ants$image_read(ants$get_ants_data("r64"))
 
   print(fi)
   print(dim(fi[]))
@@ -45,13 +45,13 @@ test_that("ANTsTransform generics", {
   # Somehow this cannot run on windows
   # # resample to speed up this example
   cat("Resample images for speed\n")
-  fi <- ants$resample_image(fi, list(60L,60L), TRUE, 0L)
-  mo <- ants$resample_image(mo, list(60L,60L), TRUE, 0L)
+  fi <- ants$resample_image(fi, list(60L, 60L), TRUE, 0L)
+  mo <- ants$resample_image(mo, list(60L, 60L), TRUE, 0L)
 
   # SDR transform
   cat("Non-linear transform\n")
   transform <- ants_registration(
-    fixed=fi, moving=mo, type_of_transform = 'SyN', verbose = TRUE)
+    fixed = fi, moving = mo, type_of_transform = "SyN", verbose = TRUE)
 
   tmp_files <- unique(unlist(c(
     py_to_r(transform$fwdtransforms),
@@ -68,29 +68,42 @@ test_that("ANTsTransform generics", {
   z1 <- as_ANTsTransform(y)
   z2 <- as_ANTsTransform(y[], dimension = y$dimension)
 
+
   p <- matrix(rnorm(120), nrow = py_to_r(y$dimension))
-  vector_trans <- as.matrix(y) %*% rbind(p[,,drop = FALSE], 1)
-  expected_trans <- rbind(t(np$array(apply(p, 2, y$apply_to_point))), 1)
+  vector_trans <- as.matrix(y) %*% rbind(p[, , drop = FALSE], 1)
+  expected_trans <- rbind(t(np$array(apply(
+    p, 2, y$apply_to_point
+  ))), 1)
   expect_equal(vector_trans, expected_trans, tolerance = 1e-4)
 
-  expected_trans <- rbind(t(np$array(apply(p, 2, z1$apply_to_point))), 1)
+  expected_trans <- rbind(t(np$array(apply(
+    p, 2, z1$apply_to_point
+  ))), 1)
   expect_equal(vector_trans, expected_trans, tolerance = 1e-4)
 
-  expected_trans <- rbind(t(np$array(apply(p, 2, z2$apply_to_point))), 1)
+  expected_trans <- rbind(t(np$array(apply(
+    p, 2, z2$apply_to_point
+  ))), 1)
   expect_equal(vector_trans, expected_trans, tolerance = 1e-4)
 
   vector_trans <- as.matrix(y) %*% rbind(p, 0)
-  expected_trans <- rbind(t(np$array(apply(p, 2, y$apply_to_vector))), 0)
+  expected_trans <- rbind(t(np$array(apply(
+    p, 2, y$apply_to_vector
+  ))), 0)
   expect_equal(vector_trans, expected_trans, tolerance = 1e-4)
 
-  expected_trans <- rbind(t(np$array(apply(p, 2, z1$apply_to_vector))), 0)
+  expected_trans <- rbind(t(np$array(apply(
+    p, 2, z1$apply_to_vector
+  ))), 0)
   expect_equal(vector_trans, expected_trans, tolerance = 1e-4)
 
-  expected_trans <- rbind(t(np$array(apply(p, 2, z2$apply_to_vector))), 0)
+  expected_trans <- rbind(t(np$array(apply(
+    p, 2, z2$apply_to_vector
+  ))), 0)
   expect_equal(vector_trans, expected_trans, tolerance = 1e-4)
 
-  for(f in tmp_files) {
-    if(file.exists(f)){ unlink(f) }
+  for (f in tmp_files) {
+    if (file.exists(f)) { unlink(f) }
   }
 
 })
@@ -99,12 +112,12 @@ test_that("ANTsTransform generics", {
 
 test_that("Check `get_xform` is consistent with RNifti", {
 
-  mat_to_quaternion <- function (m) {
+  mat_to_quaternion <- function(m) {
     m <- m[1:3, 1:3]
     m <- apply(m, 2, function(x) {
       l2 <- sum(x^2)
       if (l2 > 0) {
-        x <- x/sqrt(l2)
+        x <- x / sqrt(l2)
       }
       x
     })
@@ -119,37 +132,37 @@ test_that("Check `get_xform` is consistent with RNifti", {
     m33 <- m[3, 3]
     trace <- m11 + m22 + m33
     if (trace > 0) {
-      s <- 0.5/sqrt(trace + 1)
-      w <- 0.25/s
+      s <- 0.5 / sqrt(trace + 1)
+      w <- 0.25 / s
       x <- (m32 - m23) * s
       y <- (m13 - m31) * s
       z <- (m21 - m12) * s
-    }
-    else if (m11 > m22 && m11 > m33) {
+    } else if (m11 > m22 && m11 > m33) {
       s <- 2 * sqrt(1 + m11 - m22 - m33)
-      w <- (m32 - m23)/s
+      w <- (m32 - m23) / s
       x <- 0.25 * s
-      y <- (m12 + m21)/s
-      z <- (m13 + m31)/s
-    }
-    else if (m22 > m33) {
+      y <- (m12 + m21) / s
+      z <- (m13 + m31) / s
+    } else if (m22 > m33) {
       s <- 2 * sqrt(1 + m22 - m11 - m33)
-      w <- (m13 - m31)/s
-      x <- (m12 + m21)/s
+      w <- (m13 - m31) / s
+      x <- (m12 + m21) / s
       y <- 0.25 * s
-      z <- (m23 + m32)/s
-    }
-    else {
+      z <- (m23 + m32) / s
+    } else {
       s <- 2 * sqrt(1 + m33 - m11 - m22)
-      w <- (m21 - m12)/s
-      x <- (m13 + m31)/s
-      y <- (m23 + m32)/s
+      w <- (m21 - m12) / s
+      x <- (m13 + m31) / s
+      y <- (m23 + m32) / s
       z <- 0.25 * s
     }
-    c(x = x, y = y, z = z, w = w)
+    c(x = x,
+      y = y,
+      z = z,
+      w = w)
   }
 
-  io_write_nii.array <- function (x, con, vox2ras = NULL, ...) {
+  io_write_nii.array <- function(x, con, vox2ras = NULL, ...) {
     if (!is.matrix(vox2ras)) {
       warning("`io_write_nii.array`: `vox2ras` is missing, using identity matrix. Please specify voxel-to-RAS transform (4x4 matrix).")
       vox2ras <- diag(1, 4)
@@ -232,12 +245,16 @@ test_that("Check `get_xform` is consistent with RNifti", {
     xform
   }
 
-  x <- array(rnorm(27), c(3,3,3))
+  x <- array(rnorm(27), c(3, 3, 3))
 
   f <- tempfile(fileext = ".nii.gz")
   con <- f
 
-  on.exit({ if(file.exists(f)) { unlink(f) } })
+  on.exit({
+    if (file.exists(f)) {
+      unlink(f)
+    }
+  })
 
 
   # TODO: Make sure det(vox2ras) > 0
@@ -247,7 +264,7 @@ test_that("Check `get_xform` is consistent with RNifti", {
     0, -2.44, 0, 23,
     0, 0, 0, 1
   ), nrow = 4, ncol = 4, byrow = TRUE)
-  if(det(vox2ras) < 0) {
+  if (det(vox2ras) < 0) {
     vox2ras[1, ] <- -vox2ras[1, ]
   }
 
@@ -264,7 +281,7 @@ test_that("Check `get_xform` is consistent with RNifti", {
     0, -2.44, 0, 23,
     0, 0, 0, 1
   ), nrow = 4, ncol = 4, byrow = TRUE)
-  if(det(vox2ras) < 0) {
+  if (det(vox2ras) < 0) {
     vox2ras[1, ] <- -vox2ras[1, ]
   }
 
@@ -282,7 +299,7 @@ test_that("Check `get_xform` is consistent with RNifti", {
     0, 0, 0, 1
   ), nrow = 4, ncol = 4, byrow = TRUE)
   vox2ras[1:3, ] <- vox2ras[1:3, ] + rnorm(12, sd = 0.01)
-  if(det(vox2ras) < 0) {
+  if (det(vox2ras) < 0) {
     vox2ras[1, ] <- -vox2ras[1, ]
   }
 

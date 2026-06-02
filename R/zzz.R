@@ -1,14 +1,14 @@
 #
 # ex <- c("n3_bias_field_correction2", "n4_bias_field_correction")
 # for(nm in names(ants)) {
-#   if(nm %in% ex) { next }
+#   if (nm %in% ex) { next }
 #   message(nm)
 #   reticulate::py_help_handler("completion", nm, source = "ants")
 # }
 
 inject_ants <- function(ants) {
 
-  if(
+  if (
     !inherits(ants, "python.builtin.module") ||
     !identical(get_os(), "windows")
   ) { return(ants) }
@@ -55,11 +55,11 @@ inject_ants <- function(ants) {
   ants <- NULL
 
   get_ants <- function(force = FALSE, error_if_missing = TRUE) {
-    if(!force && inherits(ants, "python.builtin.module")) {
+    if (!force && inherits(ants, "python.builtin.module")) {
       return( ants )
     }
-    if( !rpymat_is_setup() ) {
-      if( error_if_missing ) {
+    if ( !rpymat_is_setup() ) {
+      if ( error_if_missing ) {
         stop("Please configure ANTsPy environment first. Run the following command:\n  rpyANTs::install_ants()\nIf you would like a specific Python version (e.g. python=3.9), \n  rpyANTs::install_ants(python_ver = '3.9')")
       }
       return( NULL )
@@ -68,11 +68,11 @@ inject_ants <- function(ants) {
       rpymat::ensure_rpymat(verbose = FALSE)
       m <- reticulate::import("ants", convert = FALSE, delay_load = FALSE)
       # m <- inject_ants(m)
-      class(m) <- c('ants.proxy', class(m))
+      class(m) <- c("ants.proxy", class(m))
       ants <<- m
       return( ants )
     }, error = function(e) {
-      if( error_if_missing ) {
+      if ( error_if_missing ) {
         stop(e)
       }
       return(NULL)
@@ -94,11 +94,11 @@ inject_ants <- function(ants) {
   rpyants_module <- NULL
 
   get_rpyants <- function(force = FALSE, error_if_missing = TRUE) {
-    if(!force && inherits(rpyants_module, "python.builtin.module")) {
+    if (!force && inherits(rpyants_module, "python.builtin.module")) {
       return( rpyants_module )
     }
-    if( !rpymat_is_setup() ) {
-      if( error_if_missing ) {
+    if ( !rpymat_is_setup() ) {
+      if ( error_if_missing ) {
         stop("Please configure ANTsPy environment first. Run the following command:\n  rpyANTs::install_ants()\nIf you would like a specific Python version (e.g. python=3.9), \n  rpyANTs::install_ants(python_ver = '3.9')")
       }
       return( NULL )
@@ -108,11 +108,11 @@ inject_ants <- function(ants) {
       m <- reticulate::import_from_path("rpyants", path = system.file("rpyants", package = "rpyANTs"), convert = FALSE, delay_load = FALSE)
       # m <- reticulate::import("rpyants", convert = FALSE, delay_load = FALSE)
       # m <- inject_ants(m)
-      class(m) <- c('ants.proxy', class(m))
+      class(m) <- c("ants.proxy", class(m))
       rpyants_module <<- m
       return( rpyants_module )
     }, error = function(e) {
-      if( error_if_missing ) {
+      if ( error_if_missing ) {
         stop(e)
       }
       return(NULL)
@@ -135,18 +135,18 @@ inject_ants <- function(ants) {
   antspynet <- NULL
 
   get_antspynet <- function(force = FALSE, error_if_missing = TRUE) {
-    if(!force && inherits(antspynet, "python.builtin.module")) {
+    if (!force && inherits(antspynet, "python.builtin.module")) {
       return( antspynet )
     }
-    if( !rpymat_is_setup() ) {
-      if( error_if_missing ) {
+    if ( !rpymat_is_setup() ) {
+      if ( error_if_missing ) {
         stop("Please configure ANTsPy environment first. Run the following command:\n  rpyANTs::install_ants()\nIf you would like a specific Python version (e.g. python=3.9), \n  rpyANTs::install_ants(python_ver = '3.9')")
       }
       return( NULL )
     }
     tryCatch({
       rpyants <- load_rpyants()
-      if(is.null(rpyants) || !"try_import_antspynet" %in% names(rpyants$utils$paths)) {
+      if (is.null(rpyants) || !"try_import_antspynet" %in% names(rpyants$utils$paths)) {
         rpymat::ensure_rpymat(verbose = FALSE)
         m <- reticulate::import("antspynet", convert = FALSE, delay_load = FALSE)
         # set cache directory
@@ -156,11 +156,11 @@ inject_ants <- function(ants) {
       } else {
         m <- rpyants$utils$paths$try_import_antspynet()
       }
-      class(m) <- c('ants.proxy', class(m))
+      class(m) <- c("ants.proxy", class(m))
       antspynet <<- m
       return( antspynet )
     }, error = function(e) {
-      if( error_if_missing ) {
+      if ( error_if_missing ) {
         stop(e)
       }
       return(NULL)
@@ -185,13 +185,13 @@ load_py <- local({
   function() {
     if (!is.null(main)) { return(main) }
 
-    if( !rpymat_is_setup() ) {
+    if ( !rpymat_is_setup() ) {
       return( NULL )
     }
 
     py <- tryCatch({
       reticulate <- asNamespace("reticulate")
-      if(isTRUE(reticulate$is_python_initialized())) {
+      if (isTRUE(reticulate$is_python_initialized())) {
         py <- reticulate::import_main(convert = TRUE)
       } else {
         py <- NULL
@@ -201,7 +201,7 @@ load_py <- local({
       reticulate::py
     })
 
-    if(!is.null(py)) {
+    if (!is.null(py)) {
       main <<- py
     }
     main
@@ -241,7 +241,7 @@ ants_available <- function(module = c("ants", "antspynet")) {
 
   module <- match.arg(module)
 
-  if( !rpymat_is_setup() ) {
+  if ( !rpymat_is_setup() ) {
     return( FALSE )
   }
   tryCatch({

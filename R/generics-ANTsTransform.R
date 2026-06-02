@@ -60,44 +60,44 @@ is_affine3D <- function(x, ...) {
 #' @rdname is_affine3D
 #' @export
 is_affine3D.default <- function(x, strict = TRUE, ...) {
-  if(!is.matrix(x)) {
+  if (!is.matrix(x)) {
     re <- FALSE
-    if(is.character(x)) {
+    if (is.character(x)) {
       re <- tryCatch({
         ants <- load_ants()
         x <- ants$read_transform(x)
         is_affine3D.ants.core.ants_transform.ANTsTransform(x)
-      }, error = function(e){
+      }, error = function(e) {
         FALSE
       })
     }
     return(re)
   }
-  if(!is.numeric(x)) { return(FALSE) }
-  if(ncol(x) != 4) { return(FALSE) }
-  if(nrow(x) == 4) {
-    if(strict && x[[16]] != 1) {
+  if (!is.numeric(x)) { return(FALSE) }
+  if (ncol(x) != 4) { return(FALSE) }
+  if (nrow(x) == 4) {
+    if (strict && x[[16]] != 1) {
       return(FALSE)
     }
     return(TRUE)
   }
-  if(nrow(x) == 3) { return(TRUE) }
+  if (nrow(x) == 3) { return(TRUE) }
   return(TRUE)
 }
 
 #' @rdname is_affine3D
 #' @export
 is_affine3D.ants.core.ants_transform.ANTsTransform <- function(x, ...) {
-  if(!isTRUE(to_r(x$dimension) == 3)) {
+  if (!isTRUE(to_r(x$dimension) == 3)) {
     return(FALSE)
   }
-  if(is_py_inherits(x$transform_type)) {
+  if (is_py_inherits(x$transform_type)) {
     transform_type <- to_r(x$transform_type)
   } else {
     transform_type <- x$transform_type
   }
 
-  if(!transform_type %in% AFFINE_TRANSFORM_TYPES) { return(FALSE) }
+  if (!transform_type %in% AFFINE_TRANSFORM_TYPES) { return(FALSE) }
   return(TRUE)
 }
 
@@ -143,18 +143,18 @@ as_ANTsTransform.default <- function(x, dimension = 3, ...) {
   dm <- dim(x)
 
   is_affine <- TRUE
-  if(is_py_inherits(dimension)) {
+  if (is_py_inherits(dimension)) {
     dimension <- to_r(dimension)
   }
   dimension <- as.integer(dimension)[[1]]
 
-  if(length(dm) != 2) {
+  if (length(dm) != 2) {
     is_affine <- FALSE
-  } else if(dm[[1]] > dimension+1 || dm[[2]] > dimension+1) {
+  } else if (dm[[1]] > dimension + 1 || dm[[2]] > dimension + 1) {
     is_affine <- FALSE
   }
 
-  if(!is_affine) {
+  if (!is_affine) {
     stop("as_ANTsTransform: non-linear transform is not yet supported.")
     # if(dm[[1]] != dimension) {
     #   stop(sprintf("as_ANTsTransform: is this a %sD non-linear transform? Please specify `dimension` explicitly", dm[[1]]))
@@ -166,7 +166,7 @@ as_ANTsTransform.default <- function(x, dimension = 3, ...) {
 
   ants <- load_ants()
 
-  if( is_affine ) {
+  if ( is_affine ) {
     y <- cbind(diag(rep(1, dimension)), 0)
     dm[[1]] <- min(dm[[1]], dimension)
     dm[[2]] <- min(dm[[2]], dimension + 1)
@@ -223,13 +223,13 @@ as_ANTsTransform.character <- function(x, ...) {
 #' @export
 as.matrix.ants.core.ants_transform.ANTsTransform <- function(x, ...) {
 
-  if(is_py_inherits(x$transform_type)) {
+  if (is_py_inherits(x$transform_type)) {
     transform_type <- to_r(x$transform_type)
   } else {
     transform_type <- x$transform_type
   }
 
-  if(!isTRUE(transform_type %in% AFFINE_TRANSFORM_TYPES)) {
+  if (!isTRUE(transform_type %in% AFFINE_TRANSFORM_TYPES)) {
     stop("This ANTsTransform is not affine/linear. Cannot convert to matrix")
   }
   ndims <- to_r(x$dimension)
@@ -245,22 +245,22 @@ as.matrix.ants.core.ants_transform.ANTsTransform <- function(x, ...) {
 
 #' @export
 as.array.ants.core.ants_transform.ANTsTransform <- function(x, displacement_field = NULL, ...) {
-  if(is_py_inherits(x$transform_type)) {
+  if (is_py_inherits(x$transform_type)) {
     transform_type <- to_r(x$transform_type)
   } else {
     transform_type <- x$transform_type
   }
 
 
-  if(transform_type %in% AFFINE_TRANSFORM_TYPES) {
+  if (transform_type %in% AFFINE_TRANSFORM_TYPES) {
     return(as.matrix(x, ...))
   }
 
-  if(!transform_type %in% "DisplacementFieldTransform") {
+  if (!transform_type %in% "DisplacementFieldTransform") {
     stop("as.array: Unsupported ANTsTransform type: ", transform_type)
   }
 
-  if(!is_py_inherits(displacement_field, "ANTsImage")) {
+  if (!is_py_inherits(displacement_field, "ANTsImage")) {
     stop("as.array: `displacement_field` must be an ANTsImage")
   }
 
@@ -277,13 +277,13 @@ as.array.ants.core.ants_transform.ANTsTransform <- function(x, displacement_fiel
 
 #' @export
 dim.ants.core.ants_transform.ANTsTransform <- function(x) {
-  if(is_py_inherits(x$transform_type)) {
+  if (is_py_inherits(x$transform_type)) {
     transform_type <- to_r(x$transform_type)
   } else {
     transform_type <- x$transform_type
   }
 
-  if(!isTRUE(transform_type %in% AFFINE_TRANSFORM_TYPES)) {
+  if (!isTRUE(transform_type %in% AFFINE_TRANSFORM_TYPES)) {
     stop("Cannot obtain dim(x) for non-linear transform")
   }
   ndims <- to_r(x$dimension) + 1

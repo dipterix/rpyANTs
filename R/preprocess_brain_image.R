@@ -72,7 +72,7 @@ antspynet_preprocess_brain_image <- function(
     brain_extraction_modality,
     {
       brain_extraction_modality <- match.arg(brain_extraction_modality)
-      if(brain_extraction_modality == "none") {
+      if (brain_extraction_modality == "none") {
         brain_extraction_modality <- NULL
       }
       brain_extraction_modality
@@ -82,10 +82,10 @@ antspynet_preprocess_brain_image <- function(
   template_transform_type <- convert_if_not_python(
     template_transform_type,
     {
-      if(length(template_transform_type) > 1) {
+      if (length(template_transform_type) > 1) {
         template_transform_type <- template_transform_type[[1]]
       }
-      if(template_transform_type == "None") {
+      if (template_transform_type == "None") {
         template_transform_type <- NULL
       }
       template_transform_type
@@ -99,7 +99,7 @@ antspynet_preprocess_brain_image <- function(
     }
   )
 
-  if(missing(template) || (is.character(template) && length(template) > 1 )) {
+  if (missing(template) || (is.character(template) && length(template) > 1 )) {
     template <- match.arg(template)
   }
 
@@ -121,7 +121,7 @@ antspynet_preprocess_brain_image <- function(
 
   intensity_normalization_type <- convert_if_not_python(
     intensity_normalization_type, {
-      if(length(intensity_normalization_type)) {
+      if (length(intensity_normalization_type)) {
         as.character(intensity_normalization_type)
       } else {
         NULL

@@ -140,8 +140,8 @@ as_ANTsImage.threeBrain.nii <- function(x, strict = TRUE) {
 
 #' @export
 as_ANTsImage.character <- function(x, strict = TRUE) {
-  if(length(x) != 1 || is.na(x) || trimws(x) == "") {
-    if(strict) {
+  if (length(x) != 1 || is.na(x) || trimws(x) == "") {
+    if (strict) {
       stop("as_ANTsImage: for string `x`, length(x) must equal to 1 and cannot be empty/NA under strict mode")
     }
     return(NULL)
@@ -157,8 +157,8 @@ as_ANTsImage.python.builtin.str <- function(x, strict = TRUE) {
 
 #' @export
 as_ANTsImage.default <- function(x, strict = TRUE) {
-  if(is.null(x)) {
-    if( strict ) {
+  if (is.null(x)) {
+    if ( strict ) {
       stop("as_ANTsImage: input x (image) cannot be NULL under strict mode")
     }
     return(x)
@@ -169,7 +169,7 @@ as_ANTsImage.default <- function(x, strict = TRUE) {
 
 as_hexcolor <- function(x, ..., use_alpha = FALSE) {
   s <- grDevices::adjustcolor(col = x, ...)
-  if(!use_alpha) {
+  if (!use_alpha) {
     s <- substr(s, 1, 7)
   }
   s
@@ -178,11 +178,11 @@ as_hexcolor <- function(x, ..., use_alpha = FALSE) {
 
 convert_if_not_python <- function(x, value, convert = TRUE) {
   value <- substitute(value)
-  if(!inherits(x, "python.builtin.object")) {
+  if (!inherits(x, "python.builtin.object")) {
     parent_frame <- parent.frame()
     x <- eval(value, parent_frame)
   }
-  if(convert && !inherits(x, "python.builtin.object")) {
+  if (convert && !inherits(x, "python.builtin.object")) {
     x <- r_to_py(x)
   }
   return(x)
@@ -202,10 +202,10 @@ to_r <- function(x) {
 }
 
 snapshot_tempfiles <- function() {
-  if(!ants_available()) { return() }
+  if (!ants_available()) { return() }
   ants <- load_ants()
   injected <- py_builtin("hasattr", convert = TRUE)(ants$utils, "rpyANTsInjected")
-  if(!injected) { return() }
+  if (!injected) { return() }
   tryCatch({
     to_r(ants$utils$rpyANTsInjection$requested_tempfiles)
   }, error = function(e) {
@@ -216,21 +216,21 @@ snapshot_tempfiles <- function() {
 remove_tmpfiles <- function(x, ...) {
 
   tfiles <- py_list(convert = FALSE)
-  if(ants_available()) {
+  if (ants_available()) {
     ants <- load_ants()
 
     injected <- py_builtin("hasattr", convert = TRUE)(ants$utils, "rpyANTsInjected")
-    if(injected && isTRUE(to_r(ants$utils$rpyANTsInjected))) {
+    if (injected && isTRUE(to_r(ants$utils$rpyANTsInjected))) {
       tfiles <- ants$utils$rpyANTsInjection$requested_tempfiles
     }
   }
 
-  for(f in x) {
-    if(file.exists(f)) {
+  for (f in x) {
+    if (file.exists(f)) {
       unlink(f, ...)
       tryCatch({
         idx <- to_r(tfiles$index(f))
-        if(idx > -1) {
+        if (idx > -1) {
           tfiles$remove(f)
         }
       }, error = function(e) {
@@ -241,30 +241,30 @@ remove_tmpfiles <- function(x, ...) {
 }
 
 
-get_os <- function(){
-  if("windows" %in% tolower(.Platform$OS.type)){
+get_os <- function() {
+  if ("windows" %in% tolower(.Platform$OS.type)) {
     return("windows")
   }
   os <- tolower(R.version$os)
-  if(startsWith(os, "darwin")){
-    return('darwin')
+  if (startsWith(os, "darwin")) {
+    return("darwin")
   }
-  if(startsWith(os, "linux")){
-    return('linux')
+  if (startsWith(os, "linux")) {
+    return("linux")
   }
-  if(startsWith(os, "solaris")){
-    return('solaris')
+  if (startsWith(os, "solaris")) {
+    return("solaris")
   }
-  if(startsWith(os, "win")){
-    return('windows')
+  if (startsWith(os, "win")) {
+    return("windows")
   }
-  return('unknown')
+  return("unknown")
 }
 
 
 normalize_path <- function(path, must_work = NA) {
   path <- unlist(lapply(path, function(p) {
-    if(!file.exists(p)) {
+    if (!file.exists(p)) {
       dname <- dirname(p)
       dname <- normalizePath(dname, winslash = "/", mustWork = must_work)
       p <- file.path(dname, basename(p), fsep = "/")
@@ -287,13 +287,13 @@ dir_create2 <- function(x, showWarnings = FALSE, recursive = TRUE, check = TRUE,
     dir.create(x, showWarnings = showWarnings, recursive = recursive, ...)
   }
   if (check && !dir.exists(x)) {
-    stop('Cannot create directory at ', shQuote(x))
+    stop("Cannot create directory at ", shQuote(x))
   }
   invisible(normalize_path(x))
 }
 
 
-R_user_dir <- function (package, which = c("data", "config", "cache")) {
+R_user_dir <- function(package, which = c("data", "config", "cache")) {
   stopifnot(is.character(package), length(package) == 1L)
   which <- match.arg(which)
   home <- normalizePath("~")
