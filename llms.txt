@@ -33,6 +33,7 @@ This package was originally created for the following three purposes:
 The installation requires one-line extra setup
 
 ``` r
+
 # Install from CRAN
 install.packages("rpyANTs")
 
@@ -53,6 +54,7 @@ Python installations.
 To upgrade `ANTs`, first update `rpyANTs`, then upgrade `ANTsPyx`
 
 ``` r
+
 install.packages("rpyANTs")
 rpymat::add_packages(packages = "antspyx", pip = TRUE)
 ```
@@ -62,6 +64,7 @@ rpymat::add_packages(packages = "antspyx", pip = TRUE)
 To load `ANTs`
 
 ``` r
+
 library(rpyANTs)
 
 # Whether ANTs is available
@@ -74,6 +77,7 @@ ants
 In R, we use `$` to get module functions or class members. For example:
 
 ``` r
+
 ants$add_noise_to_image
 #> <ANTs Python Wrapper>
 #> Help on function add_noise_to_image in module ants.ops.add_noise_to_image:
@@ -118,6 +122,7 @@ ants$add_noise_to_image
 The following R code translates Python code into R:
 
 ``` r
+
 # >>> img = ants.image_read(ants.get_ants_data('r16'))
 img <- ants$image_read(ants$get_ants_data('r16'))
 
@@ -162,6 +167,7 @@ noise_image4 <- trans$apply_to_image(noise_image4)
 To load imaging data into R
 
 ``` r
+
 # Use [] to convert ANTsImage into R array
 is.array(img[])
 #> [1] TRUE
@@ -193,6 +199,7 @@ image(noise_image4[], asp = 1, axes = FALSE,
 example:
 
 ``` r
+
 library(rpyANTs)
 
 script_path <- tempfile(fileext = ".py")
@@ -212,6 +219,7 @@ You can also run `Python` interactive in R (yes, you are correct).
 Simply run
 
 ``` r
+
 rpyANTs::repl_python()
 ```
 
@@ -248,6 +256,7 @@ Native R variables can be easily converted to `Python` and back via
 For example
 
 ``` r
+
 # R to Python
 r_to_py(1)
 #> 1.0
@@ -304,6 +313,7 @@ Here are several examples
 1.  Explicit integers
 
 ``` r
+
 # ants$create_ants_transform(dimension = 3)     # <- error
 ants$create_ants_transform(dimension = 3L)      # < XXXL is an explicit integer
 ```
@@ -313,6 +323,7 @@ ants$create_ants_transform(dimension = 3L)      # < XXXL is an explicit integer
 A Python `tuple` is a vector that cannot alter lengths.
 
 ``` r
+
 # Wrong as `aff_iterations` needs to be a tuple
 # ants$registration(fixed, moving, ..., aff_iterations = c(6L, 4L, 2L, 1L))
 
@@ -329,6 +340,7 @@ Python function results will be converted to R objects automatically.
 For example,
 
 ``` r
+
 np <- import("numpy", convert = TRUE)
 np$eye(4L)
 #>      [,1] [,2] [,3] [,4]
@@ -388,6 +400,7 @@ operators is being supported in R as `S3` generic functions. Don’t worry
 if you don’t know what is `S3` generic, see the following examples:
 
 ``` r
+
 library(rpyANTs)
 image <- ants$image_read(ants$get_ants_data('mni'))
 print(image)
@@ -421,6 +434,7 @@ repository](https://github.com/dipterix/rpyANTs/issues)
 Alternative version 1: call operators directly
 
 ``` r
+
 library(rpyANTs)
 image <- ants$image_read(ants$get_ants_data('r16'))
 
@@ -434,6 +448,7 @@ Work-around version 2: If you don’t know how Python operators work, use
 Python directly
 
 ``` r
+
 library(rpyANTs)
 image <- ants$image_read(ants$get_ants_data('r16'))
 

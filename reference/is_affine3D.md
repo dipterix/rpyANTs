@@ -36,6 +36,7 @@ A logical value whether the object can be loaded as a 4-by-4 matrix.
 ## Examples
 
 ``` r
+
 # not affine
 is_affine3D(1)
 #> [1] FALSE

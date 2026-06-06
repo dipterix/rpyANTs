@@ -59,6 +59,7 @@ Motion-corrected image
 ## Examples
 
 ``` r
+
 if(interactive() && ants_available()) {
   fi <- as_ANTsImage(ants$get_ants_data('ch2'))
   mytx <- ants_motion_correction( fi )

@@ -71,6 +71,7 @@ One or a list of `'ANTsImage'` image instances. Please print out
 
 ``` r
 
+
 # Print Python documents
 if(interactive() && ants_available("antspynet")) {
   antspynet <- load_antspynet()

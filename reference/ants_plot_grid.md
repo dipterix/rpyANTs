@@ -105,6 +105,7 @@ Nothing
 ## Examples
 
 ``` r
+
 if(interactive() && ants_available()) {
   ants <- load_ants()
   image1 <- ants$image_read(ants$get_ants_data('mni'))

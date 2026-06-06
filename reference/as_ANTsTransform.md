@@ -45,6 +45,7 @@ An `'ANTsTransform'` object
 ## Examples
 
 ``` r
+
 if(interactive() && ants_available()) {
 
   mat <- matrix(c(

@@ -126,6 +126,7 @@ Function family `ants_registration*` align images (specified by
 ## Examples
 
 ``` r
+
 if(interactive() && ants_available()) {
 
   ants <- load_ants()

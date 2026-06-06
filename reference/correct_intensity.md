@@ -30,6 +30,7 @@ An `'ANTsImage'` instance
 ## Examples
 
 ``` r
+
 if(interactive() && ants_available()) {
   ants <- load_ants()
   scale <- (0.1 + outer(

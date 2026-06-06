@@ -23,6 +23,7 @@ The downloaded template path
 ## Examples
 
 ``` r
+
 # Do not run for testing as this will download the template
 if(FALSE) {
 

@@ -79,6 +79,7 @@ Transformed image. The image will share the same space as `fixed`.
 ## Examples
 
 ``` r
+
 if(interactive() && ants_available()) {
   ants <- load_ants()
   fixed <- as_ANTsImage( ants$get_ants_data('r16') )

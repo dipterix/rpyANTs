@@ -60,6 +60,7 @@ Transformed points in data frame (R object)
 ## Examples
 
 ``` r
+
 if(interactive() && ants_available()) {
   ants <- load_ants()
   fixed <- as_ANTsImage( ants$get_ants_data('r16') )

@@ -22,6 +22,7 @@ Index slice instance
 
 ``` r
 
+
 if(interactive() && ants_available()) {
 
   x <- np_array(array(seq(20), c(4, 5)))

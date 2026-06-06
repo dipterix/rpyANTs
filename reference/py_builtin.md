@@ -26,6 +26,7 @@ A python built-in object specified by `name`
 ## Examples
 
 ``` r
+
 if(interactive() && ants_available()) {
 
 

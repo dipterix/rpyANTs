@@ -26,6 +26,7 @@ List instance, or an R vector if converted
 
 ``` r
 
+
 if(interactive() && ants_available()) {
 
   py_list(list(1,2,3))

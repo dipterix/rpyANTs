@@ -2,6 +2,8 @@
 
 ## rpyANTs 0.0.6
 
+CRAN release: 2026-01-11
+
 - Improved normalization for irregular brain
 - Fixed issues where atlases in `nii` are ignored
 - Added `extract_coregistartion` to extract index to world and world to

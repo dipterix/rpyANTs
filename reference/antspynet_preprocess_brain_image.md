@@ -91,6 +91,7 @@ re-sampled into template.
 ## Examples
 
 ``` r
+
 library(rpyANTs)
 if(interactive() && ants_available("antspynet")) {
   image_path <- ants$get_ants_data('r30')

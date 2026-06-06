@@ -145,6 +145,7 @@ the inferior (bottom) of the brain to the superior (top) of the brain.
 
 ``` r
 
+
 if(interactive() && ants_available()) {
   ants <- load_ants()
   img <- ants$image_read(ants$get_ants_data('mni'))
