@@ -24,3 +24,4 @@ yarn\.lock$
 \.V8history$
 ^\.positai$
 ^\.claude$
+^\.lintr$

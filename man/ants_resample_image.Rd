@@ -38,7 +38,7 @@ if(interactive() && ants_available()) {
 
   sample_fpath <- as.character(ants$get_ants_data("r16"))
 
-  if(file.exists(sample_fpath)) {
+  if (file.exists(sample_fpath)) {
 
     try(silent = TRUE, {
 

@@ -33,6 +33,11 @@ template_urls <- list(
     coord_sys = "MNI305",
     name = "fsaverage",
     url = "https://github.com/dipterix/threeBrain-sample/releases/download/1.0.1/fsaverage.zip"
+  ),
+  `nmt_v2_0_acpc_asym` = list(
+    coord_sys = "NMTv2ACPC",
+    name = "NMTv2ACPCAsym",
+    url = "https://github.com/dipterix/threeBrain-sample/releases/download/1.0.1/nmt_v2_0_acpc_asym.zip"
   )
 )
 
