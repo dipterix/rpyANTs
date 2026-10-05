@@ -194,6 +194,73 @@ def normalize_to_template_syn(
         ]
     }
 
+def registration_syn_aggro(
+    fixed, moving, initial_transform: Union[list, None] = None,
+    multivariate_extras: Union[list, tuple, None] = None, **kwargs) -> dict:
+    '''
+    Register images with `ants.registration` 'SyNAggro' and additional metrics.
+
+    `ants.registration` ignores `multivariate_extras` when `type_of_transform` is 'SyNAggro',
+    hence the two stages of 'SyNAggro' are run separately with the same settings: the affine
+    stage first (as 'Affine'), then the SyN stage (as 'SyNOnly', which takes additional metrics).
+
+    @param fixed: Fixed image
+    @type fixed: ANTsImage
+
+    @param moving: Moving image
+    @type moving: ANTsImage
+
+    @param initial_transform: Initial transform(s) of the affine stage; default is to align the centers of mass
+    @type initial_transform: list | None
+
+    @param multivariate_extras: Additional metrics for the SyN stage, see `ants.registration`;
+            if `None`, 'SyNAggro' is called directly
+    @type multivariate_extras: list | tuple | None
+
+    @param kwargs: Other parameters passed to `ants.registration`
+
+    @return: Registration results, same as `ants.registration`
+    '''
+    if multivariate_extras is None:
+        return ants.registration(
+            fixed=fixed, moving=moving, type_of_transform='SyNAggro',
+            initial_transform=initial_transform, **kwargs)
+    # Stage 1: the affine stage of 'SyNAggro', whose settings are fixed. The
+    # transform only starts stage 2, hence it goes to a temporary `.mat` file
+    affine_kwargs = dict(kwargs)
+    affine_kwargs.update(
+        aff_iterations=(2100, 1200, 1200, 100),
+        aff_shrink_factors=(4, 2, 2, 1),
+        aff_smoothing_sigmas=(3, 2, 1, 0),
+        smoothing_in_mm=False,
+        outprefix="", write_composite_transform=False)
+    # 'SyNAggro' only masks its affine stage when `mask_all_stages` is set
+    if not affine_kwargs.get('mask_all_stages', False):
+        affine_kwargs.update(mask=None, moving_mask=None)
+    res_affine = ants.registration(
+        fixed=fixed, moving=moving, type_of_transform='Affine',
+        initial_transform=initial_transform, **affine_kwargs)
+    # Stage 2: the SyN stage of 'SyNAggro', with the additional metrics.
+    # `restrict_transformation` only applies to the first stage of a
+    # registration, which was the affine stage
+    syn_kwargs = dict(kwargs)
+    syn_kwargs.update(restrict_transformation=None)
+    # a single file path also works with 'ANTsPy' < 0.4, a list does not
+    affine_transform = res_affine['fwdtransforms']
+    if len(affine_transform) == 1:
+        affine_transform = affine_transform[0]
+    try:
+        res_syn = ants.registration(
+            fixed=fixed, moving=moving, type_of_transform='SyNOnly',
+            initial_transform=affine_transform,
+            multivariate_extras=multivariate_extras, **syn_kwargs)
+    finally:
+        # the affine is included in the transforms of stage 2
+        for path in res_affine['fwdtransforms']:
+            if os.path.isfile(path):
+                os.unlink(path)
+    return res_syn
+
 def normalization_with_atropos(
     fix_path: Union[list, tuple, str], mov_paths: Union[list, tuple], working_path: str, 
     weights: Union[float, int, list, tuple] = 1, with_skull = False, cost_function = "CC",
@@ -257,11 +324,10 @@ def normalization_with_atropos(
     n_images = len(mov_paths)
     if n_images == 0:
         raise ValueError("normalization_with_atropos: `mov_paths` must have at least one image")
-    if n_images > 1:
-        if len(fix_paths) == 1:
-            fix_paths = fix_paths * n_images
-        elif len(fix_paths) != n_images:
-            raise ValueError("normalization_with_atropos: `fix_path` and `mov_paths` must have the same length or `fix_path` must be a single path")
+    if len(fix_paths) == 1:
+        fix_paths = fix_paths * n_images
+    elif len(fix_paths) != n_images:
+        raise ValueError("normalization_with_atropos: `fix_path` and `mov_paths` must have the same length or `fix_path` must be a single path")
     if isinstance(weights, (float, int)):
         weights = [weights] * n_images
     if len(weights) != n_images:
@@ -276,7 +342,7 @@ def normalization_with_atropos(
     fixing_mask_path = file_path(fixing_root, "T1_brainmask.nii.gz")
     moving_path = mov_paths[0]
     if not isinstance(weights, list):
-        weights = [weights for x in mov_paths]
+        weights = list(weights)
     if len(weights) != len(mov_paths):
         raise ValueError("normalization_with_atropos: weights must be a single number or a list of the same length as `mov_paths`")
     # Read in image 
@@ -409,10 +475,10 @@ def normalization_with_atropos(
             if res_syn is None:
                 fixing_csf = ants.image_read(file_path(fixing_root, "atropos_2.nii.gz"))
                 # fixing_csf_path = file_path(fixing_root, "atropos_2.nii.gz")
-                with StageContext("atropos_dGWbS", "image", fixing_root) as (ctx, fixing_dGWbS):
+                with StageContext("atropos_dGWbS", "image", fixing_root) as (ctx_dGWbS, fixing_dGWbS):
                     if fixing_dGWbS is None:
                         fixing_dGWbS = ants.image_read(file_path(fixing_root, "atropos_4.nii.gz")) + ants.image_read(file_path(fixing_root, "atropos_5.nii.gz")) + ants.image_read(file_path(fixing_root, "atropos_6.nii.gz"))
-                        ctx.result = fixing_dGWbS
+                        ctx_dGWbS.result = fixing_dGWbS
                 # fixing_dGWbS_path = file_path(fixing_root, "atropos_dGWbS.nii.gz")
                 moving_csf = moving_atropos[1]
                 # moving_csf_path = file_path(working_path, "atropos_1.nii.gz")
@@ -451,10 +517,9 @@ def normalization_with_atropos(
                 if cost_function == 'CC':
                     syn_sampling = 4   # CC radius ~4
                 if with_skull:
-                    res_syn = ants.registration(
+                    res_syn = registration_syn_aggro(
                         fixed=fixing_img,
                         moving=moving_img,
-                        type_of_transform='SyNAggro',
                         flow_sigma=3.5, total_sigma=0,        # mild extra smoothing of total field
                         aff_metric='mattes', aff_sampling=32, 
                         aff_random_sampling_rate=0.2, 
@@ -469,10 +534,9 @@ def normalization_with_atropos(
                         verbose=verbose
                     )
                 else:
-                    res_syn = ants.registration(
+                    res_syn = registration_syn_aggro(
                         fixed=fix_skullstrip,
                         moving=mov_skullstrip,
-                        type_of_transform='SyNAggro',
                         grad_step = 0.15, 
                         flow_sigma=3.5, total_sigma=0,        # mild extra smoothing of total field
                         aff_metric='mattes', aff_sampling=32, 
@@ -492,7 +556,7 @@ def normalization_with_atropos(
                     moving=fixing_mask, 
                     transformlist=res_syn["invtransforms"], 
                     interpolator="nearestNeighbor")
-                with StageContext("T1", "image", working_path, verbose=verbose) as (ctx, moving_img):
+                with StageContext("T1", "image", working_path, verbose=verbose) as (ctx_t1, moving_img):
                     if moving_img is not None:
                         brain = moving_img * brain_mask_final
                         stage_image(brain, "brain2.nii.gz", root=working_path)
@@ -545,13 +609,17 @@ def normalization_with_atropos(
         
         # fixing_deep_atropos_list = None
         stage_image(fixing_img * fixing_mask, "fixed_brain.nii.gz", root=working_path)
-        brain_mask_no_csf = moving_deep_atropos_list[0] > 0
-        brain_mask_no_csf[moving_deep_atropos_list[1] > 0.05] = 0
-        stage_image(moving_img * brain_mask_no_csf, "brain.nii.gz", root=working_path)
+        # `moving_deep_atropos_list`: [0] segmentation, [1] background, [2] CSF,
+        #   [3] GM, [4] WM, [5] deep GM, [6] brain stem, [7] cerebellum
+        # Trim the rim where background probability > 0.05 (mostly the outer CSF
+        # shell); ventricular and sulcal CSF are kept, as in the template mask
+        brain_mask_trimmed = moving_deep_atropos_list[0] > 0
+        brain_mask_trimmed[moving_deep_atropos_list[1] > 0.05] = 0
+        stage_image(moving_img * brain_mask_trimmed, "brain.nii.gz", root=working_path)
         mov_skullstrip = restore_image("brain.nii.gz", root=working_path)
         fix_skullstrip = restore_image("fixed_brain.nii.gz", root=working_path)
         moving_deep_atropos_list = None
-        brain_mask_no_csf = None
+        brain_mask_trimmed = None
 
         # gc.collect()
         with StageContext("SyN_w_deep_atropos", "registration", working_path) as (ctx, res_syn):
@@ -583,10 +651,9 @@ def normalization_with_atropos(
                 if cost_function == 'CC':
                     syn_sampling = 4   # CC radius ~4
                 if with_skull:
-                    res_syn = ants.registration(
+                    res_syn = registration_syn_aggro(
                         fixed=fixing_img,
                         moving=moving_img,
-                        type_of_transform='SyNAggro',
                         flow_sigma=3.5, total_sigma=0,        # mild extra smoothing of total field
                         aff_metric='mattes', aff_sampling=32, 
                         aff_random_sampling_rate=0.2, 
@@ -599,10 +666,9 @@ def normalization_with_atropos(
                         verbose=verbose
                     )
                 else:
-                    res_syn = ants.registration(
+                    res_syn = registration_syn_aggro(
                         fixed=fix_skullstrip,
                         moving=mov_skullstrip,
-                        type_of_transform='SyNAggro',
                         grad_step = 0.15, 
                         flow_sigma=3.5, total_sigma=0,        # mild extra smoothing of total field
                         aff_metric='mattes', aff_sampling=32, 

@@ -48,6 +48,10 @@ class StageContext():
         'fwdtransforms': [],
         'invtransforms': []
       }
+      # `warpedfixout` is missing from the cache created by rpyANTs <= 0.0.6
+      warpedfixout = restore_image(f"{ prefix }_warped_fix.nii.gz", root = root, strict = False)
+      if warpedfixout is not None:
+        result['warpedfixout'] = warpedfixout
       abs_prefix = file_path(root, prefix)
       # not gonna be 10...
       for ii in range(10):
@@ -97,6 +101,12 @@ class StageContext():
         file_copy(warpedmovout, to_path)
         result['warpedmovout'] = to_path
       # stage_image(result['warpedmovout'], f"{ prefix }_warped_mov.nii.gz")
+      warpedfixout = result.get('warpedfixout', None)
+      if isinstance(warpedfixout, ants.core.ants_image.ANTsImage):
+        stage_image(img=warpedfixout, name=f"{ prefix }_warped_fix.nii.gz", root=root)
+      elif os.path.isfile(f"{ abs_prefix }_warped_fix.nii.gz"):
+        # do not keep the image of a previous registration
+        os.unlink(f"{ abs_prefix }_warped_fix.nii.gz")
       for name in ["fwdtransforms", "invtransforms"]:
         for ii in range(len(result[name])):
           from_path = result[name][ii]
@@ -108,7 +118,7 @@ class StageContext():
           file_copy(from_path, to_path)
           result[name][ii] = to_path
     elif result_type.startswith("image["):
-      # suffix must be from 1 to n_images, not starting from 0
+      # suffix must be from 0 to n_images-1, starting from 0
       for ii in range( self._n_images ):
         stage_image(img=result[ ii ], name=f"{ prefix }_{ ii }.nii.gz", root = root)
     else:

@@ -10,6 +10,7 @@
 # yael.get_native_mapping("CT")
 import os
 import json
+import warnings
 from typing import Union
 import numpy as np
 import ants
@@ -84,7 +85,7 @@ class YAELPreprocess():
             image_type = parsed['type']
             if image_type.startswith("preop"):
                 parsed['components']['ses'] = 'preop'
-            elif image_type.startswith("preop"):
+            elif image_type.startswith("postop"):
                 parsed['components']['ses'] = 'postop'
             elif image_type in self.allowed_image_types:
                 if parsed['type'] == "CT":
@@ -412,6 +413,11 @@ class YAELPreprocess():
                         mappings[f"{type}_in_T1w"] = file_path(aligned_prefix, filename)
                 except:
                     continue
+        # if several aligned images share the type (e.g. a `postop*` image saved as
+        # `ses-preop` by rpyANTs <= 0.0.6), use the one `register_to_T1w` writes now
+        expected_path = self.expected_image_path(type, "coregistration/anat", space = "scanner")
+        if expected_path is not None and os.path.basename(expected_path) in os.listdir( aligned_rootdir ):
+            mappings[f"{type}_in_T1w"] = file_path(aligned_prefix, os.path.basename(expected_path))
         return result
 
     def map_to_template(self, 
@@ -617,23 +623,55 @@ class YAELPreprocess():
         tranform_rootdir = file_path(self._work_path, "normalization/transformations")
         if not os.path.exists(tranform_rootdir):
             return None
-        forward_list = []
-        inverse_list = []
+        native_lower = native_type.lower()
+        template_lower = template_name.lower()
+        # (sub, order, filename) of the transforms between the native image and the template
+        forward_candidates = []
+        inverse_candidates = []
         for filename in os.listdir( tranform_rootdir ):
-            if os.path.isfile( file_path(tranform_rootdir, filename) ):
-                try:
-                    parsed = parse_bids_filename(filename)
-                    parsed_components = parsed['components']
-                    order = parsed['type'].replace("ants", "")
-                    order = int(order)
-                except:
-                    continue
-                if parsed_components.get('sub', None) == self._subject_code:
-                    if order is not None:
-                        if parsed_components.get('from', None).lower() == native_type.lower() and parsed_components.get('to', None).lower() == template_name.lower():
-                            forward_list.append( (order, filename) )
-                        elif parsed_components.get('from', None).lower() == template_name.lower() and parsed_components.get('to', None).lower() == native_type.lower():
-                            inverse_list.append( (order, filename) )
+            if not os.path.isfile( file_path(tranform_rootdir, filename) ):
+                continue
+            try:
+                parsed = parse_bids_filename(filename)
+                parsed_components = parsed['components']
+                order = int(parsed['type'].replace("ants", ""))
+            except Exception:
+                continue
+            sub = parsed_components.get('sub', None)
+            from_space = parsed_components.get('from', None)
+            to_space = parsed_components.get('to', None)
+            if sub is None or from_space is None or to_space is None:
+                continue
+            from_space = from_space.lower()
+            to_space = to_space.lower()
+            if from_space == native_lower and to_space == template_lower:
+                forward_candidates.append( (sub, order, filename) )
+            elif from_space == template_lower and to_space == native_lower:
+                inverse_candidates.append( (sub, order, filename) )
+        def select_transforms(subjects):
+            forward = [ (x[1], x[2]) for x in forward_candidates if x[0] in subjects ]
+            inverse = [ (x[1], x[2]) for x in inverse_candidates if x[0] in subjects ]
+            return forward, inverse
+        all_subjects = set( x[0] for x in forward_candidates + inverse_candidates )
+        # the subject's own transforms
+        forward_list, inverse_list = select_transforms({ self._subject_code })
+        if len( forward_list ) == 0 or len( inverse_list ) == 0:
+            # `sub-` entity in another letter case, only if it is spelled one way
+            same_subject = set( s for s in all_subjects if s.lower() == self._subject_code.lower() )
+            if len( same_subject ) == 1:
+                forward_list, inverse_list = select_transforms(same_subject)
+        if len( forward_list ) == 0 or len( inverse_list ) == 0:
+            # The `sub-` entity differs from the subject code when the folder was
+            # renamed or copied: use such transforms only if they all come from
+            # one subject, under which the native image was imported as well
+            native_image = self._images.get(native_type, None)
+            native_subject = None
+            if native_image is not None:
+                native_subject = native_image['components'].get('sub', None)
+            if len( all_subjects ) == 1 and native_subject in all_subjects:
+                forward_list, inverse_list = select_transforms(all_subjects)
+                if len( forward_list ) > 0 and len( inverse_list ) > 0:
+                    warnings.warn(f"Using transforms of subject `{ native_subject }` from { tranform_rootdir } for subject `{ self._subject_code }` (template `{ template_name }`)")
         if len( forward_list ) == 0 or len( inverse_list ) == 0:
             return None
         forward_list.sort(key = lambda x: x[0], reverse = True)

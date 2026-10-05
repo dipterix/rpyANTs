@@ -1,3 +1,10 @@
+# rpyANTs 0.0.7
+
+* `YAELPreprocess.get_template_mapping` no longer fails on transform files without `from`/`to` entities, matches the subject code case-insensitively when it is spelled one way, and uses transforms whose `sub` entity differs from the subject code (renamed or copied folders) only when they all come from the subject under which the native image was imported
+* Restored the tissue probability maps and additional image modalities as extra metrics in the final normalization stage; they were not used since version 0.0.6
+* Fixed image types starting with `postop` (for example `postopT1w`) being saved with the session label `ses-preop` instead of `ses-postop` by `YAEL`; images saved by earlier versions are still found
+* Fixed the final registration not being cached when normalizing without `antspynet`; its transform files are now stored in the working directory, and a working directory that is used again returns the stored registration
+
 # rpyANTs 0.0.6
 
 * Improved normalization for irregular brain
