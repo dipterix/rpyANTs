@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">rpyANTs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.6.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.6.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,6 +32,14 @@
       <small>Source: <a href="https://github.com/dipterix/rpyANTs/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.0.7" id="rpyants-007">rpyANTs 0.0.7<a class="anchor" aria-label="anchor" href="#rpyants-007"></a></h2>
+<ul><li>
+<code>YAELPreprocess.get_template_mapping</code> no longer fails on transform files without <code>from</code>/<code>to</code> entities, matches the subject code case-insensitively when it is spelled one way, and uses transforms whose <code>sub</code> entity differs from the subject code (renamed or copied folders) only when they all come from the subject under which the native image was imported</li>
+<li>Restored the tissue probability maps and additional image modalities as extra metrics in the final normalization stage; they were not used since version 0.0.6</li>
+<li>Fixed image types starting with <code>postop</code> (for example <code>postopT1w</code>) being saved with the session label <code>ses-preop</code> instead of <code>ses-postop</code> by <code>YAEL</code>; images saved by earlier versions are still found</li>
+<li>Fixed the final registration not being cached when normalizing without <code>antspynet</code>; its transform files are now stored in the working directory, and a working directory that is used again returns the stored registration</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.6" id="rpyants-006">rpyANTs 0.0.6<a class="anchor" aria-label="anchor" href="#rpyants-006"></a></h2><p class="text-muted">CRAN release: 2026-01-11</p>
 <ul><li>Improved normalization for irregular brain</li>
@@ -107,7 +115,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>
