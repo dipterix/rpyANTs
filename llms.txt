@@ -115,7 +115,7 @@ ants$add_noise_to_image
 #> 
 #> *** Above documentation is for Python. 
 #> *** Please use `$` instead of `.` for modules and functions in R
-#> <function add_noise_to_image at 0x163af8360>
+#> <function add_noise_to_image at 0x121ab40e0>
 #>  signature: (image, noise_model, noise_parameters)
 ```
 
@@ -212,7 +212,7 @@ print(ants.__version__)
 )")
 
 run_script(script_path)
-#> 0.5.4
+#> 0.6.3
 ```
 
 You can also run `Python` interactive in R (yes, you are correct).
