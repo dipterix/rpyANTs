@@ -23,7 +23,7 @@ Imports:
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
-URL: http://dipterix.org/rpyANTs/
+URL: http://dipterix.org/rpyANTs/, https://github.com/dipterix/rpyANTs
 BugReports: https://github.com/dipterix/rpyANTs/issues
 Copyright: 
     For the rpyANTs package - Zhengjia Wang; 
