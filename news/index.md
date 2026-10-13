@@ -2,6 +2,8 @@
 
 ## rpyANTs 0.0.7
 
+CRAN release: 2026-10-12
+
 - `YAELPreprocess.get_template_mapping` no longer fails on transform
   files without `from`/`to` entities, matches the subject code
   case-insensitively when it is spelled one way, and uses transforms
